@@ -3,8 +3,8 @@
 ```
 chargers/
     {chargerId}/
-			partnerId: id<partner>
-			posId: id<pos>
+		partnerId: id<partner>
+		posId: id<pos>
 ```
 
 `chargers` is for looking up the points of sale when updating the available battery count. A charging station will
@@ -41,9 +41,9 @@ Transactions allows us and our partners to do accounting.
 ```
 batteries/
     {batteryId}/
-			manufacturingTime: integer
-			chargeCycleCount: integer
-			borrowTime: integer
+		manufacturingTime: integer
+		chargeCycleCount: integer
+		borrowTime: integer
 ```
 
 ```
