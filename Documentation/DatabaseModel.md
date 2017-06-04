@@ -57,9 +57,9 @@ partners/
         transactions/
             id<transaction> : true
             ...
-		cashiers/
-		    id<user> : true
-		    ...
+        cashiers/
+            id<user> : true
+            ...
 ```
 
 The `adminId` user can add/remove cashier users.
