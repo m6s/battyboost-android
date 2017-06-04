@@ -42,8 +42,8 @@ public class MainActivity extends AppCompatActivity implements Observable {
         super.onCreate(savedInstanceState);
         MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
         binding.setActivity(this);
-        DatabaseReference partners = database.getReference("partners");
-        partners.addValueEventListener(new ValueEventListener() {
+        DatabaseReference partnersRef = database.getReference("partners");
+        partnersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
             }

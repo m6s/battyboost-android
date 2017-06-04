@@ -28,9 +28,8 @@ public class MainActivity extends AppCompatActivity implements Observable {
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 //        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Partner partner = new Partner();
-        partner.name = "testName";
-        partner.batteryCount = 42;
-        client.addPartner(partner);
+        partner.balance = 12000;
+        client.addPartner(partner).subscribe();
     }
 
     @Override
