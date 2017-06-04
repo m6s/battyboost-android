@@ -66,7 +66,7 @@ public class AdminConsole {
     }
 
     @Test
-    public void addPowerbank() {
+    public void addBattery() {
         Battery battery = new Battery();
         Calendar calendar = Calendar.getInstance(Locale.GERMANY); // TODO Use Java 8 date time framework
         calendar.clear();
