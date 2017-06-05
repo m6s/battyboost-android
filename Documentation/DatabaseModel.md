@@ -1,5 +1,7 @@
 # Database model for Firebase
 
+## Intelligent charging stations
+
 ```
 chargers/
     {chargerId}/
@@ -9,6 +11,38 @@ chargers/
 
 `chargers` is for looking up the points of sale when updating the available battery count. A charging station will
 notify the backend when a battery is removed or fully charged with the total amount of fully charged batteries.
+
+## Dumb charging stations
+
+```
+chargingBatteries/
+    {batteryId}/
+        chargingCompleteTime: integer
+```
+
+## QR assignment
+
+```
+userQRs/
+    uuid: id<user>
+    ...
+```
+
+```
+batteryQRs/
+    uuid: id<battery>
+    ...
+```
+
+```
+allocatedQRs/
+    uuid: true
+    ...
+```
+
+Used to double-check valid QR
+
+## Finding battyboost shops
 
 ```
 pos/
@@ -23,6 +57,8 @@ pos/
 `pos` stands for point of sale and can be queried to show the available batteries on a map. We may want to use
 [GeoFire](https://github.com/firebase/geofire-js) for locations.
 
+## Accounting
+
 ```
 transactions/
     {transactionId}/
@@ -36,15 +72,16 @@ transactions/
         time: integer
 ```
 
-Transactions allows us and our partners to do accounting.
-
 ```
 batteries/
     {batteryId}/
+        qr: uuid<battery>
         manufacturingTime: integer
         chargeCycleCount: integer
         borrowTime: integer
 ```
+
+## Partners
 
 ```
 partners/
@@ -52,21 +89,24 @@ partners/
         adminId: id<user>
         balanceCents: integer
         batteries/
-            id<battery> : true
+            id<battery>: true
             ...
         transactions/
-            id<transaction> : true
+            id<transaction>: true
             ...
         cashiers/
-            id<user> : true
+            id<user>: true
             ...
 ```
 
 The `adminId` user can add/remove cashier users.
 
+## User management
+
 ```
 users/
     {userId}/
+        qr: uuid<user>
         oldestBorrowTime: integer
         balanceCents: integer
         batteries/
@@ -82,9 +122,9 @@ users/
 
 `oldestBorrowTime` is the oldest `borrowTime` of all batteries currently borrowed by a user.
 
-## Writes to logic trigger functions
+## Database triggered functions
 
-(See Functions.md for actual function definitions)
+All write access is through trigger functions. (See Functions.md for actual function definitions)
 
 ```
 logic/
@@ -103,7 +143,7 @@ logic/
                     succeeded: boolean
 ```
 
-## Alternative to logic
+## Alternative to for database triggered functions
 
 ```
 command/
