@@ -1,5 +1,7 @@
 package info.mschmitt.battyboost.app;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
@@ -7,12 +9,16 @@ import info.mschmitt.battyboost.core.BattyboostClient;
  * @author Matthias Schmitt
  */
 public class BattyboostApplicationComponent {
-    public final BattyboostClient client;
     public final FirebaseDatabase database;
+    public final FirebaseAuth auth;
+    public final AuthUI authUI;
+    public final BattyboostClient client;
 
     public BattyboostApplicationComponent(BattyboostApplication application) {
         database = FirebaseDatabase.getInstance();
-        client = new BattyboostClient(database);
+        auth = FirebaseAuth.getInstance();
+        authUI = AuthUI.getInstance();
+        client = new BattyboostClient(database, auth);
     }
 
     public void inject(BattyboostApplication application) {

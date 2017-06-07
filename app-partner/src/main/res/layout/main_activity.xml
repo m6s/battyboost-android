@@ -19,8 +19,8 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="@{() -> activity.onClick()}"
-            android:text="Create" />
+            android:onClick="@{() -> activity.onScanClick()}"
+            android:text="Scan" />
 
         <TextView
             android:layout_width="match_parent"

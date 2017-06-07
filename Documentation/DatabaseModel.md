@@ -99,6 +99,13 @@ partners/
             ...
 ```
 
+```
+invites/
+    {partnerId}/
+        token: string
+        validTime: integer
+```
+
 The `adminId` user can add/remove cashier users.
 
 ## User management

@@ -13,6 +13,8 @@ public class MainActivityComponent {
     public void inject(MainActivity activity) {
         activity.client = applicationComponent.client;
         activity.database = applicationComponent.database;
+        activity.auth = applicationComponent.auth;
+        activity.authUI = applicationComponent.authUI;
         activity.injected = true;
     }
 }

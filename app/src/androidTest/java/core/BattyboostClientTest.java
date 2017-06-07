@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import durdinapps.rxfirebase2.DataSnapshotMapper;
@@ -23,6 +24,7 @@ import java.util.List;
 @RunWith(AndroidJUnit4.class)
 public class BattyboostClientTest {
     private static FirebaseDatabase database;
+    private static FirebaseAuth auth;
     private static BattyboostClient client;
 
     @BeforeClass
@@ -31,7 +33,8 @@ public class BattyboostClientTest {
         FirebaseApp app = FirebaseApp.initializeApp(context);
         //noinspection ConstantConditions
         database = FirebaseDatabase.getInstance(app);
-        client = new BattyboostClient(database);
+        auth = FirebaseAuth.getInstance(app);
+        client = new BattyboostClient(database, auth);
     }
 
     @Test

@@ -5,6 +5,7 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import durdinapps.rxfirebase2.DataSnapshotMapper;
@@ -26,6 +27,7 @@ import java.util.*;
 public class AdminConsole {
     private static final String TAG = "ADMIN";
     private static FirebaseDatabase database;
+    private static FirebaseAuth auth;
     private static BattyboostClient client;
 
     @BeforeClass
@@ -34,7 +36,8 @@ public class AdminConsole {
         FirebaseApp app = FirebaseApp.initializeApp(context);
         //noinspection ConstantConditions
         database = FirebaseDatabase.getInstance(app);
-        client = new BattyboostClient(database);
+        auth = FirebaseAuth.getInstance(app);
+        client = new BattyboostClient(database, auth);
     }
 
     @Test
