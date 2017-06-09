@@ -5,7 +5,6 @@
 ```
 chargers/
     {chargerId}/
-        partnerId: id<partner>
         posId: id<pos>
 ```
 
@@ -18,6 +17,7 @@ notify the backend when a battery is removed or fully charged with the total amo
 chargingBatteries/
     {batteryId}/
         chargingCompleteTime: integer
+        posId: id<pos>
 ```
 
 ## QR assignment
@@ -47,7 +47,6 @@ Used to double-check valid QR
 ```
 pos/
     {posId}/
-        type: string
         name: string
         availableBatteryCount: integer
         latitude: double
@@ -86,7 +85,9 @@ batteries/
 ```
 partners/
     {partnerId}/
+        name: string
         adminId: id<user>
+        posId: id<pos>
         balanceCents: integer
         batteries/
             id<battery>: true
@@ -98,6 +99,8 @@ partners/
             id<user>: true
             ...
 ```
+
+`posId` only needed for dumb charges
 
 ```
 invites/
