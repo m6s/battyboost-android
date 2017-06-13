@@ -8,6 +8,7 @@ import durdinapps.rxfirebase2.RxFirebaseAuth;
 import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.entities.Pos;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
@@ -43,6 +44,22 @@ public class BattyboostClient {
         DatabaseReference partnerMapRef = database.getReference("partners");
         DatabaseReference partnerRef = partnerMapRef.push();
         return RxFirebaseDatabase.setValue(partnerRef, partner).toSingleDefault(partnerRef.getKey());
+    }
+
+    public Completable updatePartner(String partnerKey, Partner partner) {
+        DatabaseReference partnerRef = database.getReference("partners/" + partnerKey);
+        return RxFirebaseDatabase.setValue(partnerRef, partner);
+    }
+
+    public Single<String> addPos(Pos pos) {
+        DatabaseReference posMapRef = database.getReference("pos");
+        DatabaseReference posRef = posMapRef.push();
+        return RxFirebaseDatabase.setValue(posRef, pos).toSingleDefault(posRef.getKey());
+    }
+
+    public Completable updatePos(String posKey, Pos pos) {
+        DatabaseReference partnerRef = database.getReference("pos/" + posKey);
+        return RxFirebaseDatabase.setValue(partnerRef, pos);
     }
 
     public Single<String> addBattery(UUID uuid, Battery battery) {

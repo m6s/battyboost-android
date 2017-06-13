@@ -43,7 +43,7 @@ public class AdminConsole {
     @Test
     public void addPartner() throws Exception {
         Partner partner = new Partner();
-        partner.balance = 1000;
+        partner.balanceCents = 1000;
         String key = client.addPartner(partner).blockingGet();
         Log.i(TAG, key);
     }

@@ -48,13 +48,36 @@ Used to double-check valid QR
 pos/
     {posId}/
         name: string
+        info: string
+        imageUrl: string
+        url: string
         availableBatteryCount: integer
         latitude: double
         longitude: double
+        weeklyOpeningHours/
+            mon/
+                {id}/
+                    from: string (hh:mm)
+                    to: string (hh:mm)
+                ...
+            tue/
+                ...
+            ...
+        openPublicHolidays: boolean (true means maybe)
+        area: "berlin"
 ```
 
 `pos` stands for point of sale and can be queried to show the available batteries on a map. We may want to use
 [GeoFire](https://github.com/firebase/geofire-js) for locations.
+
+Future: Opening hours per day (`pos/{posId}/openingHours/{date}/{id}/from|to`)
+
+```
+publicHolidays/
+    berlin/
+        string (yyyy-dd-mm): true
+        ...
+```
 
 ## Accounting
 
@@ -100,7 +123,7 @@ partners/
             ...
 ```
 
-`posId` only needed for dumb charges
+`posId` only needed for dumb charging stations.
 
 ```
 invites/
@@ -119,6 +142,7 @@ users/
         qr: uuid<user>
         oldestBorrowTime: integer
         balanceCents: integer
+        photoUrl: string
         batteries/
             id<battery> : true
             ...

@@ -11,8 +11,9 @@ public class MainActivityComponent {
     }
 
     public void inject(MainActivity activity) {
-        activity.client = applicationComponent.client;
-        activity.database = applicationComponent.database;
+        activity.component = this;
+        activity.applicationComponent = applicationComponent;
+        activity.router = applicationComponent.router;
         activity.injected = true;
     }
 }
