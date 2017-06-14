@@ -4,7 +4,8 @@ Prototyping repo for internal use.
 
 ## Getting started
 
-See AndroidStudio.md
+See [AndroidStudio](Documentation/AndroidStudio.md) for instructions on installing the Android SDK and development
+environment.
 
 ## Developing
 
