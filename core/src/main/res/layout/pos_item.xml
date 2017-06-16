@@ -6,7 +6,7 @@
 
         <variable
             name="holder"
-            type="info.mschmitt.battyboost.core.ui.PosListAdapter.PosHolder" />
+            type="info.mschmitt.battyboost.core.ui.PosRecyclerAdapter.PosHolder" />
 
         <import type="android.view.View" />
 

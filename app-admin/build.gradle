@@ -4,7 +4,6 @@ apply plugin: 'me.tatarka.retrolambda'
 android {
     compileSdkVersion 25
     buildToolsVersion "26.0.0"
-
     defaultConfig {
         applicationId "info.mschmitt.battyboost.serviceapp"
         minSdkVersion 16
@@ -26,12 +25,15 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
 }
 
 dependencies {
     compile project(path: ':core')
-    compile 'com.google.firebase:firebase-database:10.2.6' // Re-declared for the google services plugin
-    compile 'com.google.firebase:firebase-auth:10.2.6' // Re-declared for the google services plugin
+    compile 'com.google.firebase:firebase-database:11.0.1' // Re-declared for the google services plugin
+    compile 'com.google.firebase:firebase-auth:11.0.1' // Re-declared for the google services plugin
     provided 'javax.inject:javax.inject:1@jar'
 }
 apply plugin: 'com.google.gms.google-services'

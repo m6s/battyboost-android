@@ -50,7 +50,6 @@ public class PosFragment extends Fragment {
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 

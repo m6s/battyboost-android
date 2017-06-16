@@ -4,19 +4,21 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import com.google.firebase.database.*;
+import android.view.*;
+import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.HubViewBinding;
 import info.mschmitt.battyboost.app.map.MapFragment;
+import info.mschmitt.battyboost.app.profile.ProfileFragment;
+import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 import javax.inject.Inject;
@@ -28,19 +30,19 @@ import java.util.WeakHashMap;
  */
 public class HubFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
+    private static final int RC_SIGN_IN = 123;
     private final WeakHashMap<Fragment, Void> injectedFragments = new WeakHashMap<>();
     public ViewModel viewModel;
-    @Inject public BattyboostClient client;
-    @Inject public FirebaseDatabase database;
     @Inject public Router router;
+    @Inject public FirebaseDatabase database;
+    @Inject public BattyboostClient client;
+    @Inject public FirebaseAuth auth;
+    @Inject public AuthUI authUI;
     @Inject public HubComponent component;
     @Inject public boolean injected;
 
     public static Fragment newInstance() {
         return new HubFragment();
-    }
-
-    public void onClick() {
     }
 
     @Override
@@ -51,6 +53,12 @@ public class HubFragment extends Fragment {
         if (childFragment instanceof MapFragment) {
             MapFragment mapFragment = (MapFragment) childFragment;
             component.plus(mapFragment).inject(mapFragment);
+        } else if (childFragment instanceof ScheduleFragment) {
+            ScheduleFragment scheduleFragment = (ScheduleFragment) childFragment;
+            component.plus(scheduleFragment).inject(scheduleFragment);
+        } else if (childFragment instanceof ProfileFragment) {
+            ProfileFragment profileFragment = (ProfileFragment) childFragment;
+            component.plus(profileFragment).inject(profileFragment);
         }
         injectedFragments.put(childFragment, null);
     }
@@ -63,28 +71,16 @@ public class HubFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        setRetainInstance(true);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        DatabaseReference partnersRef = database.getReference("partners");
-        partnersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
         HubViewBinding binding = HubViewBinding.inflate(inflater, container, false);
-//        binding.bottomNavigationView.getMenu().getItem(1).setEnabled(false);
-//        binding.bottomNavigationView.getMenu().getItem(2).setEnabled(false);
         binding.setFragment(this);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
-        if (savedInstanceState == null) {
+        if (getChildFragmentManager().findFragmentById(R.id.navigationContentView) == null) {
             router.showMap(this);
         }
         updateActionBar();
@@ -97,17 +93,51 @@ public class HubFragment extends Fragment {
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.hub, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem signInOutMenuItem = menu.findItem(R.id.menu_item_sign_in_out);
+        if (auth.getCurrentUser() != null) {
+            signInOutMenuItem.setTitle("Sign out");
+            signInOutMenuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
+        } else {
+            signInOutMenuItem.setTitle("Sign in");
+            signInOutMenuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
+        }
+    }
+
     private void updateActionBar() {
         FragmentManager fragmentManager = getChildFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.navigationContentView);
         ActionBar actionBar = getSupportActionBar();
         if (fragment instanceof MapFragment) {
             actionBar.setTitle("Map");
+        } else if (fragment instanceof ScheduleFragment) {
+            actionBar.setTitle("Schedule");
+        } else if (fragment instanceof ProfileFragment) {
+            actionBar.setTitle("Profile");
         }
     }
 
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
+    private boolean onSignInMenuItemClick(MenuItem menuItem) {
+        startActivityForResult(authUI.createSignInIntentBuilder().build(), RC_SIGN_IN);
+        return true;
+    }
+
+    private boolean onSignOutMenuItemClick(MenuItem menuItem) {
+        authUI.signOut(getActivity()).addOnSuccessListener(ignore -> {
+            if (getView() != null) {Snackbar.make(getView(), "Signed out", Snackbar.LENGTH_SHORT).show();}
+        });
+        return true;
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -116,10 +146,13 @@ public class HubFragment extends Fragment {
                 router.showMap(this);
                 break;
             case R.id.action_schedule:
+                router.showSchedule(this);
                 break;
-            case R.id.action_balance:
+            case R.id.action_profile:
+                router.showProfile(this);
                 break;
         }
+        updateActionBar();
         return true;
     }
 

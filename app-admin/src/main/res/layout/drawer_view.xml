@@ -6,9 +6,9 @@
 
         <variable
             name="fragment"
-            type="info.mschmitt.battyboost.adminapp.topiclist.TopicListFragment" />
+            type="info.mschmitt.battyboost.adminapp.drawer.DrawerFragment" />
 
-        <import type="info.mschmitt.battyboost.adminapp.topiclist.TopicListFragment.Topic" />
+        <import type="info.mschmitt.battyboost.adminapp.drawer.DrawerFragment.DrawerItem" />
     </data>
 
     <LinearLayout
@@ -25,7 +25,7 @@
             android:padding="16dp"
             android:text="Partners"
             android:textAppearance="@android:style/TextAppearance.Medium"
-            android:textColor="@{fragment.viewModel.topic == Topic.PARTNERS ? @color/primaryAccent : @android:color/secondary_text_light}" />
+            android:textColor="@{fragment.viewModel.drawerItem == DrawerItem.PARTNERS ? @color/primaryAccent : @android:color/secondary_text_light}" />
 
         <Button
             android:layout_width="match_parent"
@@ -36,6 +36,6 @@
             android:padding="16dp"
             android:text="POS"
             android:textAppearance="@android:style/TextAppearance.Medium"
-            android:textColor="@{fragment.viewModel.topic == Topic.POS_LIST ? @color/primaryAccent : @android:color/secondary_text_light}" />
+            android:textColor="@{fragment.viewModel.drawerItem == DrawerItem.POS_LIST ? @color/primaryAccent : @android:color/secondary_text_light}" />
     </LinearLayout>
 </layout>

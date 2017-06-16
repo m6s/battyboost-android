@@ -47,10 +47,9 @@ public class PartnerFragment extends Fragment {
         if (!injected) {
             throw new IllegalStateException("Not injected");
         }
+        super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 

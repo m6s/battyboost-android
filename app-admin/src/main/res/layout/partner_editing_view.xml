@@ -31,7 +31,7 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="@android:color/white"
+                    android:background="@android:color/background_light"
                     android:theme="@style/AppThemeEditingToolbar"
                     app:navigationOnClickListener="@{() -> fragment.goUp()}" />
             </android.support.design.widget.AppBarLayout>
@@ -99,7 +99,6 @@
                             <android.support.design.widget.TextInputEditText
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:enabled="false"
                                 android:hint="Admin Id"
                                 android:inputType="numberDecimal"
                                 android:text="@{fragment.viewModel.adminId}" />
@@ -113,7 +112,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onChangeAdminClick()}"
-                            android:text="Change" />
+                            android:text="Select" />
                     </LinearLayout>
 
                     <View
@@ -149,7 +148,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onChangePosClick()}"
-                            android:text="Change" />
+                            android:text="Select" />
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>

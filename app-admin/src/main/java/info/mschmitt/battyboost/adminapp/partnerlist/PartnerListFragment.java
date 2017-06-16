@@ -13,7 +13,7 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PartnerListViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
-import info.mschmitt.battyboost.core.ui.PartnersAdapter;
+import info.mschmitt.battyboost.core.ui.PartnerRecyclerAdapter;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -45,13 +45,13 @@ public class PartnerListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        setRetainInstance(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         PartnerListViewBinding binding = PartnerListViewBinding.inflate(inflater, container, false);
-        PartnersAdapter adapter = new PartnersAdapter(database.getReference("partners"), this::onPartnerClick);
+        PartnerRecyclerAdapter adapter =
+                new PartnerRecyclerAdapter(database.getReference("partners"), this::onPartnerClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);

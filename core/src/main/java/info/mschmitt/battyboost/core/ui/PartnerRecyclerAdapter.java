@@ -15,10 +15,10 @@ import info.mschmitt.battyboost.core.entities.Partner;
 /**
  * @author Matthias Schmitt
  */
-public class PartnersAdapter extends FirebaseRecyclerAdapter<Partner, PartnersAdapter.PartnerHolder> {
+public class PartnerRecyclerAdapter extends FirebaseRecyclerAdapter<Partner, PartnerRecyclerAdapter.PartnerHolder> {
     private final OnPartnerClickListener listener;
 
-    public PartnersAdapter(Query ref, OnPartnerClickListener listener) {
+    public PartnerRecyclerAdapter(Query ref, OnPartnerClickListener listener) {
         super(Partner.class, R.layout.partner_item, PartnerHolder.class, ref);
         this.listener = listener;
     }

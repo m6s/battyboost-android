@@ -16,9 +16,9 @@ import android.view.ViewGroup;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.HubViewBinding;
+import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListFragment;
 import info.mschmitt.battyboost.adminapp.poslist.PosListFragment;
-import info.mschmitt.battyboost.adminapp.topiclist.TopicListFragment;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -27,7 +27,7 @@ import java.util.WeakHashMap;
 /**
  * @author Matthias Schmitt
  */
-public class HubFragment extends Fragment {
+public class HubFragment extends Fragment implements DrawerFragment.DrawerListener {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private final WeakHashMap<Fragment, Void> injectedFragments = new WeakHashMap<>();
     public ViewModel viewModel;
@@ -44,9 +44,9 @@ public class HubFragment extends Fragment {
         if (injectedFragments.containsKey(childFragment)) {
             return;
         }
-        if (childFragment instanceof TopicListFragment) {
-            TopicListFragment topicListFragment = (TopicListFragment) childFragment;
-            component.plus(topicListFragment).inject(topicListFragment);
+        if (childFragment instanceof DrawerFragment) {
+            DrawerFragment drawerFragment = (DrawerFragment) childFragment;
+            component.plus(drawerFragment).inject(drawerFragment);
         } else if (childFragment instanceof PartnerListFragment) {
             PartnerListFragment partnerListFragment = (PartnerListFragment) childFragment;
             component.plus(partnerListFragment).inject(partnerListFragment);
@@ -66,7 +66,6 @@ public class HubFragment extends Fragment {
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         setHasOptionsMenu(true);
-        setRetainInstance(true);
     }
 
     @Override
@@ -84,7 +83,6 @@ public class HubFragment extends Fragment {
         if (getChildFragmentManager().findFragmentById(R.id.drawerContentView) == null) {
             router.showTopicList(this);
             router.showPartnerList(this);
-            actionBar.setTitle("Partners");
         }
         updateActionBar();
         return binding.getRoot();
@@ -131,9 +129,10 @@ public class HubFragment extends Fragment {
         }
     }
 
-    public void onTopicSelected(TopicListFragment.Topic topic) {
+    @Override
+    public void onDrawerItemSelected(DrawerFragment sender, DrawerFragment.DrawerItem drawerItem) {
         getBinding().drawerLayout.closeDrawers();
-        switch (topic) {
+        switch (drawerItem) {
             case PARTNERS:
                 router.showPartnerList(this);
                 break;

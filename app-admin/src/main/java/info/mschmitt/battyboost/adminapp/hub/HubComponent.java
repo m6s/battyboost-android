@@ -2,12 +2,12 @@ package info.mschmitt.battyboost.adminapp.hub;
 
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
+import info.mschmitt.battyboost.adminapp.drawer.DrawerComponent;
+import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListComponent;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListFragment;
 import info.mschmitt.battyboost.adminapp.poslist.PosListComponent;
 import info.mschmitt.battyboost.adminapp.poslist.PosListFragment;
-import info.mschmitt.battyboost.adminapp.topiclist.TopicListComponent;
-import info.mschmitt.battyboost.adminapp.topiclist.TopicListFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -15,13 +15,11 @@ import info.mschmitt.battyboost.core.BattyboostClient;
  */
 public class HubComponent {
     private final Router router;
-    private final TopicListFragment.OnTopicSelectedListener onTopicSelectedListener;
     private final FirebaseDatabase database;
     private final BattyboostClient client;
 
-    public HubComponent(HubFragment fragment, Router router, FirebaseDatabase database, BattyboostClient client) {
+    public HubComponent(Router router, FirebaseDatabase database, BattyboostClient client) {
         this.router = router;
-        onTopicSelectedListener = fragment::onTopicSelected;
         this.database = database;
         this.client = client;
     }
@@ -32,8 +30,8 @@ public class HubComponent {
         hubFragment.injected = true;
     }
 
-    public TopicListComponent plus(TopicListFragment fragment) {
-        return new TopicListComponent(router, onTopicSelectedListener);
+    public DrawerComponent plus(DrawerFragment fragment) {
+        return new DrawerComponent(router);
     }
 
     public PartnerListComponent plus(PartnerListFragment partnerListFragment) {

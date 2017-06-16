@@ -6,7 +6,7 @@
 
         <variable
             name="holder"
-            type="info.mschmitt.battyboost.core.ui.PartnersAdapter.PartnerHolder" />
+            type="info.mschmitt.battyboost.core.ui.PartnerRecyclerAdapter.PartnerHolder" />
 
         <import type="android.view.View" />
 

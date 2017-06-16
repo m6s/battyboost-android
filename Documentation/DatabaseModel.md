@@ -140,9 +140,8 @@ The `adminId` user can add/remove cashier users.
 users/
     {userId}/
         qr: uuid<user>
-        oldestBorrowTime: integer
+        earliestBorrowTime: integer
         balanceCents: integer
-        photoUrl: string
         batteries/
             id<battery> : true
             ...
@@ -154,7 +153,10 @@ users/
             ...
 ```
 
-`oldestBorrowTime` is the oldest `borrowTime` of all batteries currently borrowed by a user.
+The Admin SDK allows access to the following properties via the FirebaseUser: displayName, email, photoUrl,
+providerData, providerId, uid, userMetadata, disabled, emailVerified
+
+`earliestBorrowTime` is the earliest `borrowTime` of all batteries currently borrowed by a user.
 
 ## Database triggered functions
 

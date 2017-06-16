@@ -9,7 +9,9 @@ import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.entities.User;
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 import java.util.UUID;
@@ -31,40 +33,46 @@ public class BattyboostClient {
      * TODO Move to backend
      */
     private void connectTriggers() {
-        RxFirebaseAuth.observeAuthState(auth)
-                .filter(ignore -> auth.getCurrentUser() != null)
-                .map(FirebaseAuth::getCurrentUser)
-                .subscribe(this::onUserSignIn);
+        userCreateTrigger().flatMapCompletable(this::onUserCreate).subscribe();
     }
 
-    private void onUserSignIn(FirebaseUser user) {
+    private Observable<FirebaseUser> userCreateTrigger() {
+        return RxFirebaseAuth.observeAuthState(auth)
+                .filter(ignore -> auth.getCurrentUser() != null)
+                .flatMapMaybe(ignore -> RxFirebaseDatabase.observeSingleValueEvent(
+                        database.getReference("users").child(auth.getCurrentUser().getUid())))
+                .filter(dataSnapshot -> !dataSnapshot.exists())
+                .map(ignore -> auth.getCurrentUser());
+    }
+
+    private Completable onUserCreate(FirebaseUser firebaseUser) {
+        DatabaseReference userRef = database.getReference("users").child(firebaseUser.getUid());
+        User user = new User();
+        return RxFirebaseDatabase.setValue(userRef, user);
     }
 
     public Single<String> addPartner(Partner partner) {
-        DatabaseReference partnerMapRef = database.getReference("partners");
-        DatabaseReference partnerRef = partnerMapRef.push();
+        DatabaseReference partnerRef = database.getReference("partners").push();
         return RxFirebaseDatabase.setValue(partnerRef, partner).toSingleDefault(partnerRef.getKey());
     }
 
     public Completable updatePartner(String partnerKey, Partner partner) {
-        DatabaseReference partnerRef = database.getReference("partners/" + partnerKey);
+        DatabaseReference partnerRef = database.getReference("partners").child(partnerKey);
         return RxFirebaseDatabase.setValue(partnerRef, partner);
     }
 
     public Single<String> addPos(Pos pos) {
-        DatabaseReference posMapRef = database.getReference("pos");
-        DatabaseReference posRef = posMapRef.push();
+        DatabaseReference posRef = database.getReference("pos").push();
         return RxFirebaseDatabase.setValue(posRef, pos).toSingleDefault(posRef.getKey());
     }
 
     public Completable updatePos(String posKey, Pos pos) {
-        DatabaseReference partnerRef = database.getReference("pos/" + posKey);
+        DatabaseReference partnerRef = database.getReference("pos").child(posKey);
         return RxFirebaseDatabase.setValue(partnerRef, pos);
     }
 
     public Single<String> addBattery(UUID uuid, Battery battery) {
-        DatabaseReference batteryMapRef = database.getReference("batteries");
-        DatabaseReference batteryRef = batteryMapRef.child(uuid.toString());
+        DatabaseReference batteryRef = database.getReference("batteries").child(uuid.toString());
         return RxFirebaseDatabase.setValue(batteryRef, battery).toSingleDefault(batteryRef.getKey());
     }
 

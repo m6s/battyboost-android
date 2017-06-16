@@ -8,7 +8,7 @@ to create a new throw-away project.
 From that open project, download the necessary dependencies via Tools > Android > SDK Manager.
 
 On the *SDK Platforms* tab select and install the latest SDK Platform. Check the *Show Package Details* check box in
-the bottom right corner. Include an image with Google API for an Atom 64 bit system.
+the bottom right corner. Include a Google Play Intel x86 Atom system image.
 
 On the *SDK Tools* tab select and install the the Android Emulator, and Intel x86 Emulator Accelerator (HAXM). Leave the
 other default selection in place. Check the *Show Package Details* check box in the bottom right corner. Make sure the

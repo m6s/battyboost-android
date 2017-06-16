@@ -35,6 +35,6 @@ public class BattyboostApplicationComponent {
     }
 
     public HubComponent plus(HubFragment fragment) {
-        return new HubComponent(client, database, router);
+        return new HubComponent(router, database, client, auth, authUI);
     }
 }

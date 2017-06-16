@@ -9,6 +9,7 @@ import info.mschmitt.battyboost.adminapp.partner.PartnerFragment;
 import info.mschmitt.battyboost.adminapp.partnerediting.PartnerEditingFragment;
 import info.mschmitt.battyboost.adminapp.pos.PosFragment;
 import info.mschmitt.battyboost.adminapp.posediting.PosEditingFragment;
+import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -59,9 +60,6 @@ public class MainActivity extends AppCompatActivity {
             // https://developer.android.com/topic/libraries/support-library/revisions.html#26-0-0-beta1
             return;
         }
-        if (router.goBack(this)) {
-            return;
-        }
         super.onBackPressed();
     }
 
@@ -91,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (childFragment instanceof PosEditingFragment) {
             PosEditingFragment posEditingFragment = (PosEditingFragment) childFragment;
             applicationComponent.plus(posEditingFragment).inject(posEditingFragment);
+        } else if (childFragment instanceof PosSelectionFragment) {
+            PosSelectionFragment posSelectionFragment = (PosSelectionFragment) childFragment;
+            applicationComponent.plus(posSelectionFragment).inject(posSelectionFragment);
         }
         injectedFragments.put(childFragment, null);
     }

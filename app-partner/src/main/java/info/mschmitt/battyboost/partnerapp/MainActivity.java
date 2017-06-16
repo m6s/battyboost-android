@@ -79,15 +79,20 @@ public class MainActivity extends AppCompatActivity implements Observable {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main, menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_item_sign_in_out);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem signInOutMenuItem = menu.findItem(R.id.menu_item_sign_in_out);
         if (auth.getCurrentUser() != null) {
-            menuItem.setTitle("Sign out");
-            menuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
+            signInOutMenuItem.setTitle("Sign out");
+            signInOutMenuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
         } else {
-            menuItem.setTitle("Sign in");
-            menuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
+            signInOutMenuItem.setTitle("Sign in");
+            signInOutMenuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
         }
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     private boolean onSignInMenuItemClick(MenuItem menuItem) {
@@ -96,7 +101,9 @@ public class MainActivity extends AppCompatActivity implements Observable {
     }
 
     private boolean onSignOutMenuItemClick(MenuItem menuItem) {
-        authUI.signOut(this).addOnSuccessListener(this, ignore -> invalidateOptionsMenu());
+        authUI.signOut(this).addOnSuccessListener(ignore -> {
+//            if (getView() != null) {Snackbar.make(getView(), "Signed out", Snackbar.LENGTH_SHORT).show();}
+        });
         return true;
     }
 }

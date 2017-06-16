@@ -15,10 +15,10 @@ import info.mschmitt.battyboost.core.entities.Pos;
 /**
  * @author Matthias Schmitt
  */
-public class PosListAdapter extends FirebaseRecyclerAdapter<Pos, PosListAdapter.PosHolder> {
+public class PosRecyclerAdapter extends FirebaseRecyclerAdapter<Pos, PosRecyclerAdapter.PosHolder> {
     private final OnPosClickListener listener;
 
-    public PosListAdapter(Query ref, OnPosClickListener listener) {
+    public PosRecyclerAdapter(Query ref, OnPosClickListener listener) {
         super(Pos.class, R.layout.pos_item, PosHolder.class, ref);
         this.listener = listener;
     }

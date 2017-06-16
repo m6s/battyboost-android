@@ -53,7 +53,6 @@ public class PosEditingFragment extends Fragment {
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         Bundle args = getArguments();
         posKey = args.getString(ARG_POS_KEY);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -126,7 +125,7 @@ public class PosEditingFragment extends Fragment {
         return true;
     }
 
-    public void setPos(Pos pos) {
+    private void setPos(Pos pos) {
         viewModel.pos = pos;
         viewModel.name = pos.name;
         viewModel.info = pos.info;

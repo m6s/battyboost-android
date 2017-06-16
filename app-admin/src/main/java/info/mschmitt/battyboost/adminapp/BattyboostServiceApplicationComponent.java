@@ -13,6 +13,8 @@ import info.mschmitt.battyboost.adminapp.pos.PosComponent;
 import info.mschmitt.battyboost.adminapp.pos.PosFragment;
 import info.mschmitt.battyboost.adminapp.posediting.PosEditingComponent;
 import info.mschmitt.battyboost.adminapp.posediting.PosEditingFragment;
+import info.mschmitt.battyboost.adminapp.posselection.PosSelectionComponent;
+import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -43,7 +45,7 @@ public class BattyboostServiceApplicationComponent {
     }
 
     public HubComponent plus(HubFragment fragment) {
-        return new HubComponent(fragment, router, database, client);
+        return new HubComponent(router, database, client);
     }
 
     public PartnerComponent plus(PartnerFragment fragment) {
@@ -60,5 +62,9 @@ public class BattyboostServiceApplicationComponent {
 
     public PosEditingComponent plus(PosEditingFragment fragment) {
         return new PosEditingComponent(router, database, client);
+    }
+
+    public PosSelectionComponent plus(PosSelectionFragment fragment) {
+        return new PosSelectionComponent(router, database, client);
     }
 }

@@ -13,6 +13,7 @@ import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PartnerEditingViewBinding;
+import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
 import io.reactivex.disposables.CompositeDisposable;
@@ -24,7 +25,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class PartnerEditingFragment extends Fragment {
+public class PartnerEditingFragment extends Fragment implements PosSelectionFragment.PosSelectionListener {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_PARTNER_KEY = "PARTNER_KEY";
     public ViewModel viewModel;
@@ -53,7 +54,6 @@ public class PartnerEditingFragment extends Fragment {
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         Bundle args = getArguments();
         partnerKey = args.getString(ARG_PARTNER_KEY);
-        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
@@ -123,7 +123,7 @@ public class PartnerEditingFragment extends Fragment {
         return true;
     }
 
-    public void setPartner(Partner partner) {
+    private void setPartner(Partner partner) {
         viewModel.partner = partner;
         viewModel.name = partner.name;
         viewModel.balanceCents = String.valueOf(partner.balanceCents);
@@ -136,10 +136,17 @@ public class PartnerEditingFragment extends Fragment {
     }
 
     public void onChangePosClick() {
+        router.showPosSelection(this, viewModel.posId);
     }
 
     public void goUp() {
         router.goUp(this);
+    }
+
+    @Override
+    public void onPosIdSelected(String posId) {
+        viewModel.posId = posId;
+        viewModel.notifyChange();
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
