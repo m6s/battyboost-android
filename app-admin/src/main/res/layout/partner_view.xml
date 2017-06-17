@@ -48,77 +48,94 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <android.support.design.widget.TextInputLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:errorEnabled="true"
-                        app:hintAnimationEnabled="false">
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical">
 
-                        <android.support.design.widget.TextInputEditText
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:hint="Name"
-                            android:inputType="text"
-                            android:text="@={fragment.viewModel.name}" />
-                    </android.support.design.widget.TextInputLayout>
+                            android:text="Name"
+                            android:textAppearance="@style/AppTextAppearanceMedium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{fragment.viewModel.partner.name}"
+                            android:textAppearance="@style/AppTextAppearanceSmall" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="8dp" />
+                        android:layout_height="16dp" />
 
-                    <android.support.design.widget.TextInputLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:errorEnabled="true"
-                        app:hintAnimationEnabled="false">
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical">
 
-                        <android.support.design.widget.TextInputEditText
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:hint="Balance"
-                            android:inputType="numberDecimal"
-                            android:text="@{fragment.viewModel.balanceCents}" />
-                    </android.support.design.widget.TextInputLayout>
+                            android:text="Balance Cents"
+                            android:textAppearance="@style/AppTextAppearanceMedium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/AppTextAppearanceSmall"
+                            app:intText="@{fragment.viewModel.partner.balanceCents}" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="8dp" />
+                        android:layout_height="16dp" />
 
-                    <android.support.design.widget.TextInputLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:errorEnabled="true"
-                        app:hintAnimationEnabled="false">
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical">
 
-                        <android.support.design.widget.TextInputEditText
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:hint="Admin Id"
-                            android:inputType="numberDecimal"
-                            android:text="@{fragment.viewModel.adminId}" />
-                    </android.support.design.widget.TextInputLayout>
+                            android:text="Admin"
+                            android:textAppearance="@style/AppTextAppearanceMedium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@{fragment.viewModel.partner.adminId}"
+                            android:textAppearance="@style/AppTextAppearanceSmall" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="8dp" />
+                        android:layout_height="16dp" />
 
-                    <android.support.design.widget.TextInputLayout
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:errorEnabled="true"
-                        app:hintAnimationEnabled="false">
+                        android:background="?android:attr/selectableItemBackground"
+                        android:orientation="vertical">
 
-                        <android.support.design.widget.TextInputEditText
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:enabled="false"
-                            android:hint="POS Id"
-                            android:inputType="numberDecimal"
-                            android:text="@{fragment.viewModel.posId}" />
-                    </android.support.design.widget.TextInputLayout>
+                            android:text="POS"
+                            android:textAppearance="@style/AppTextAppearanceMedium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="None"
+                            android:text="@{fragment.viewModel.partner.posId}"
+                            android:textAppearance="@style/AppTextAppearanceSmall" />
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>

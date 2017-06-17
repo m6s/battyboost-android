@@ -5,17 +5,19 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.DataSnapshotMapper;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import io.reactivex.functions.Function;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -40,13 +42,17 @@ public class BattyboostClientTest {
     @Test
     public void addPartner() throws Exception {
         DatabaseReference partnersRef = database.getReference("partners");
-        List<Partner> partners =
-                RxFirebaseDatabase.observeSingleValueEvent(partnersRef, DataSnapshotMapper.listOf(Partner.class))
-                        .blockingGet();
+        Function<DataSnapshot, List<Partner>> mapper = dataSnapshot -> {
+            ArrayList<Partner> list = new ArrayList<>();
+            for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                list.add(childSnapshot.getValue(Partner.class));
+            }
+            return list;
+        };
+        List<Partner> partners = RxDatabaseReference.valueEvents(partnersRef).firstElement().map(mapper).blockingGet();
         int oldSize = partners.size();
         client.addPartner(new Partner()).blockingGet();
-        partners = RxFirebaseDatabase.observeSingleValueEvent(partnersRef, DataSnapshotMapper.listOf(Partner.class))
-                .blockingGet();
+        partners = RxDatabaseReference.valueEvents(partnersRef).firstElement().map(mapper).blockingGet();
         Assert.assertEquals(partners.size(), oldSize + 1);
     }
 }

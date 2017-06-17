@@ -1,26 +1,25 @@
 package info.mschmitt.battyboost.adminapp.partnerediting;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PartnerEditingViewBinding;
+import info.mschmitt.battyboost.adminapp.partner.PartnerViewModel;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
-import java.io.Serializable;
 
 /**
  * @author Matthias Schmitt
@@ -28,7 +27,7 @@ import java.io.Serializable;
 public class PartnerEditingFragment extends Fragment implements PosSelectionFragment.PosSelectionListener {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_PARTNER_KEY = "PARTNER_KEY";
-    public ViewModel viewModel;
+    public PartnerViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
@@ -50,10 +49,9 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        Bundle args = getArguments();
-        partnerKey = args.getString(ARG_PARTNER_KEY);
+        viewModel = savedInstanceState == null ? new PartnerViewModel()
+                : (PartnerViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        partnerKey = getArguments().getString(ARG_PARTNER_KEY);
         setHasOptionsMenu(true);
     }
 
@@ -75,12 +73,24 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        if (viewModel.partner == null && partnerKey != null) {
-            DatabaseReference reference = database.getReference("partners/" + partnerKey);
-            Disposable disposable =
-                    RxFirebaseDatabase.observeSingleValueEvent(reference, Partner.class).subscribe(this::setPartner);
-            compositeDisposable.add(disposable);
+        if (viewModel.partner == null) {
+            if (partnerKey != null) {
+                DatabaseReference reference = database.getReference("partners").child(partnerKey);
+                Disposable disposable = RxDatabaseReference.valueEvents(reference)
+                        .filter(DataSnapshot::exists)
+                        .map(dataSnapshot -> dataSnapshot.getValue(Partner.class))
+                        .firstElement()
+                        .subscribe(this::setPartner);
+                compositeDisposable.add(disposable);
+            } else {
+                setPartner(new Partner());
+            }
         }
+    }
+
+    private void setPartner(Partner partner) {
+        viewModel.partner = partner;
+        viewModel.notifyChange();
     }
 
     @Override
@@ -107,36 +117,21 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
-        Partner partner = new Partner();
-        partner.name = viewModel.name;
-        partner.balanceCents = Integer.parseInt(viewModel.balanceCents);
-        partner.adminId = viewModel.adminId;
-        partner.posId = viewModel.posId;
         Disposable disposable;
         if (partnerKey == null) {
-            disposable = client.addPartner(partner).subscribe(s -> router.goUp(this));
+            disposable = client.addPartner(viewModel.partner).subscribe(s -> router.goUp(this));
         } else {
-            disposable = client.updatePartner(partnerKey, partner).subscribe(() -> router.goUp(this));
+            disposable = client.updatePartner(partnerKey, viewModel.partner).subscribe(() -> router.goUp(this));
         }
         compositeDisposable.add(disposable);
-//        Snackbar.make(getView(), partner.toString(), Snackbar.LENGTH_SHORT).show();
         return true;
-    }
-
-    private void setPartner(Partner partner) {
-        viewModel.partner = partner;
-        viewModel.name = partner.name;
-        viewModel.balanceCents = String.valueOf(partner.balanceCents);
-        viewModel.adminId = partner.adminId == null ? " " : partner.adminId;
-        viewModel.posId = partner.posId == null ? " " : partner.posId;
-        viewModel.notifyChange();
     }
 
     public void onChangeAdminClick() {
     }
 
     public void onChangePosClick() {
-        router.showPosSelection(this, viewModel.posId);
+        router.showPosSelection(this, viewModel.partner.posId);
     }
 
     public void goUp() {
@@ -145,15 +140,7 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
 
     @Override
     public void onPosIdSelected(String posId) {
-        viewModel.posId = posId;
+        viewModel.partner.posId = posId;
         viewModel.notifyChange();
-    }
-
-    public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public String name;
-        @Bindable public String balanceCents;
-        @Bindable public String adminId;
-        @Bindable public String posId;
-        private Partner partner;
     }
 }

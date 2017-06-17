@@ -1,25 +1,24 @@
 package info.mschmitt.battyboost.adminapp.posediting;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PosEditingViewBinding;
+import info.mschmitt.battyboost.adminapp.pos.PosViewModel;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
-import java.io.Serializable;
 
 /**
  * @author Matthias Schmitt
@@ -27,7 +26,7 @@ import java.io.Serializable;
 public class PosEditingFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_POS_KEY = "POS_KEY";
-    public ViewModel viewModel;
+    public PosViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
@@ -49,8 +48,8 @@ public class PosEditingFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        viewModel = savedInstanceState == null ? new PosViewModel()
+                : (PosViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         Bundle args = getArguments();
         posKey = args.getString(ARG_POS_KEY);
         setHasOptionsMenu(true);
@@ -74,11 +73,18 @@ public class PosEditingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        if (viewModel.pos == null && posKey != null) {
-            DatabaseReference reference = database.getReference("pos/" + posKey);
-            Disposable disposable =
-                    RxFirebaseDatabase.observeSingleValueEvent(reference, Pos.class).subscribe(this::setPos);
-            compositeDisposable.add(disposable);
+        if (viewModel.pos == null) {
+            if (posKey != null) {
+                DatabaseReference reference = database.getReference("pos").child(posKey);
+                Disposable disposable = RxDatabaseReference.valueEvents(reference)
+                        .filter(DataSnapshot::exists)
+                        .map(dataSnapshot -> dataSnapshot.getValue(Pos.class))
+                        .firstElement()
+                        .subscribe(this::setPos);
+                compositeDisposable.add(disposable);
+            } else {
+                setPos(new Pos());
+            }
         }
     }
 
@@ -101,40 +107,24 @@ public class PosEditingFragment extends Fragment {
         saveMenuItem.setOnMenuItemClickListener(this::onSaveMenuItemClick);
     }
 
+    private void setPos(Pos pos) {
+        viewModel.pos = pos;
+        viewModel.notifyChange();
+    }
+
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
-        Pos pos = new Pos();
-        pos.name = viewModel.name;
-        pos.info = viewModel.info;
-        pos.imageUrl = viewModel.imageUrl;
-        pos.url = viewModel.url;
-        pos.availableBatteryCount = Integer.parseInt(viewModel.availableBatteryCount);
-        pos.latitude = Double.parseDouble(viewModel.latitude);
-        pos.longitude = Double.parseDouble(viewModel.longitude);
         Disposable disposable;
         if (posKey == null) {
-            disposable = client.addPos(pos).subscribe(s -> router.goUp(this));
+            disposable = client.addPos(viewModel.pos).subscribe(s -> router.goUp(this));
         } else {
-            disposable = client.updatePos(posKey, pos).subscribe(() -> router.goUp(this));
+            disposable = client.updatePos(posKey, viewModel.pos).subscribe(() -> router.goUp(this));
         }
         compositeDisposable.add(disposable);
-//        Snackbar.make(getView(), pos.toString(), Snackbar.LENGTH_SHORT).show();
         return true;
-    }
-
-    private void setPos(Pos pos) {
-        viewModel.pos = pos;
-        viewModel.name = pos.name;
-        viewModel.info = pos.info;
-        viewModel.imageUrl = pos.imageUrl;
-        viewModel.url = pos.url;
-        viewModel.availableBatteryCount = String.valueOf(pos.availableBatteryCount);
-        viewModel.latitude = String.valueOf(pos.latitude);
-        viewModel.longitude = String.valueOf(pos.longitude);
-        viewModel.notifyChange();
     }
 
     public void onSelectImageUrlClick() {
@@ -142,16 +132,5 @@ public class PosEditingFragment extends Fragment {
 
     public void goUp() {
         router.goUp(this);
-    }
-
-    public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public String name;
-        @Bindable public String info;
-        @Bindable public String imageUrl;
-        @Bindable public String url;
-        @Bindable public String availableBatteryCount;
-        @Bindable public String latitude;
-        @Bindable public String longitude;
-        private Pos pos;
     }
 }

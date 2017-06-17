@@ -1,25 +1,23 @@
 package info.mschmitt.battyboost.adminapp.partner;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PartnerViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
-import java.io.Serializable;
 
 /**
  * @author Matthias Schmitt
@@ -27,12 +25,13 @@ import java.io.Serializable;
 public class PartnerFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_PARTNER_KEY = "PARTNER_KEY";
-    public ViewModel viewModel;
+    public PartnerViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
+    private String partnerKey;
 
     public static Fragment newInstance(String key) {
         PartnerFragment fragment = new PartnerFragment();
@@ -48,8 +47,9 @@ public class PartnerFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        partnerKey = getArguments().getString(ARG_PARTNER_KEY);
+        viewModel = savedInstanceState == null ? new PartnerViewModel()
+                : (PartnerViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         setHasOptionsMenu(true);
     }
 
@@ -71,11 +71,11 @@ public class PartnerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Bundle args = getArguments();
-        String partnerKey = args.getString(ARG_PARTNER_KEY);
-        DatabaseReference reference = database.getReference("partners/" + partnerKey);
-        Disposable disposable =
-                RxFirebaseDatabase.observeValueEvent(reference, Partner.class).subscribe(this::setPartner);
+        DatabaseReference reference = database.getReference("partners").child(partnerKey);
+        Disposable disposable = RxDatabaseReference.valueEvents(reference)
+                .filter(DataSnapshot::exists)
+                .map(dataSnapshot -> dataSnapshot.getValue(Partner.class))
+                .subscribe(this::setPartner);
         compositeDisposable.add(disposable);
     }
 
@@ -94,37 +94,33 @@ public class PartnerFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.partner, menu);
-        MenuItem editMenuItem = menu.findItem(R.id.menu_item_edit);
-        editMenuItem.setOnMenuItemClickListener(this::onEditMenuItemClick);
+        MenuItem menuItem = menu.findItem(R.id.menu_item_edit);
+        menuItem.setOnMenuItemClickListener(this::onEditMenuItemClick);
+        menuItem = menu.findItem(R.id.menu_item_delete);
+        menuItem.setOnMenuItemClickListener(this::onDeleteMenuItemClick);
     }
 
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-    private boolean onEditMenuItemClick(MenuItem menuItem) {
-        router.showPartnerEditing(this, getArguments().getString(ARG_PARTNER_KEY));
+    private void setPartner(Partner partner) {
+        viewModel.partner = partner;
+        viewModel.notifyChange();
+    }
+
+    private boolean onDeleteMenuItemClick(MenuItem menuItem) {
+        Disposable disposable = client.deletePartner(partnerKey).subscribe(() -> router.goUp(this));
+        compositeDisposable.add(disposable);
         return true;
     }
 
-    public void setPartner(Partner partner) {
-        viewModel.partner = partner;
-        viewModel.name = partner.name;
-        viewModel.balanceCents = String.valueOf(partner.balanceCents);
-        viewModel.adminId = partner.adminId == null ? " " : partner.adminId;
-        viewModel.posId = partner.posId == null ? " " : partner.posId;
-        viewModel.notifyChange();
+    private boolean onEditMenuItemClick(MenuItem menuItem) {
+        router.showPartnerEditing(this, partnerKey);
+        return true;
     }
 
     public void goUp() {
         router.goUp(this);
-    }
-
-    public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public String name;
-        @Bindable public String balanceCents;
-        @Bindable public String adminId;
-        @Bindable public String posId;
-        private Partner partner;
     }
 }

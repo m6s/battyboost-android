@@ -4,12 +4,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.RxFirebaseAuth;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
 import info.mschmitt.battyboost.core.entities.User;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -37,10 +37,10 @@ public class BattyboostClient {
     }
 
     private Observable<FirebaseUser> userCreateTrigger() {
-        return RxFirebaseAuth.observeAuthState(auth)
+        return RxAuth.stateChanges(auth)
                 .filter(ignore -> auth.getCurrentUser() != null)
-                .flatMapMaybe(ignore -> RxFirebaseDatabase.observeSingleValueEvent(
-                        database.getReference("users").child(auth.getCurrentUser().getUid())))
+                .flatMapMaybe(ignore -> RxDatabaseReference.valueEvents(
+                        database.getReference("users").child(auth.getCurrentUser().getUid())).firstElement())
                 .filter(dataSnapshot -> !dataSnapshot.exists())
                 .map(ignore -> auth.getCurrentUser());
     }
@@ -48,32 +48,42 @@ public class BattyboostClient {
     private Completable onUserCreate(FirebaseUser firebaseUser) {
         DatabaseReference userRef = database.getReference("users").child(firebaseUser.getUid());
         User user = new User();
-        return RxFirebaseDatabase.setValue(userRef, user);
+        return RxDatabaseReference.setValue(userRef, user);
     }
 
     public Single<String> addPartner(Partner partner) {
         DatabaseReference partnerRef = database.getReference("partners").push();
-        return RxFirebaseDatabase.setValue(partnerRef, partner).toSingleDefault(partnerRef.getKey());
+        return RxDatabaseReference.setValue(partnerRef, partner).toSingleDefault(partnerRef.getKey());
     }
 
     public Completable updatePartner(String partnerKey, Partner partner) {
         DatabaseReference partnerRef = database.getReference("partners").child(partnerKey);
-        return RxFirebaseDatabase.setValue(partnerRef, partner);
+        return RxDatabaseReference.setValue(partnerRef, partner);
+    }
+
+    public Completable deletePartner(String partnerKey) {
+        DatabaseReference partnerRef = database.getReference("partners").child(partnerKey);
+        return RxDatabaseReference.removeValue(partnerRef);
     }
 
     public Single<String> addPos(Pos pos) {
         DatabaseReference posRef = database.getReference("pos").push();
-        return RxFirebaseDatabase.setValue(posRef, pos).toSingleDefault(posRef.getKey());
+        return RxDatabaseReference.setValue(posRef, pos).toSingleDefault(posRef.getKey());
     }
 
     public Completable updatePos(String posKey, Pos pos) {
         DatabaseReference partnerRef = database.getReference("pos").child(posKey);
-        return RxFirebaseDatabase.setValue(partnerRef, pos);
+        return RxDatabaseReference.setValue(partnerRef, pos);
+    }
+
+    public Completable deletePos(String posKey) {
+        DatabaseReference partnerRef = database.getReference("pos").child(posKey);
+        return RxDatabaseReference.removeValue(partnerRef);
     }
 
     public Single<String> addBattery(UUID uuid, Battery battery) {
         DatabaseReference batteryRef = database.getReference("batteries").child(uuid.toString());
-        return RxFirebaseDatabase.setValue(batteryRef, battery).toSingleDefault(batteryRef.getKey());
+        return RxDatabaseReference.setValue(batteryRef, battery).toSingleDefault(batteryRef.getKey());
     }
 
     /**
@@ -86,6 +96,6 @@ public class BattyboostClient {
         DatabaseReference inviteMapRef = database.getReference("invites");
         String partnerId = ""; // TODO Get from db
         DatabaseReference inviteRef = inviteMapRef.child(partnerId);
-        return RxFirebaseDatabase.setValue(inviteRef, token);
+        return RxDatabaseReference.setValue(inviteRef, token);
     }
 }

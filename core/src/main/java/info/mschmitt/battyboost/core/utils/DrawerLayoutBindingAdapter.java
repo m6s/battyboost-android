@@ -7,7 +7,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 /**
  * @author Matthias Schmitt
  */
-public class DrawerLayoutBindingAdapters {
+public class DrawerLayoutBindingAdapter {
     @BindingAdapter("toggle")
     public static void setToggle(DrawerLayout view, ActionBarDrawerToggle oldValue, ActionBarDrawerToggle newValue) {
         if (oldValue != null) {

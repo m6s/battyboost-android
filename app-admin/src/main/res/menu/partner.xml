@@ -6,4 +6,8 @@
         android:icon="@drawable/ic_edit_white_24dp"
         android:title="Edit"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_item_delete"
+        android:title="Delete"
+        app:showAsAction="never" />
 </menu>

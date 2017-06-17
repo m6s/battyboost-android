@@ -13,8 +13,8 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.RxFirebaseAuth;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.partnerapp.databinding.MainActivityBinding;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements Observable {
     protected void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = RxFirebaseAuth.observeAuthState(auth).subscribe(ignore -> {
+        Disposable disposable = RxAuth.stateChanges(auth).subscribe(ignore -> {
             FirebaseUser user = auth.getCurrentUser();
             text = user == null ? "Please log in" : "Hello " + user.getDisplayName() + "!";
             propertyChangeRegistry.notifyChange(MainActivity.this, BR.text);

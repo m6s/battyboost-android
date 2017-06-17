@@ -10,10 +10,10 @@ import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.RxFirebaseAuth;
 import info.mschmitt.battyboost.app.databinding.ProfileViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -66,7 +66,7 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = RxFirebaseAuth.observeAuthState(auth).subscribe(ignore -> {
+        Disposable disposable = RxAuth.stateChanges(auth).subscribe(ignore -> {
             viewModel.signedIn = auth.getCurrentUser() != null;
             viewModel.notifyChange();
         });

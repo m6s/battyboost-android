@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * @author Matthias Schmitt
  */
-public class ViewBindingAdapters {
+public class ViewBindingAdapter {
     @BindingAdapter("visibleGone")
     public static void setVisibleGone(View view, boolean show) {
         view.setVisibility(show ? View.VISIBLE : View.GONE);

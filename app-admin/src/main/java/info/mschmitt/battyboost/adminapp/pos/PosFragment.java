@@ -1,25 +1,23 @@
 package info.mschmitt.battyboost.adminapp.pos;
 
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PosViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
-import java.io.Serializable;
 
 /**
  * @author Matthias Schmitt
@@ -27,12 +25,13 @@ import java.io.Serializable;
 public class PosFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_POS_KEY = "POS_KEY";
-    public ViewModel viewModel;
+    public PosViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
+    private String posKey;
 
     public static Fragment newInstance(String key) {
         PosFragment fragment = new PosFragment();
@@ -47,8 +46,9 @@ public class PosFragment extends Fragment {
         if (!injected) {
             throw new IllegalStateException("Not injected");
         }
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        viewModel = savedInstanceState == null ? new PosViewModel()
+                : (PosViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        posKey = getArguments().getString(ARG_POS_KEY);
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -71,10 +71,11 @@ public class PosFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Bundle args = getArguments();
-        String partnerKey = args.getString(ARG_POS_KEY);
-        DatabaseReference reference = database.getReference("pos/" + partnerKey);
-        Disposable disposable = RxFirebaseDatabase.observeValueEvent(reference, Pos.class).subscribe(this::setPos);
+        DatabaseReference reference = database.getReference("pos").child(posKey);
+        Disposable disposable = RxDatabaseReference.valueEvents(reference)
+                .filter(DataSnapshot::exists)
+                .map(dataSnapshot -> dataSnapshot.getValue(Pos.class))
+                .subscribe(this::setPos);
         compositeDisposable.add(disposable);
     }
 
@@ -93,43 +94,33 @@ public class PosFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.pos, menu);
-        MenuItem editMenuItem = menu.findItem(R.id.menu_item_edit);
-        editMenuItem.setOnMenuItemClickListener(this::onEditMenuItemClick);
+        MenuItem menuItem = menu.findItem(R.id.menu_item_edit);
+        menuItem.setOnMenuItemClickListener(this::onEditMenuItemClick);
+        menuItem = menu.findItem(R.id.menu_item_delete);
+        menuItem.setOnMenuItemClickListener(this::onDeleteMenuItemClick);
     }
 
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-    private boolean onEditMenuItemClick(MenuItem menuItem) {
-        router.showPosEditing(this, getArguments().getString(ARG_POS_KEY));
+    private boolean onDeleteMenuItemClick(MenuItem menuItem) {
+        Disposable disposable = client.deletePos(posKey).subscribe(() -> router.goUp(this));
+        compositeDisposable.add(disposable);
         return true;
     }
 
-    public void setPos(Pos pos) {
-        viewModel.pos = pos;
-        viewModel.name = pos.name;
-        viewModel.info = pos.info;
-        viewModel.imageUrl = pos.imageUrl;
-        viewModel.url = pos.url;
-        viewModel.availableBatteryCount = String.valueOf(pos.availableBatteryCount);
-        viewModel.latitude = String.valueOf(pos.latitude);
-        viewModel.longitude = String.valueOf(pos.longitude);
-        viewModel.notifyChange();
+    private boolean onEditMenuItemClick(MenuItem menuItem) {
+        router.showPosEditing(this, posKey);
+        return true;
     }
 
     public void goUp() {
         router.goUp(this);
     }
 
-    public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public String name;
-        @Bindable public String info;
-        @Bindable public String imageUrl;
-        @Bindable public String url;
-        @Bindable public String availableBatteryCount;
-        @Bindable public String latitude;
-        @Bindable public String longitude;
-        private Pos pos;
+    private void setPos(Pos pos) {
+        viewModel.pos = pos;
+        viewModel.notifyChange();
     }
 }

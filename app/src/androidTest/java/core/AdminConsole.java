@@ -6,13 +6,14 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import durdinapps.rxfirebase2.DataSnapshotMapper;
-import durdinapps.rxfirebase2.RxFirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import io.reactivex.functions.Function;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,9 +52,15 @@ public class AdminConsole {
     @Test
     public void printBatteryQRs() throws Exception {
         DatabaseReference batteryMapRef = database.getReference("batteries");
+        Function<DataSnapshot, Map<String, Battery>> mapper = dataSnapshot -> {
+            Map<String, Battery> map = new HashMap<>((int) dataSnapshot.getChildrenCount());
+            for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                map.put(childSnapshot.getKey(), childSnapshot.getValue(Battery.class));
+            }
+            return map;
+        };
         Map<String, Battery> batteries =
-                RxFirebaseDatabase.observeSingleValueEvent(batteryMapRef, DataSnapshotMapper.mapOf(Battery.class))
-                        .blockingGet();
+                RxDatabaseReference.valueEvents(batteryMapRef).firstElement().map(mapper).blockingGet();
         for (Map.Entry<String, Battery> entry : batteries.entrySet()) {
             String qrData = compileQRData(entry.getKey(), entry.getValue());
             String url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + URLEncoder.encode(qrData,
