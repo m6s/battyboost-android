@@ -1,8 +1,7 @@
 package info.mschmitt.battyboost.core.utils;
 
 import android.support.annotation.NonNull;
-
-import java.util.function.Function;
+import io.reactivex.functions.Function;
 
 /**
  * @author Matthias Schmitt
@@ -15,7 +14,7 @@ public class RxOptional<T> {
         this.value = value;
     }
 
-    public <U> RxOptional<U> map(Function<? super T, ? extends U> mapper) {
+    public <U> RxOptional<U> map(Function<? super T, ? extends U> mapper) throws Exception {
         if (value == null) {
             return empty();
         } else {
@@ -27,5 +26,11 @@ public class RxOptional<T> {
     public static <T> RxOptional<T> empty() {
         //noinspection unchecked
         return (RxOptional<T>) EMPTY;
+    }
+
+    public <U> RxOptional<U> flatMap(Function<? super T, RxOptional<U>> mapper) throws Exception {
+        if (value == null) { return empty(); } else {
+            return mapper.apply(value);
+        }
     }
 }

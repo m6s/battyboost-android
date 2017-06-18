@@ -80,8 +80,7 @@ public class ProfileFragment extends Fragment {
         compositeDisposable.add(disposable);
         disposable = rxAuth.userChanges()
                 .switchMap(optional -> databaseUserChanges(optional.value))
-                .map(optional -> optional.map(
-                        dataSnapshot -> dataSnapshot.exists() ? dataSnapshot.getValue(DatabaseUser.class) : null))
+                .map(optional -> optional.flatMap(BattyboostClient.DATABASE_USER_MAPPER))
                 .subscribe(optional -> setDatabaseUser(optional.value));
         compositeDisposable.add(disposable);
     }

@@ -1,17 +1,20 @@
 package info.mschmitt.battyboost.core;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.DatabaseUser;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.utils.RxOptional;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 
 import java.util.UUID;
 
@@ -19,6 +22,9 @@ import java.util.UUID;
  * @author Matthias Schmitt
  */
 public class BattyboostClient {
+    public static final Function<DataSnapshot, RxOptional<DatabaseUser>> DATABASE_USER_MAPPER =
+            dataSnapshot -> dataSnapshot.exists() ? new RxOptional<>(dataSnapshot.getValue(DatabaseUser.class))
+                    : RxOptional.empty();
     private final FirebaseDatabase database;
     private final RxAuth rxAuth;
 
