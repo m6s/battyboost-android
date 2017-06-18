@@ -4,12 +4,11 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,7 +29,6 @@ import java.util.WeakHashMap;
  */
 public class HubFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
-    private static final int RC_SIGN_IN = 123;
     private final WeakHashMap<Fragment, Void> injectedFragments = new WeakHashMap<>();
     public ViewModel viewModel;
     @Inject public Router router;
@@ -71,19 +69,15 @@ public class HubFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         HubViewBinding binding = HubViewBinding.inflate(inflater, container, false);
         binding.setFragment(this);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(binding.toolbar);
         if (getChildFragmentManager().findFragmentById(R.id.navigationContentView) == null) {
             router.showMap(this);
         }
-        updateActionBar();
         return binding.getRoot();
     }
 
@@ -91,53 +85,6 @@ public class HubFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.hub, menu);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        MenuItem signInOutMenuItem = menu.findItem(R.id.menu_item_sign_in_out);
-        if (auth.getCurrentUser() != null) {
-            signInOutMenuItem.setTitle("Sign out");
-            signInOutMenuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
-        } else {
-            signInOutMenuItem.setTitle("Sign in");
-            signInOutMenuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
-        }
-    }
-
-    private void updateActionBar() {
-        FragmentManager fragmentManager = getChildFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentById(R.id.navigationContentView);
-        ActionBar actionBar = getSupportActionBar();
-        if (fragment instanceof MapFragment) {
-            actionBar.setTitle("Map");
-        } else if (fragment instanceof ScheduleFragment) {
-            actionBar.setTitle("Schedule");
-        } else if (fragment instanceof ProfileFragment) {
-            actionBar.setTitle("Profile");
-        }
-    }
-
-    private ActionBar getSupportActionBar() {
-        return ((AppCompatActivity) getActivity()).getSupportActionBar();
-    }
-
-    private boolean onSignInMenuItemClick(MenuItem menuItem) {
-        startActivityForResult(authUI.createSignInIntentBuilder().build(), RC_SIGN_IN);
-        return true;
-    }
-
-    private boolean onSignOutMenuItemClick(MenuItem menuItem) {
-        authUI.signOut(getActivity()).addOnSuccessListener(ignore -> {
-            if (getView() != null) {Snackbar.make(getView(), "Signed out", Snackbar.LENGTH_SHORT).show();}
-        });
-        return true;
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -152,7 +99,6 @@ public class HubFragment extends Fragment {
                 router.showProfile(this);
                 break;
         }
-        updateActionBar();
         return true;
     }
 

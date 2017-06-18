@@ -4,15 +4,16 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.*;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import info.mschmitt.battyboost.app.R;
+import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.ProfileViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.Pos;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -27,6 +28,7 @@ public class ProfileFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final int RC_SIGN_IN = 123;
     public ViewModel viewModel;
+    @Inject public Router router;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
     @Inject public FirebaseAuth auth;
@@ -46,19 +48,17 @@ public class ProfileFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ProfileViewBinding binding = ProfileViewBinding.inflate(inflater, container, false);
-//        PosRecyclerAdapter adapter = new PosRecyclerAdapter(database.getReference("pos"), this::onPosClick);
-//        binding.recyclerView.setAdapter(adapter);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
-//        binding.recyclerView.setLayoutManager(layoutManager);
-//        DividerItemDecoration itemDecoration =
-//                new DividerItemDecoration(binding.recyclerView.getContext(), layoutManager.getOrientation());
-//        binding.recyclerView.addItemDecoration(itemDecoration);
         binding.setFragment(this);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(binding.toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Profile");
         return binding.getRoot();
     }
 
@@ -85,7 +85,36 @@ public class ProfileFragment extends Fragment {
         super.onPause();
     }
 
-    private void onPosClick(String posId, Pos pos) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.profile, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem signInOutMenuItem = menu.findItem(R.id.menu_item_sign_in_out);
+        if (auth.getCurrentUser() != null) {
+            signInOutMenuItem.setTitle("Sign out");
+            signInOutMenuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
+        } else {
+            signInOutMenuItem.setTitle("Sign in");
+            signInOutMenuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
+        }
+    }
+
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
+    private boolean onSignInMenuItemClick(MenuItem menuItem) {
+        startActivityForResult(authUI.createSignInIntentBuilder().build(), RC_SIGN_IN);
+        return true;
+    }
+
+    private boolean onSignOutMenuItemClick(MenuItem menuItem) {
+        authUI.signOut(getActivity()).addOnSuccessListener(ignore -> router.notifySignedOut(this));
+        return true;
     }
 
     public void onSignInClick() {

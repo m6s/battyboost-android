@@ -1,0 +1,12 @@
+<resources>
+
+    <style name="AppTextAppearanceTiny">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">#61000000</item>
+    </style>
+
+    <style name="AppTextAppearanceMedium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#de000000</item>
+    </style>
+</resources>

@@ -4,6 +4,8 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ public class MapFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -53,7 +56,15 @@ public class MapFragment extends Fragment {
                 new DividerItemDecoration(binding.recyclerView.getContext(), layoutManager.getOrientation());
         binding.recyclerView.addItemDecoration(itemDecoration);
         binding.setFragment(this);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(binding.toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Map");
         return binding.getRoot();
+    }
+
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     @Override

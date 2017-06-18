@@ -26,6 +26,7 @@ public class ProfileComponent {
     }
 
     public void inject(ProfileFragment fragment) {
+        fragment.router = router;
         fragment.database = database;
         fragment.client = client;
         fragment.auth = auth;

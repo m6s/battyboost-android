@@ -1,9 +1,10 @@
 package info.mschmitt.battyboost.app;
 
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.map.MapFragment;
 import info.mschmitt.battyboost.app.profile.ProfileFragment;
@@ -22,15 +23,12 @@ public class Router {
 
     public void showMap(Fragment fragment) {
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
-        fragmentManager.beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
-                .replace(R.id.navigationContentView, MapFragment.newInstance()).commitNow();
+        fragmentManager.beginTransaction().replace(R.id.navigationContentView, MapFragment.newInstance()).commitNow();
     }
 
     public void showSchedule(Fragment fragment) {
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
         fragmentManager.beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .replace(R.id.navigationContentView, ScheduleFragment.newInstance())
                 .commitNow();
     }
@@ -38,8 +36,13 @@ public class Router {
     public void showProfile(Fragment fragment) {
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
         fragmentManager.beginTransaction()
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .replace(R.id.navigationContentView, ProfileFragment.newInstance())
                 .commitNow();
+    }
+
+    public void notifySignedOut(Fragment fragment) {
+        View view = fragment.getParentFragment().getView();
+//        View view = fragment.getView();
+        if (view != null) {Snackbar.make(view, "Signed out", Snackbar.LENGTH_SHORT).show();}
     }
 }

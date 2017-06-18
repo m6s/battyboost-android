@@ -12,43 +12,25 @@
         <import type="android.view.View" />
     </data>
 
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/navigationContentView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0px"
+            android:layout_weight="1" />
 
-            <android.support.design.widget.AppBarLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:background="@color/primary"
-                    android:theme="@style/AppThemeToolbar" />
-            </android.support.design.widget.AppBarLayout>
-
-            <FrameLayout
-                android:id="@+id/navigationContentView"
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1" />
-
-            <android.support.design.widget.BottomNavigationView
-                android:id="@+id/bottomNavigationView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/primary"
-                app:itemIconTint="@drawable/selector_bottom_navigation"
-                app:itemTextColor="@drawable/selector_bottom_navigation"
-                app:menu="@menu/hub_bottom_navigation"
-                app:onNavigationItemSelected="@{fragment::onNavigationItemSelected}" />
-        </LinearLayout>
-    </android.support.design.widget.CoordinatorLayout>
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/primary"
+            app:itemIconTint="@drawable/selector_bottom_navigation"
+            app:itemTextColor="@drawable/selector_bottom_navigation"
+            app:menu="@menu/hub_bottom_navigation"
+            app:onNavigationItemSelected="@{fragment::onNavigationItemSelected}" />
+    </LinearLayout>
 </layout>

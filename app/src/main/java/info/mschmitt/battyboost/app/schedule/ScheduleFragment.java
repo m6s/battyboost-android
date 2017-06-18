@@ -4,6 +4,8 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.databinding.ScheduleViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.Pos;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -46,20 +47,22 @@ public class ScheduleFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ScheduleViewBinding binding = ScheduleViewBinding.inflate(inflater, container, false);
-//        PosRecyclerAdapter adapter = new PosRecyclerAdapter(database.getReference("pos"), this::onPosClick);
-//        binding.recyclerView.setAdapter(adapter);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
-//        binding.recyclerView.setLayoutManager(layoutManager);
-//        DividerItemDecoration itemDecoration =
-//                new DividerItemDecoration(binding.recyclerView.getContext(), layoutManager.getOrientation());
-//        binding.recyclerView.addItemDecoration(itemDecoration);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(binding.toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Schedule");
         binding.setFragment(this);
         return binding.getRoot();
+    }
+
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     @Override
@@ -83,9 +86,6 @@ public class ScheduleFragment extends Fragment {
     public void onPause() {
         compositeDisposable.dispose();
         super.onPause();
-    }
-
-    private void onPosClick(String posId, Pos pos) {
     }
 
     public void onSignInClick() {

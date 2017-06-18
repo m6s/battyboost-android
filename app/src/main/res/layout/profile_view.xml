@@ -10,105 +10,90 @@
             type="info.mschmitt.battyboost.app.profile.ProfileFragment" />
     </data>
 
-    <FrameLayout
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
 
-        <android.support.v4.widget.NestedScrollView
-            android:id="@+id/nestedScrollView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:hintAnimationEnabled="false">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:hint="Name"
-                        android:inputType="text"
-                        android:text="@={fragment.viewModel.text}" />
-                </android.support.design.widget.TextInputLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:hintAnimationEnabled="false">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:hint="Balance"
-                        android:inputType="numberDecimal"
-                        android:text="@{fragment.viewModel.text}" />
-                </android.support.design.widget.TextInputLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:hintAnimationEnabled="false">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:hint="Admin Id"
-                        android:inputType="numberDecimal"
-                        android:text="@{fragment.viewModel.text}" />
-                </android.support.design.widget.TextInputLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp" />
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:hintAnimationEnabled="false">
-
-                    <android.support.design.widget.TextInputEditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:hint="POS Id"
-                        android:inputType="numberDecimal"
-                        android:text="@{fragment.viewModel.text}" />
-                </android.support.design.widget.TextInputLayout>
-            </LinearLayout>
-        </android.support.v4.widget.NestedScrollView>
-
-        <FrameLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/background_light"
-            app:visibleGone="@{!fragment.viewModel.signedIn}">
+            android:orientation="vertical">
 
-            <Button
-                style="?borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="@{() -> fragment.onSignInClick()}"
-                android:text="Sign in to view your profile"
-                android:textColor="@color/primaryAccent" />
-        </FrameLayout>
-    </FrameLayout>
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/primary"
+                    android:theme="@style/AppThemeToolbar" />
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:visibleGone="@{fragment.viewModel.signedIn}">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Name`}"
+                        app:text="@{fragment.viewModel.text}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Balance Cents`}"
+                        app:text="@{fragment.viewModel.text}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Admin`}"
+                        app:text="@{fragment.viewModel.text}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`POS`}"
+                        app:text="@{fragment.viewModel.text}" />
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/background_light"
+                app:visibleGone="@{!fragment.viewModel.signedIn}">
+
+                <Button
+                    style="?borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:onClick="@{() -> fragment.onSignInClick()}"
+                    android:text="Sign in to view your profile"
+                    android:textColor="@color/primaryAccent" />
+            </FrameLayout>
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
