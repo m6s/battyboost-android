@@ -1,0 +1,22 @@
+package info.mschmitt.battyboost.core.entities;
+
+import android.net.Uri;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.io.Serializable;
+
+/**
+ * @author Matthias Schmitt
+ */
+public class AuthUser implements Serializable {
+    public String email;
+    public String photoUrl;
+    public String displayName;
+
+    public AuthUser(FirebaseUser firebaseUser) {
+        displayName = firebaseUser.getDisplayName();
+        email = firebaseUser.getEmail();
+        Uri photoUri = firebaseUser.getPhotoUrl();
+        photoUrl = photoUri == null ? null : photoUri.toString();
+    }
+}

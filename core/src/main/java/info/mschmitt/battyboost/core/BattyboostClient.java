@@ -4,9 +4,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.entities.Battery;
+import info.mschmitt.battyboost.core.entities.DatabaseUser;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
-import info.mschmitt.battyboost.core.entities.User;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.Completable;
@@ -45,8 +45,8 @@ public class BattyboostClient {
 
     private Completable onUserCreate(FirebaseUser firebaseUser) {
         DatabaseReference userRef = database.getReference("users").child(firebaseUser.getUid());
-        User user = new User();
-        return RxDatabaseReference.setValue(userRef, user);
+        DatabaseUser databaseUser = new DatabaseUser();
+        return RxDatabaseReference.setValue(userRef, databaseUser);
     }
 
     public Single<String> addPartner(Partner partner) {

@@ -3,6 +3,7 @@ package info.mschmitt.battyboost.app.profile;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -16,12 +17,13 @@ import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.ProfileViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.ObservableFirebaseUser;
-import info.mschmitt.battyboost.core.entities.User;
+import info.mschmitt.battyboost.core.entities.AuthUser;
+import info.mschmitt.battyboost.core.entities.DatabaseUser;
 import info.mschmitt.battyboost.core.utils.RxOptional;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
-import io.reactivex.Single;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -53,23 +55,20 @@ public class ProfileFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            viewModel = new ViewModel();
-            setFirebaseUser(rxAuth.auth.getCurrentUser());
-        } else {
-            viewModel = (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        }
+        viewModel = savedInstanceState == null ? new ViewModel()
+                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setFirebaseUser(rxAuth.auth.getCurrentUser());
         ProfileViewBinding binding = ProfileViewBinding.inflate(inflater, container, false);
-        binding.setFragment(this);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Profile");
+        binding.setFragment(this);
         return binding.getRoot();
     }
 
@@ -80,23 +79,25 @@ public class ProfileFragment extends Fragment {
         Disposable disposable = rxAuth.userChanges().subscribe(optional -> setFirebaseUser(optional.value));
         compositeDisposable.add(disposable);
         disposable = rxAuth.userChanges()
-                .switchMap(optional -> {
-                    FirebaseUser firebaseUser = optional.value;
-                    if (firebaseUser != null) {
-                        DatabaseReference reference = database.getReference("users").child(firebaseUser.getUid());
-                        return RxDatabaseReference.valueEvents(reference).map(RxOptional::new);
-                    } else {
-                        return Single.just(RxOptional.<DataSnapshot>empty()).toObservable();
-                    }
-                })
+                .switchMap(optional -> databaseUserChanges(optional.value))
                 .map(optional -> optional.map(
-                        dataSnapshot -> dataSnapshot.exists() ? dataSnapshot.getValue(User.class) : null))
-                .subscribe(optional -> setUser(optional.value));
+                        dataSnapshot -> dataSnapshot.exists() ? dataSnapshot.getValue(DatabaseUser.class) : null))
+                .subscribe(optional -> setDatabaseUser(optional.value));
         compositeDisposable.add(disposable);
     }
 
-    private void setUser(User user) {
-        viewModel.user = user;
+    @NonNull
+    private ObservableSource<RxOptional<DataSnapshot>> databaseUserChanges(FirebaseUser firebaseUser) {
+        if (firebaseUser != null) {
+            DatabaseReference reference = database.getReference("users").child(firebaseUser.getUid());
+            return RxDatabaseReference.valueEvents(reference).map(RxOptional::new);
+        } else {
+            return Observable.just(RxOptional.<DataSnapshot>empty());
+        }
+    }
+
+    private void setDatabaseUser(DatabaseUser databaseUser) {
+        viewModel.databaseUser = databaseUser;
         viewModel.notifyChange();
     }
 
@@ -130,13 +131,13 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private ActionBar getSupportActionBar() {
-        return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    private void setFirebaseUser(FirebaseUser firebaseUser) {
+        viewModel.authUser = firebaseUser == null ? null : new AuthUser(firebaseUser);
+        viewModel.notifyChange();
     }
 
-    private void setFirebaseUser(FirebaseUser firebaseUser) {
-        viewModel.firebaseUser = firebaseUser == null ? null : new ObservableFirebaseUser(firebaseUser);
-        viewModel.notifyChange();
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     private boolean onSignInMenuItemClick(MenuItem menuItem) {
@@ -154,15 +155,12 @@ public class ProfileFragment extends Fragment {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public User user;
-        @Bindable public String text;
-        @Bindable public String displayName;
-        @Bindable public boolean signedIn;
-        @Bindable public ObservableFirebaseUser firebaseUser;
+        @Bindable public DatabaseUser databaseUser;
+        @Bindable public AuthUser authUser;
 
         @Bindable
         public boolean isSignedIn() {
-            return firebaseUser != null;
+            return authUser != null;
         }
     }
 }

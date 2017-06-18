@@ -59,7 +59,7 @@
 
                     <include
                         layout="@layout/text_output_layout"
-                        app:label="@{`Balance Cents`}"
+                        app:label="@{`Balance cents`}"
                         app:text="@{`` + fragment.viewModel.partner.balanceCents}" />
 
                     <View

@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.databinding.ScheduleViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.ObservableFirebaseUser;
+import info.mschmitt.battyboost.core.entities.AuthUser;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -46,22 +46,14 @@ public class ScheduleFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            viewModel = new ViewModel();
-            setFirebaseUser(rxAuth.auth.getCurrentUser());
-        } else {
-            viewModel = (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        }
+        viewModel = savedInstanceState == null ? new ViewModel()
+                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         setHasOptionsMenu(true);
-    }
-
-    private void setFirebaseUser(FirebaseUser firebaseUser) {
-        viewModel.firebaseUser = firebaseUser == null ? null : new ObservableFirebaseUser(firebaseUser);
-        viewModel.notifyChange();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setFirebaseUser(rxAuth.auth.getCurrentUser());
         ScheduleViewBinding binding = ScheduleViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
@@ -69,6 +61,11 @@ public class ScheduleFragment extends Fragment {
         actionBar.setTitle("Schedule");
         binding.setFragment(this);
         return binding.getRoot();
+    }
+
+    private void setFirebaseUser(FirebaseUser firebaseUser) {
+        viewModel.firebaseUser = firebaseUser == null ? null : new AuthUser(firebaseUser);
+        viewModel.notifyChange();
     }
 
     private ActionBar getSupportActionBar() {
@@ -104,7 +101,7 @@ public class ScheduleFragment extends Fragment {
 
     public static class ViewModel extends BaseObservable implements Serializable {
         @Bindable public String text;
-        public ObservableFirebaseUser firebaseUser;
+        public AuthUser firebaseUser;
 
         @Bindable
         public boolean isSignedIn() {

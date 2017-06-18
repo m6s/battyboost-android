@@ -48,7 +48,7 @@
                     <include
                         layout="@layout/text_output_layout"
                         app:label="@{`Display name`}"
-                        app:text="@{fragment.viewModel.firebaseUser.displayName}" />
+                        app:text="@{fragment.viewModel.authUser.displayName}" />
 
                     <View
                         android:layout_width="match_parent"
@@ -56,8 +56,8 @@
 
                     <include
                         layout="@layout/text_output_layout"
-                        app:label="@{`Balance Cents`}"
-                        app:text="@{fragment.viewModel.text}" />
+                        app:label="@{`Email`}"
+                        app:text="@{fragment.viewModel.authUser.email}" />
 
                     <View
                         android:layout_width="match_parent"
@@ -65,8 +65,8 @@
 
                     <include
                         layout="@layout/text_output_layout"
-                        app:label="@{`Admin`}"
-                        app:text="@{fragment.viewModel.text}" />
+                        app:label="@{`Photo`}"
+                        app:text="@{fragment.viewModel.authUser.photoUrl}" />
 
                     <View
                         android:layout_width="match_parent"
@@ -74,8 +74,8 @@
 
                     <include
                         layout="@layout/text_output_layout"
-                        app:label="@{`POS`}"
-                        app:text="@{fragment.viewModel.text}" />
+                        app:label="@{`Balance cents`}"
+                        app:text="@{`` + fragment.viewModel.databaseUser.balanceCents}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
 
