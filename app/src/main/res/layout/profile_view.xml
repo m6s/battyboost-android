@@ -76,6 +76,24 @@
                         layout="@layout/text_output_layout"
                         app:label="@{`Balance cents`}"
                         app:text="@{`` + fragment.viewModel.databaseUser.balanceCents}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Bank account owner`}"
+                        app:text="@{fragment.viewModel.databaseUser.bankAccountOwner}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`IBAN`}"
+                        app:text="@{fragment.viewModel.databaseUser.iban}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
 

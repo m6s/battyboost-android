@@ -38,21 +38,23 @@ public class BattyboostClient {
      * TODO Move to backend
      */
     private void connectTriggers() {
-        userCreateTrigger().flatMapCompletable(this::onUserCreate).subscribe();
+        userCreations().subscribe(this::onUserCreated);
     }
 
-    private Observable<FirebaseUser> userCreateTrigger() {
-        return rxAuth.userChanges().flatMapMaybe(optional -> {
+    private Observable<FirebaseUser> userCreations() {
+        return rxAuth.userChanges().filter(optional -> optional.value != null).flatMapMaybe(optional -> {
             FirebaseUser user = optional.value;
-            return user != null ? RxDatabaseReference.valueEvents(database.getReference("users").child(user.getUid()))
-                    .firstElement() : Completable.complete().toMaybe();
+            String uid = user.getUid();
+            DatabaseReference userRef = database.getReference("users").child(uid);
+            return RxDatabaseReference.valueEvents(userRef).firstElement();
         }).filter(dataSnapshot -> !dataSnapshot.exists()).map(ignore -> rxAuth.auth.getCurrentUser());
     }
 
-    private Completable onUserCreate(FirebaseUser firebaseUser) {
-        DatabaseReference userRef = database.getReference("users").child(firebaseUser.getUid());
+    private void onUserCreated(FirebaseUser firebaseUser) {
+        String uid = firebaseUser.getUid();
+        DatabaseReference userRef = database.getReference("users").child(uid);
         DatabaseUser databaseUser = new DatabaseUser();
-        return RxDatabaseReference.setValue(userRef, databaseUser);
+        userRef.setValue(databaseUser);
     }
 
     public Single<String> addPartner(Partner partner) {

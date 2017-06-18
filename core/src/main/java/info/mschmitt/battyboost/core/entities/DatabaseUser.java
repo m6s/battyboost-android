@@ -7,4 +7,6 @@ import java.io.Serializable;
  */
 public class DatabaseUser implements Serializable {
     public int balanceCents;
+    public String bankAccountOwner;
+    public String iban;
 }
