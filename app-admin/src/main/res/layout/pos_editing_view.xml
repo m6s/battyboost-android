@@ -52,71 +52,46 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
-                        app:hintAnimationEnabled="false"
-                        app:hintTextAppearance="@style/AppTextAppearanceAccentTiny">
+                        app:hintAnimationEnabled="false">
 
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Name"
                             android:inputType="text"
-                            android:text="@={fragment.viewModel.pos.name}"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
+                            android:text="@={fragment.viewModel.pos.name}" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
-                        app:hintAnimationEnabled="false"
-                        app:hintTextAppearance="@style/AppTextAppearanceAccentTiny">
+                        app:hintAnimationEnabled="false">
 
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Info"
                             android:inputType="textMultiLine"
-                            android:text="@={fragment.viewModel.pos.info}"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
+                            android:text="@={fragment.viewModel.pos.info}" />
                     </android.support.design.widget.TextInputLayout>
 
-                    <LinearLayout
+                    <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingLeft="4dp">
+                        app:errorEnabled="true"
+                        app:hintAnimationEnabled="false">
 
-                        <LinearLayout
-                            android:layout_width="0px"
+                        <android.support.design.widget.TextInputEditText
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="?android:attr/selectableItemBackground"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Image"
-                                android:textAppearance="@style/AppTextAppearanceTiny" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:hint="None"
-                                android:text="@{fragment.viewModel.pos.imageUrl}"
-                                android:textAppearance="@style/AppTextAppearanceMedium" />
-                        </LinearLayout>
-
-                        <View
-                            android:layout_width="8dp"
-                            android:layout_height="match_parent" />
-
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:hint="Image"
+                            android:inputType="none|textNoSuggestions"
                             android:onClick="@{() -> fragment.onSelectImageUrlClick()}"
-                            android:text="Select" />
-                    </LinearLayout>
+                            android:text="@{fragment.viewModel.pos.imageUrl}" />
+                    </android.support.design.widget.TextInputLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -126,31 +101,27 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
-                        app:hintAnimationEnabled="false"
-                        app:hintTextAppearance="@style/AppTextAppearanceAccentTiny">
+                        app:hintAnimationEnabled="false">
 
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="URL"
                             android:inputType="textUri"
-                            android:text="@={fragment.viewModel.pos.url}"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
+                            android:text="@={fragment.viewModel.pos.url}" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
-                        app:hintAnimationEnabled="false"
-                        app:hintTextAppearance="@style/AppTextAppearanceAccentTiny">
+                        app:hintAnimationEnabled="false">
 
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Available battery count"
                             android:inputType="number"
-                            android:textAppearance="@style/AppTextAppearanceMedium"
                             app:intText="@={fragment.viewModel.pos.availableBatteryCount}" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -158,15 +129,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
-                        app:hintAnimationEnabled="false"
-                        app:hintTextAppearance="@style/AppTextAppearanceAccentTiny">
+                        app:hintAnimationEnabled="false">
 
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Latitude"
                             android:inputType="numberDecimal"
-                            android:textAppearance="@style/AppTextAppearanceMedium"
                             app:doubleText="@={fragment.viewModel.pos.latitude}" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -174,15 +143,13 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:errorEnabled="true"
-                        app:hintAnimationEnabled="false"
-                        app:hintTextAppearance="@style/AppTextAppearanceAccentTiny">
+                        app:hintAnimationEnabled="false">
 
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Longitude"
                             android:inputType="numberDecimal"
-                            android:textAppearance="@style/AppTextAppearanceMedium"
                             app:doubleText="@={fragment.viewModel.pos.longitude}" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>

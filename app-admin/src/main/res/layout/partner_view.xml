@@ -1,7 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="HardcodedText,RtlHardcoded,SpUsage">
+    tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry,SpUsage">
 
     <data>
 
@@ -48,94 +48,37 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Name"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.partner.name}"
-                            android:textAppearance="@style/AppTextAppearanceSmall" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Name`}"
+                        app:text="@{fragment.viewModel.partner.name}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Balance Cents"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/AppTextAppearanceSmall"
-                            app:intText="@{fragment.viewModel.partner.balanceCents}" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Balance Cents`}"
+                        app:text="@{`` + fragment.viewModel.partner.balanceCents}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Admin"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.partner.adminId}"
-                            android:textAppearance="@style/AppTextAppearanceSmall" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Admin`}"
+                        app:text="@{fragment.viewModel.partner.adminId}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="POS"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:hint="None"
-                            android:text="@{fragment.viewModel.partner.posId}"
-                            android:textAppearance="@style/AppTextAppearanceSmall" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`POS`}"
+                        app:text="@{fragment.viewModel.partner.posId}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>

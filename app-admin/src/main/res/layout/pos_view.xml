@@ -48,162 +48,64 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Name"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.pos.name}"
-                            android:textAppearance="@style/AppTextAppearanceSmall" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Name`}"
+                        app:text="@{fragment.viewModel.pos.name}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Info"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.pos.info}"
-                            android:textAppearance="@style/AppTextAppearanceSmall" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Info`}"
+                        app:text="@{fragment.viewModel.pos.info}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Image"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.pos.imageUrl}"
-                            android:textAppearance="@style/AppTextAppearanceSmall" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Image`}"
+                        app:text="@{fragment.viewModel.pos.imageUrl}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="URL"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@{fragment.viewModel.pos.url}"
-                            android:textAppearance="@style/AppTextAppearanceSmall" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`URL`}"
+                        app:text="@{fragment.viewModel.pos.url}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Available battery count"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/AppTextAppearanceSmall"
-                            app:intText="@{fragment.viewModel.pos.availableBatteryCount}" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Available battery count`}"
+                        app:text="@{`` + fragment.viewModel.pos.availableBatteryCount}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Latitude"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/AppTextAppearanceSmall"
-                            app:doubleText="@{fragment.viewModel.pos.latitude}" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Latitude`}"
+                        app:text="@{`` + fragment.viewModel.pos.latitude}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Longitude"
-                            android:textAppearance="@style/AppTextAppearanceMedium" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="@style/AppTextAppearanceSmall"
-                            app:doubleText="@{fragment.viewModel.pos.longitude}" />
-                    </LinearLayout>
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Longitude`}"
+                        app:text="@{`` + fragment.viewModel.pos.longitude}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>
