@@ -1,6 +1,5 @@
 package info.mschmitt.battyboost.core;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -21,11 +20,11 @@ import java.util.UUID;
  */
 public class BattyboostClient {
     private final FirebaseDatabase database;
-    private final FirebaseAuth auth;
+    private final RxAuth rxAuth;
 
-    public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth) {
+    public BattyboostClient(FirebaseDatabase database, RxAuth rxAuth) {
         this.database = database;
-        this.auth = auth;
+        this.rxAuth = rxAuth;
         connectTriggers();
     }
 
@@ -37,12 +36,11 @@ public class BattyboostClient {
     }
 
     private Observable<FirebaseUser> userCreateTrigger() {
-        return RxAuth.stateChanges(auth)
-                .filter(ignore -> auth.getCurrentUser() != null)
-                .flatMapMaybe(ignore -> RxDatabaseReference.valueEvents(
-                        database.getReference("users").child(auth.getCurrentUser().getUid())).firstElement())
-                .filter(dataSnapshot -> !dataSnapshot.exists())
-                .map(ignore -> auth.getCurrentUser());
+        return rxAuth.userChanges().flatMapMaybe(optional -> {
+            FirebaseUser user = optional.value;
+            return user != null ? RxDatabaseReference.valueEvents(database.getReference("users").child(user.getUid()))
+                    .firstElement() : Completable.complete().toMaybe();
+        }).filter(dataSnapshot -> !dataSnapshot.exists()).map(ignore -> rxAuth.auth.getCurrentUser());
     }
 
     private Completable onUserCreate(FirebaseUser firebaseUser) {

@@ -8,13 +8,20 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.ProfileViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.entities.ObservableFirebaseUser;
+import info.mschmitt.battyboost.core.entities.User;
+import info.mschmitt.battyboost.core.utils.RxOptional;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -31,7 +38,7 @@ public class ProfileFragment extends Fragment {
     @Inject public Router router;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
-    @Inject public FirebaseAuth auth;
+    @Inject public RxAuth rxAuth;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
@@ -46,8 +53,12 @@ public class ProfileFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        if (savedInstanceState == null) {
+            viewModel = new ViewModel();
+            setFirebaseUser(rxAuth.auth.getCurrentUser());
+        } else {
+            viewModel = (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -66,11 +77,27 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = RxAuth.stateChanges(auth).subscribe(ignore -> {
-            viewModel.signedIn = auth.getCurrentUser() != null;
-            viewModel.notifyChange();
-        });
+        Disposable disposable = rxAuth.userChanges().subscribe(optional -> setFirebaseUser(optional.value));
         compositeDisposable.add(disposable);
+        disposable = rxAuth.userChanges()
+                .switchMap(optional -> {
+                    FirebaseUser firebaseUser = optional.value;
+                    if (firebaseUser != null) {
+                        DatabaseReference reference = database.getReference("users").child(firebaseUser.getUid());
+                        return RxDatabaseReference.valueEvents(reference).map(RxOptional::new);
+                    } else {
+                        return Single.just(RxOptional.<DataSnapshot>empty()).toObservable();
+                    }
+                })
+                .map(optional -> optional.map(
+                        dataSnapshot -> dataSnapshot.exists() ? dataSnapshot.getValue(User.class) : null))
+                .subscribe(optional -> setUser(optional.value));
+        compositeDisposable.add(disposable);
+    }
+
+    private void setUser(User user) {
+        viewModel.user = user;
+        viewModel.notifyChange();
     }
 
     @Override
@@ -94,7 +121,7 @@ public class ProfileFragment extends Fragment {
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MenuItem signInOutMenuItem = menu.findItem(R.id.menu_item_sign_in_out);
-        if (auth.getCurrentUser() != null) {
+        if (rxAuth.auth.getCurrentUser() != null) {
             signInOutMenuItem.setTitle("Sign out");
             signInOutMenuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
         } else {
@@ -105,6 +132,11 @@ public class ProfileFragment extends Fragment {
 
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
+    private void setFirebaseUser(FirebaseUser firebaseUser) {
+        viewModel.firebaseUser = firebaseUser == null ? null : new ObservableFirebaseUser(firebaseUser);
+        viewModel.notifyChange();
     }
 
     private boolean onSignInMenuItemClick(MenuItem menuItem) {
@@ -122,7 +154,15 @@ public class ProfileFragment extends Fragment {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public boolean signedIn;
+        @Bindable public User user;
         @Bindable public String text;
+        @Bindable public String displayName;
+        @Bindable public boolean signedIn;
+        @Bindable public ObservableFirebaseUser firebaseUser;
+
+        @Bindable
+        public boolean isSignedIn() {
+            return firebaseUser != null;
+        }
     }
 }

@@ -21,19 +21,19 @@ public class Router {
                 .commitNow();
     }
 
-    public void showMap(Fragment fragment) {
+    public void showMap(HubFragment fragment) {
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.navigationContentView, MapFragment.newInstance()).commitNow();
     }
 
-    public void showSchedule(Fragment fragment) {
+    public void showSchedule(HubFragment fragment) {
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.navigationContentView, ScheduleFragment.newInstance())
                 .commitNow();
     }
 
-    public void showProfile(Fragment fragment) {
+    public void showProfile(HubFragment fragment) {
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.navigationContentView, ProfileFragment.newInstance())

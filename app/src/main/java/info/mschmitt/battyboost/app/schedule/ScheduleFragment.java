@@ -10,10 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.databinding.ScheduleViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.entities.ObservableFirebaseUser;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -30,7 +31,7 @@ public class ScheduleFragment extends Fragment {
     public ViewModel viewModel;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
-    @Inject public FirebaseAuth auth;
+    @Inject public RxAuth rxAuth;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
@@ -45,9 +46,18 @@ public class ScheduleFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        if (savedInstanceState == null) {
+            viewModel = new ViewModel();
+            setFirebaseUser(rxAuth.auth.getCurrentUser());
+        } else {
+            viewModel = (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        }
         setHasOptionsMenu(true);
+    }
+
+    private void setFirebaseUser(FirebaseUser firebaseUser) {
+        viewModel.firebaseUser = firebaseUser == null ? null : new ObservableFirebaseUser(firebaseUser);
+        viewModel.notifyChange();
     }
 
     @Override
@@ -69,8 +79,8 @@ public class ScheduleFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = RxAuth.stateChanges(auth).subscribe(ignore -> {
-            viewModel.signedIn = auth.getCurrentUser() != null;
+        Disposable disposable = rxAuth.userChanges().subscribe(optional -> {
+            setFirebaseUser(optional.value);
             viewModel.notifyChange();
         });
         compositeDisposable.add(disposable);
@@ -93,7 +103,12 @@ public class ScheduleFragment extends Fragment {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public boolean signedIn;
         @Bindable public String text;
+        public ObservableFirebaseUser firebaseUser;
+
+        @Bindable
+        public boolean isSignedIn() {
+            return firebaseUser != null;
+        }
     }
 }

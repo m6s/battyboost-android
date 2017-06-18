@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements Observable {
     @Bindable public String text;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
-    @Inject public FirebaseAuth auth;
+    @Inject public RxAuth rxAuth;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
@@ -67,8 +66,8 @@ public class MainActivity extends AppCompatActivity implements Observable {
     protected void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = RxAuth.stateChanges(auth).subscribe(ignore -> {
-            FirebaseUser user = auth.getCurrentUser();
+        Disposable disposable = rxAuth.userChanges().subscribe(optional -> {
+            FirebaseUser user = optional.value;
             text = user == null ? "Please log in" : "Hello " + user.getDisplayName() + "!";
             propertyChangeRegistry.notifyChange(MainActivity.this, BR.text);
         });
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements Observable {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem signInOutMenuItem = menu.findItem(R.id.menu_item_sign_in_out);
-        if (auth.getCurrentUser() != null) {
+        if (rxAuth.auth.getCurrentUser() != null) {
             signInOutMenuItem.setTitle("Sign out");
             signInOutMenuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
         } else {

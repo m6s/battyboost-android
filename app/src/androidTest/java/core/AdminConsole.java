@@ -12,6 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.functions.Function;
 import org.junit.BeforeClass;
@@ -28,8 +29,8 @@ import java.util.*;
 public class AdminConsole {
     private static final String TAG = "ADMIN";
     private static FirebaseDatabase database;
-    private static FirebaseAuth auth;
     private static BattyboostClient client;
+    private static RxAuth rxAuth;
 
     @BeforeClass
     public static void setup() {
@@ -37,8 +38,8 @@ public class AdminConsole {
         FirebaseApp app = FirebaseApp.initializeApp(context);
         //noinspection ConstantConditions
         database = FirebaseDatabase.getInstance(app);
-        auth = FirebaseAuth.getInstance(app);
-        client = new BattyboostClient(database, auth);
+        rxAuth = new RxAuth(FirebaseAuth.getInstance(app));
+        client = new BattyboostClient(database, rxAuth);
     }
 
     @Test
