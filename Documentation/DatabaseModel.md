@@ -68,7 +68,13 @@ pos/
 ```
 
 `pos` stands for point of sale and can be queried to show the available batteries on a map. We may want to use
-[GeoFire](https://github.com/firebase/geofire-js) for locations.
+[GeoFire](https://github.com/firebase/geofire-js) for locations:
+
+```
+_geofirePos/
+    {posId}: location
+    ...
+```
 
 Future: Opening hours per day (`pos/{posId}/openingHours/{date}/{id}/from|to`)
 
