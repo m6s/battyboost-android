@@ -151,21 +151,15 @@ public class PosEditingFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onPickPlaceMenuItemClick);
     }
 
-    private boolean onPickPlaceMenuItemClick(MenuItem menuItem) {
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-        try {
-            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
-        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-        }
-        return true;
-    }
-
     private void setPos(Pos pos) {
         viewModel.pos = pos;
         viewModel.notifyChange();
     }
 
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
     private boolean onPickPlaceMenuItemClick(MenuItem menuItem) {
         PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
         try {
@@ -174,10 +168,6 @@ public class PosEditingFragment extends Fragment {
             Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
         return true;
-    }
-
-    private ActionBar getSupportActionBar() {
-        return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     public void goUp() {
