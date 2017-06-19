@@ -54,7 +54,22 @@ pos/
         availableBatteryCount: integer
         latitude: double
         longitude: double
-        weeklyOpeningHours/
+        area: "berlin"
+```
+
+`pos` stands for point of sale and can be queried to show the available batteries on a map. We may want to use
+[GeoFire](https://github.com/firebase/geofire-js) for locations and remove `latitude` and `longitude` from `pos`.
+
+```
+_geofirePos/
+    {posId}: location
+    ...
+```
+
+```
+weeklyOpeningHours/
+    {posId}/
+            openPublicHolidays: boolean (true means maybe)
             mon/
                 {id}/
                     from: string (hh:mm)
@@ -63,20 +78,9 @@ pos/
             tue/
                 ...
             ...
-        openPublicHolidays: boolean (true means maybe)
-        area: "berlin"
 ```
 
-`pos` stands for point of sale and can be queried to show the available batteries on a map. We may want to use
-[GeoFire](https://github.com/firebase/geofire-js) for locations:
-
-```
-_geofirePos/
-    {posId}: location
-    ...
-```
-
-Future: Opening hours per day (`pos/{posId}/openingHours/{date}/{id}/from|to`)
+Future: Opening hours per day (`/openingHours/{posId}/{date}/{id}/from|to`)
 
 ```
 publicHolidays/

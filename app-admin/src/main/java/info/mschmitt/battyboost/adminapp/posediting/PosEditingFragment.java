@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.Toast;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -52,6 +53,10 @@ public class PosEditingFragment extends Fragment {
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
+        if (!GeoLocation.coordinatesValid(viewModel.pos.latitude, viewModel.pos.longitude)) {
+            Toast.makeText(getContext(), "Not a valid geo location", Toast.LENGTH_LONG).show();
+            return true;
+        }
         Disposable disposable;
         if (posKey == null) {
             disposable = client.addPos(viewModel.pos).subscribe(s -> router.goUp(this));
