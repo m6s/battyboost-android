@@ -50,6 +50,15 @@
 
                     <include
                         layout="@layout/text_output_layout"
+                        app:label="@{`Image`}"
+                        app:text="@{fragment.viewModel.pos.imageUrl}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
                         app:label="@{`Name`}"
                         app:text="@{fragment.viewModel.pos.name}" />
 
@@ -68,17 +77,34 @@
 
                     <include
                         layout="@layout/text_output_layout"
-                        app:label="@{`Image`}"
-                        app:text="@{fragment.viewModel.pos.imageUrl}" />
+                        app:label="@{`URL`}"
+                        app:text="@{fragment.viewModel.pos.url}" />
 
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="16dp" />
 
-                    <include
-                        layout="@layout/text_output_layout"
-                        app:label="@{`URL`}"
-                        app:text="@{fragment.viewModel.pos.url}" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include
+                            layout="@layout/text_output_layout"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:label="@{`Latitude`}"
+                            app:text="@{String.format(`%.6f`, fragment.viewModel.pos.latitude)}" />
+
+                        <include
+                            layout="@layout/text_output_layout"
+                            android:layout_width="0px"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            app:label="@{`Longitude`}"
+                            app:text="@{String.format(`%.6f`, fragment.viewModel.pos.longitude)}" />
+                    </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
@@ -88,24 +114,6 @@
                         layout="@layout/text_output_layout"
                         app:label="@{`Available battery count`}"
                         app:text="@{`` + fragment.viewModel.pos.availableBatteryCount}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        app:label="@{`Latitude`}"
-                        app:text="@{`` + fragment.viewModel.pos.latitude}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        app:label="@{`Longitude`}"
-                        app:text="@{`` + fragment.viewModel.pos.longitude}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>

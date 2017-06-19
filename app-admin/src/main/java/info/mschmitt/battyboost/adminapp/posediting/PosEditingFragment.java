@@ -1,10 +1,18 @@
 package info.mschmitt.battyboost.adminapp.posediting;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
+import android.widget.Toast;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,6 +34,7 @@ import javax.inject.Inject;
 public class PosEditingFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_POS_KEY = "POS_KEY";
+    private static final int PLACE_PICKER_REQUEST = 1;
     public PosViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
@@ -40,6 +49,39 @@ public class PosEditingFragment extends Fragment {
         args.putString(ARG_POS_KEY, key);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    private boolean onSaveMenuItemClick(MenuItem menuItem) {
+        Disposable disposable;
+        if (posKey == null) {
+            disposable = client.addPos(viewModel.pos).subscribe(s -> router.goUp(this));
+        } else {
+            disposable = client.updatePos(posKey, viewModel.pos).subscribe(() -> router.goUp(this));
+        }
+        compositeDisposable.add(disposable);
+        return true;
+    }
+
+    public void onSelectImageUrlClick() {
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                Place place = PlacePicker.getPlace(getContext(), data);
+                CharSequence name = place.getName();
+                viewModel.pos.name = name == null ? null : name.toString();
+                Uri websiteUri = place.getWebsiteUri();
+                viewModel.pos.url = websiteUri == null ? null : websiteUri.toString();
+                CharSequence address = place.getAddress();
+                viewModel.pos.info = address == null ? null : address.toString();
+                viewModel.pos.latitude = place.getLatLng().latitude;
+                viewModel.pos.longitude = place.getLatLng().longitude;
+                viewModel.notifyChange();
+            }
+        }
     }
 
     @Override
@@ -103,8 +145,20 @@ public class PosEditingFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.pos_editing, menu);
-        MenuItem saveMenuItem = menu.findItem(R.id.menu_item_save);
-        saveMenuItem.setOnMenuItemClickListener(this::onSaveMenuItemClick);
+        MenuItem menuItem = menu.findItem(R.id.menu_item_save);
+        menuItem.setOnMenuItemClickListener(this::onSaveMenuItemClick);
+        menuItem = menu.findItem(R.id.menu_item_pick_place);
+        menuItem.setOnMenuItemClickListener(this::onPickPlaceMenuItemClick);
+    }
+
+    private boolean onPickPlaceMenuItemClick(MenuItem menuItem) {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+        }
+        return true;
     }
 
     private void setPos(Pos pos) {
@@ -112,22 +166,18 @@ public class PosEditingFragment extends Fragment {
         viewModel.notifyChange();
     }
 
-    private ActionBar getSupportActionBar() {
-        return ((AppCompatActivity) getActivity()).getSupportActionBar();
-    }
-
-    private boolean onSaveMenuItemClick(MenuItem menuItem) {
-        Disposable disposable;
-        if (posKey == null) {
-            disposable = client.addPos(viewModel.pos).subscribe(s -> router.goUp(this));
-        } else {
-            disposable = client.updatePos(posKey, viewModel.pos).subscribe(() -> router.goUp(this));
+    private boolean onPickPlaceMenuItemClick(MenuItem menuItem) {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }
-        compositeDisposable.add(disposable);
         return true;
     }
 
-    public void onSelectImageUrlClick() {
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     public void goUp() {

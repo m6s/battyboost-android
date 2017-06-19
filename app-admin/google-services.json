@@ -98,7 +98,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:81192633722:android:a76d67523afe9109",
         "android_client_info": {
-          "package_name": "info.mschmitt.battyboost.serviceapp"
+          "package_name": "info.mschmitt.battyboost.adminapp"
         }
       },
       "oauth_client": [
