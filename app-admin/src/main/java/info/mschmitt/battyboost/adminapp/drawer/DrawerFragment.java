@@ -52,10 +52,10 @@ public class DrawerFragment extends Fragment {
     }
 
     public void onPartnersClick() {
-        setSelectedItem(DrawerItem.PARTNERS);
+        setSelectedItem(DrawerItem.PARTNER_LIST);
         DrawerListener drawerListener = getDrawerListener();
         if (drawerListener != null) {
-            drawerListener.onDrawerItemSelected(this, DrawerItem.PARTNERS);
+            drawerListener.onDrawerItemSelected(this, DrawerItem.PARTNER_LIST);
         }
     }
 
@@ -82,12 +82,20 @@ public class DrawerFragment extends Fragment {
         }
     }
 
+    public void onUsersClick() {
+        setSelectedItem(DrawerItem.USER_LIST);
+        DrawerListener drawerListener = getDrawerListener();
+        if (drawerListener != null) {
+            drawerListener.onDrawerItemSelected(this, DrawerItem.USER_LIST);
+        }
+    }
+
     public <T extends Fragment & DrawerListener> void setTargetFragment(T targetFragment) {
         setTargetFragment(targetFragment, 0);
     }
 
     public enum DrawerItem {
-        PARTNERS, POS_LIST
+        PARTNER_LIST, POS_LIST, USER_LIST
     }
 
     public interface DrawerListener {
@@ -95,6 +103,6 @@ public class DrawerFragment extends Fragment {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public DrawerItem drawerItem = DrawerItem.PARTNERS;
+        @Bindable public DrawerItem drawerItem = DrawerItem.PARTNER_LIST;
     }
 }

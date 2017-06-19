@@ -8,6 +8,8 @@ import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListComponent;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListFragment;
 import info.mschmitt.battyboost.adminapp.poslist.PosListComponent;
 import info.mschmitt.battyboost.adminapp.poslist.PosListFragment;
+import info.mschmitt.battyboost.adminapp.userlist.UserListComponent;
+import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -40,5 +42,9 @@ public class HubComponent {
 
     public PosListComponent plus(PosListFragment posListFragment) {
         return new PosListComponent(router, database, client);
+    }
+
+    public UserListComponent plus(UserListFragment userListFragment) {
+        return new UserListComponent(router, database, client);
     }
 }

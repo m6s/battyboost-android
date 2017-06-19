@@ -15,6 +15,10 @@ import info.mschmitt.battyboost.adminapp.posediting.PosEditingComponent;
 import info.mschmitt.battyboost.adminapp.posediting.PosEditingFragment;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionComponent;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
+import info.mschmitt.battyboost.adminapp.user.UserComponent;
+import info.mschmitt.battyboost.adminapp.user.UserFragment;
+import info.mschmitt.battyboost.adminapp.userediting.UserEditingComponent;
+import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 
@@ -68,5 +72,13 @@ public class BattyboostServiceApplicationComponent {
 
     public PosSelectionComponent plus(PosSelectionFragment fragment) {
         return new PosSelectionComponent(router, database, client);
+    }
+
+    public UserComponent plus(UserFragment fragment) {
+        return new UserComponent(router, database, client);
+    }
+
+    public UserEditingComponent plus(UserEditingFragment fragment) {
+        return new UserEditingComponent(router, database, client);
     }
 }

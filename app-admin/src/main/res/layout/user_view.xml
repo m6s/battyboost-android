@@ -7,7 +7,7 @@
 
         <variable
             name="fragment"
-            type="info.mschmitt.battyboost.app.profile.ProfileFragment" />
+            type="info.mschmitt.battyboost.adminapp.user.UserFragment" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -34,58 +34,17 @@
                     app:navigationOnClickListener="@{() -> fragment.goUp()}" />
             </android.support.design.widget.AppBarLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0px"
-                android:layout_weight="1"
-                app:visibleGone="@{fragment.viewModel.signedOut}">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Signed out" />
-            </FrameLayout>
-
             <android.support.v4.widget.NestedScrollView
                 android:id="@+id/nestedScrollView"
                 android:layout_width="match_parent"
                 android:layout_height="0px"
-                android:layout_weight="1"
-                app:visibleGone="@{!fragment.viewModel.signedOut}">
+                android:layout_weight="1">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:padding="16dp">
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        app:label="@{`Display name`}"
-                        app:text="@{fragment.viewModel.authUser.displayName}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        app:label="@{`Email`}"
-                        app:text="@{fragment.viewModel.authUser.email}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        app:label="@{`Photo`}"
-                        app:text="@{fragment.viewModel.authUser.photoUrl}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
 
                     <include
                         layout="@layout/text_output_layout"

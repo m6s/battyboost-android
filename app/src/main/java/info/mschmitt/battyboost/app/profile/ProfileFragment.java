@@ -150,6 +150,10 @@ public class ProfileFragment extends Fragment {
         return true;
     }
 
+    public void goUp() {
+        router.goUp(this);
+    }
+
     public static class ViewModel extends BaseObservable implements Serializable {
         @Bindable public DatabaseUser databaseUser;
         @Bindable public AuthUser authUser;

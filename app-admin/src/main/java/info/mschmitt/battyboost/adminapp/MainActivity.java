@@ -10,6 +10,8 @@ import info.mschmitt.battyboost.adminapp.partnerediting.PartnerEditingFragment;
 import info.mschmitt.battyboost.adminapp.pos.PosFragment;
 import info.mschmitt.battyboost.adminapp.posediting.PosEditingFragment;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
+import info.mschmitt.battyboost.adminapp.user.UserFragment;
+import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -92,6 +94,12 @@ public class MainActivity extends AppCompatActivity {
         } else if (childFragment instanceof PosSelectionFragment) {
             PosSelectionFragment posSelectionFragment = (PosSelectionFragment) childFragment;
             applicationComponent.plus(posSelectionFragment).inject(posSelectionFragment);
+        } else if (childFragment instanceof UserFragment) {
+            UserFragment userFragment = (UserFragment) childFragment;
+            applicationComponent.plus(userFragment).inject(userFragment);
+        } else if (childFragment instanceof UserEditingFragment) {
+            UserEditingFragment userEditingFragment = (UserEditingFragment) childFragment;
+            applicationComponent.plus(userEditingFragment).inject(userEditingFragment);
         }
         injectedFragments.put(childFragment, null);
     }

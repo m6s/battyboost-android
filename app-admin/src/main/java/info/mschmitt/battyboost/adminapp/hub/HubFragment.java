@@ -19,6 +19,7 @@ import info.mschmitt.battyboost.adminapp.databinding.HubViewBinding;
 import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListFragment;
 import info.mschmitt.battyboost.adminapp.poslist.PosListFragment;
+import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -53,6 +54,9 @@ public class HubFragment extends Fragment implements DrawerFragment.DrawerListen
         } else if (childFragment instanceof PosListFragment) {
             PosListFragment posListFragment = (PosListFragment) childFragment;
             component.plus(posListFragment).inject(posListFragment);
+        } else if (childFragment instanceof UserListFragment) {
+            UserListFragment userListFragment = (UserListFragment) childFragment;
+            component.plus(userListFragment).inject(userListFragment);
         }
         injectedFragments.put(childFragment, null);
     }
@@ -124,6 +128,8 @@ public class HubFragment extends Fragment implements DrawerFragment.DrawerListen
             actionBar.setTitle("Partners");
         } else if (fragment instanceof PosListFragment) {
             actionBar.setTitle("POS");
+        } else if (fragment instanceof UserListFragment) {
+            actionBar.setTitle("Users");
         } else {
             throw new AssertionError();
         }
@@ -133,11 +139,14 @@ public class HubFragment extends Fragment implements DrawerFragment.DrawerListen
     public void onDrawerItemSelected(DrawerFragment sender, DrawerFragment.DrawerItem drawerItem) {
         getBinding().drawerLayout.closeDrawers();
         switch (drawerItem) {
-            case PARTNERS:
+            case PARTNER_LIST:
                 router.showPartnerList(this);
                 break;
             case POS_LIST:
                 router.showPosList(this);
+                break;
+            case USER_LIST:
+                router.showUserList(this);
                 break;
             default:
                 throw new AssertionError();

@@ -87,6 +87,11 @@ public class BattyboostClient {
         return RxDatabaseReference.removeValue(partnerRef);
     }
 
+    public Completable updateUser(String userKey, DatabaseUser user) {
+        DatabaseReference userRef = database.getReference("users").child(userKey);
+        return RxDatabaseReference.setValue(userRef, user);
+    }
+
     public Single<String> addBattery(UUID uuid, Battery battery) {
         DatabaseReference batteryRef = database.getReference("batteries").child(uuid.toString());
         return RxDatabaseReference.setValue(batteryRef, battery).toSingleDefault(batteryRef.getKey());

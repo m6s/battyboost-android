@@ -6,7 +6,7 @@
 
         <variable
             name="holder"
-            type="info.mschmitt.battyboost.core.ui.PosRecyclerAdapter.PosHolder" />
+            type="info.mschmitt.battyboost.core.ui.UserRecyclerAdapter.UserHolder" />
 
         <import type="java.lang.String" />
     </data>
@@ -24,17 +24,5 @@
             android:layout_height="wrap_content"
             android:text="@{holder.key}"
             android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{holder.pos.name}"
-            android:textAppearance="@style/AppTextAppearanceListItemSecondaryPlus" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{String.format(`%.6f`, holder.pos.latitude) + `, ` + String.format(`%.6f`, holder.pos.longitude)}"
-            android:textAppearance="@style/AppTextAppearanceListItemSecondary" />
     </LinearLayout>
 </layout>
