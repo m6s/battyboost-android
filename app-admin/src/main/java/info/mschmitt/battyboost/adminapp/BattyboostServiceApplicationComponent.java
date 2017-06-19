@@ -16,22 +16,24 @@ import info.mschmitt.battyboost.adminapp.posediting.PosEditingFragment;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionComponent;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 
 /**
  * @author Matthias Schmitt
  */
 public class BattyboostServiceApplicationComponent {
     public final FirebaseDatabase database;
-    public final FirebaseAuth auth;
+    public final RxAuth rxAuth;
     public final AuthUI authUI;
     public final BattyboostClient client;
     public final Router router;
 
     public BattyboostServiceApplicationComponent(BattyboostServiceApplication application) {
         database = FirebaseDatabase.getInstance();
-        auth = FirebaseAuth.getInstance();
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        rxAuth = new RxAuth(auth);
         authUI = AuthUI.getInstance();
-        client = new BattyboostClient(database, auth);
+        client = new BattyboostClient(database, rxAuth);
         router = new Router();
     }
 
