@@ -96,7 +96,7 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:81192633722:android:a76d67523afe9109",
+        "mobilesdk_app_id": "1:81192633722:android:547c3dc32475485e",
         "android_client_info": {
           "package_name": "info.mschmitt.battyboost.adminapp"
         }
@@ -106,7 +106,7 @@
           "client_id": "81192633722-rim3l7qobaad2bas66vei9ihfnqnf1oj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "info.mschmitt.battyboost.serviceapp",
+            "package_name": "info.mschmitt.battyboost.adminapp",
             "certificate_hash": "d8457f0163bd25df69cefd6bc64da6bb3f7680ac"
           }
         },

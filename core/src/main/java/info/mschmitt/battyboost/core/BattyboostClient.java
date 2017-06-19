@@ -1,5 +1,7 @@
 package info.mschmitt.battyboost.core;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -22,21 +24,22 @@ import java.util.UUID;
  * @author Matthias Schmitt
  */
 public class BattyboostClient {
-    public static final Function<DataSnapshot, RxOptional<DatabaseUser>> DATABASE_USER_MAPPER =
+    public static final Function<DataSnapshot, RxOptional<DatabaseUser>> OPTIONAL_DATABASE_USER_MAPPER =
             dataSnapshot -> dataSnapshot.exists() ? new RxOptional<>(dataSnapshot.getValue(DatabaseUser.class))
                     : RxOptional.empty();
+    public static final Function<DataSnapshot, Pos> POS_MAPPER = dataSnapshot -> dataSnapshot.getValue(Pos.class);
     private final FirebaseDatabase database;
     private final RxAuth rxAuth;
+    private final GeoFire posGeoFire;
 
     public BattyboostClient(FirebaseDatabase database, RxAuth rxAuth) {
         this.database = database;
         this.rxAuth = rxAuth;
+        DatabaseReference geofirePosRef = FirebaseDatabase.getInstance().getReference("_geofirePos");
+        posGeoFire = new GeoFire(geofirePosRef);
         connectTriggers();
     }
 
-    /**
-     * TODO Move to backend
-     */
     private void connectTriggers() {
         userCreations().subscribe(this::onUserCreated);
     }
@@ -50,6 +53,9 @@ public class BattyboostClient {
         }).filter(dataSnapshot -> !dataSnapshot.exists()).map(ignore -> rxAuth.auth.getCurrentUser());
     }
 
+    /**
+     * Trigger
+     */
     private void onUserCreated(FirebaseUser firebaseUser) {
         String uid = firebaseUser.getUid();
         DatabaseReference userRef = database.getReference("users").child(uid);
@@ -74,17 +80,39 @@ public class BattyboostClient {
 
     public Single<String> addPos(Pos pos) {
         DatabaseReference posRef = database.getReference("pos").push();
-        return RxDatabaseReference.setValue(posRef, pos).toSingleDefault(posRef.getKey());
+        String key = posRef.getKey();
+        return RxDatabaseReference.setValue(posRef, pos).doOnComplete(() -> onPosAdded(key, pos)).toSingleDefault(key);
+    }
+
+    /**
+     * Trigger
+     */
+    private void onPosAdded(String key, Pos pos) {
+        posGeoFire.setLocation(key, new GeoLocation(pos.latitude, pos.longitude));
     }
 
     public Completable updatePos(String posKey, Pos pos) {
         DatabaseReference partnerRef = database.getReference("pos").child(posKey);
-        return RxDatabaseReference.setValue(partnerRef, pos);
+        return RxDatabaseReference.setValue(partnerRef, pos).doOnComplete(() -> onPosChanged(posKey, pos));
+    }
+
+    /**
+     * Trigger
+     */
+    private void onPosChanged(String key, Pos pos) {
+        posGeoFire.setLocation(key, new GeoLocation(pos.latitude, pos.longitude));
     }
 
     public Completable deletePos(String posKey) {
         DatabaseReference partnerRef = database.getReference("pos").child(posKey);
-        return RxDatabaseReference.removeValue(partnerRef);
+        return RxDatabaseReference.removeValue(partnerRef).doOnComplete(() -> onPosRemoved(posKey));
+    }
+
+    /**
+     * Trigger
+     */
+    private void onPosRemoved(String key) {
+        posGeoFire.removeLocation(key);
     }
 
     public Completable updateUser(String userKey, DatabaseUser user) {

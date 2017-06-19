@@ -82,7 +82,7 @@ public class ProfileFragment extends Fragment {
         Disposable disposable = rxAuth.userChanges().subscribe(optional -> setFirebaseUser(optional.value));
         compositeDisposable.add(disposable);
         disposable = databaseUserChanges(firebaseUser).map(
-                optional -> optional.flatMap(BattyboostClient.DATABASE_USER_MAPPER))
+                optional -> optional.flatMap(BattyboostClient.OPTIONAL_DATABASE_USER_MAPPER))
                 .subscribe(optional -> setDatabaseUser(optional.value));
         compositeDisposable.add(disposable);
     }
