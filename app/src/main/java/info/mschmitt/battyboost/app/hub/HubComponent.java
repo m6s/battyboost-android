@@ -3,10 +3,10 @@ package info.mschmitt.battyboost.app.hub;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.Router;
+import info.mschmitt.battyboost.app.balance.BalanceComponent;
+import info.mschmitt.battyboost.app.balance.BalanceFragment;
 import info.mschmitt.battyboost.app.map.MapComponent;
 import info.mschmitt.battyboost.app.map.MapFragment;
-import info.mschmitt.battyboost.app.profile.ProfileComponent;
-import info.mschmitt.battyboost.app.profile.ProfileFragment;
 import info.mschmitt.battyboost.app.schedule.ScheduleComponent;
 import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
@@ -49,7 +49,7 @@ public class HubComponent {
         return new ScheduleComponent(router, database, client, rxAuth, authUI);
     }
 
-    public ProfileComponent plus(ProfileFragment fragment) {
-        return new ProfileComponent(router, database, client, rxAuth, authUI);
+    public BalanceComponent plus(BalanceFragment fragment) {
+        return new BalanceComponent(router, database, client, rxAuth, authUI);
     }
 }

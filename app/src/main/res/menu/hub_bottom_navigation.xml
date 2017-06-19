@@ -14,9 +14,9 @@
         android:title="Schedule"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/action_profile"
+        android:id="@+id/action_balance"
         android:enabled="true"
-        android:icon="@drawable/ic_person_black_24dp"
-        android:title="Profile"
+        android:icon="@drawable/ic_account_balance_black_24dp"
+        android:title="Balance"
         app:showAsAction="ifRoom" />
 </menu>

@@ -33,11 +33,25 @@
                     android:theme="@style/AppThemeToolbar" />
             </android.support.design.widget.AppBarLayout>
 
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0px"
+                android:layout_weight="1"
+                app:visibleGone="@{fragment.viewModel.signedOut}">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Signed out" />
+            </FrameLayout>
+
             <android.support.v4.widget.NestedScrollView
                 android:id="@+id/nestedScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:visibleGone="@{fragment.viewModel.signedIn}">
+                android:layout_height="0px"
+                android:layout_weight="1"
+                app:visibleGone="@{!fragment.viewModel.signedOut}">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -96,22 +110,6 @@
                         app:text="@{fragment.viewModel.databaseUser.iban}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@android:color/background_light"
-                app:visibleGone="@{!fragment.viewModel.signedIn}">
-
-                <Button
-                    style="?borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:onClick="@{() -> fragment.onSignInClick()}"
-                    android:text="Sign in to view your profile"
-                    android:textColor="@color/primaryAccent" />
-            </FrameLayout>
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

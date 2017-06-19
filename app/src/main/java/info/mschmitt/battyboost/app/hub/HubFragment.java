@@ -13,9 +13,9 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
+import info.mschmitt.battyboost.app.balance.BalanceFragment;
 import info.mschmitt.battyboost.app.databinding.HubViewBinding;
 import info.mschmitt.battyboost.app.map.MapFragment;
-import info.mschmitt.battyboost.app.profile.ProfileFragment;
 import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
@@ -54,9 +54,9 @@ public class HubFragment extends Fragment {
         } else if (childFragment instanceof ScheduleFragment) {
             ScheduleFragment scheduleFragment = (ScheduleFragment) childFragment;
             component.plus(scheduleFragment).inject(scheduleFragment);
-        } else if (childFragment instanceof ProfileFragment) {
-            ProfileFragment profileFragment = (ProfileFragment) childFragment;
-            component.plus(profileFragment).inject(profileFragment);
+        } else if (childFragment instanceof BalanceFragment) {
+            BalanceFragment balanceFragment = (BalanceFragment) childFragment;
+            component.plus(balanceFragment).inject(balanceFragment);
         }
         injectedFragments.put(childFragment, null);
     }
@@ -95,8 +95,8 @@ public class HubFragment extends Fragment {
             case R.id.action_schedule:
                 router.showSchedule(this);
                 break;
-            case R.id.action_profile:
-                router.showProfile(this);
+            case R.id.action_balance:
+                router.showBalance(this);
                 break;
         }
         return true;

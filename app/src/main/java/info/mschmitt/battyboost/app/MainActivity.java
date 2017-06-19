@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.battyboost.app.hub.HubFragment;
+import info.mschmitt.battyboost.app.profile.ProfileFragment;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -70,8 +71,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if (childFragment instanceof HubFragment) {
-            HubFragment mapFragment = (HubFragment) childFragment;
-            applicationComponent.plus(mapFragment).inject(mapFragment);
+            HubFragment hubFragment = (HubFragment) childFragment;
+            applicationComponent.plus(hubFragment).inject(hubFragment);
+        } else if (childFragment instanceof ProfileFragment) {
+            ProfileFragment profileFragment = (ProfileFragment) childFragment;
+            applicationComponent.plus(profileFragment).inject(profileFragment);
         }
         injectedFragments.put(childFragment, null);
     }

@@ -1,11 +1,11 @@
 package info.mschmitt.battyboost.app;
 
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import info.mschmitt.battyboost.app.balance.BalanceFragment;
 import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.map.MapFragment;
 import info.mschmitt.battyboost.app.profile.ProfileFragment;
@@ -17,7 +17,7 @@ import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
 public class Router {
     private static final String MAP_TAG = MapFragment.class.getSimpleName();
     private static final String SCHEDULE_TAG = ScheduleFragment.class.getSimpleName();
-    private static final String PROFILE_TAG = ProfileFragment.class.getSimpleName();
+    private static final String BALANCE_TAG = BalanceFragment.class.getSimpleName();
 
     public void showHub(AppCompatActivity activity) {
         activity.getSupportFragmentManager()
@@ -60,25 +60,38 @@ public class Router {
         fragmentTransaction.commitNow();
     }
 
-    public void showProfile(HubFragment hubFragment) {
+    public void showBalance(HubFragment hubFragment) {
         FragmentManager fragmentManager = hubFragment.getChildFragmentManager();
         Fragment old = fragmentManager.findFragmentById(R.id.navigationContentView);
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         if (old != null) {
             fragmentTransaction.detach(old);
         }
-        Fragment fragment = fragmentManager.findFragmentByTag(PROFILE_TAG);
+        Fragment fragment = fragmentManager.findFragmentByTag(BALANCE_TAG);
         if (fragment == null) {
-            fragment = ProfileFragment.newInstance();
-            fragmentTransaction.add(R.id.navigationContentView, fragment, PROFILE_TAG);
+            fragment = BalanceFragment.newInstance();
+            fragmentTransaction.add(R.id.navigationContentView, fragment, BALANCE_TAG);
         } else {
             fragmentTransaction.attach(fragment);
         }
         fragmentTransaction.commitNow();
     }
 
-    public void notifySignedOut(Fragment fragment) {
-        View view = fragment.getParentFragment().getView();
-        if (view != null) {Snackbar.make(view, "Signed out", Snackbar.LENGTH_SHORT).show();}
+    public void showProfile(Fragment fragment) {
+        FragmentActivity activity = fragment.getActivity();
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.contentView, ProfileFragment.newInstance())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void goUp(Fragment fragment) {
+        fragment.getActivity().getSupportFragmentManager().popBackStackImmediate();
+    }
+
+    public void goBack(Fragment fragment) {
+        fragment.getFragmentManager().popBackStackImmediate();
     }
 }

@@ -142,6 +142,8 @@ users/
         qr: uuid<user>
         earliestBorrowTime: integer
         balanceCents: integer
+        bankAccountOwner: string
+        iban: string
         batteries/
             id<battery> : true
             ...
