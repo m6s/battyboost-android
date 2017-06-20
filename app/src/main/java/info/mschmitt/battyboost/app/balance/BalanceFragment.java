@@ -107,7 +107,6 @@ public class BalanceFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
         MenuItem menuItem = menu.findItem(R.id.menu_item_settings);
         menuItem.setOnMenuItemClickListener(this::onProfileMenuItemClick);
-        menuItem.setVisible(auth.getCurrentUser() != null);
     }
 
     private boolean onProfileMenuItemClick(MenuItem menuItem) {

@@ -1,23 +1,29 @@
 package info.mschmitt.battyboost.app.settings;
 
+import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.SettingsViewBinding;
+import info.mschmitt.battyboost.app.databinding.TextInputDialogBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.AuthUser;
 import info.mschmitt.battyboost.core.entities.DatabaseUser;
@@ -132,21 +138,72 @@ public class SettingsFragment extends Fragment {
     }
 
     public void onDisplayNameClick() {
+        Context context = getView().getContext();
+        TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
+        binding.textInputLayout.setHint("Display name");
+        binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        binding.editText.append(viewModel.authUser.displayName != null ? viewModel.authUser.displayName : "");
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            String displayName = binding.editText.getText().toString();
+            UserProfileChangeRequest request =
+                    new UserProfileChangeRequest.Builder().setDisplayName(displayName).build();
+            // TODO Show saving indicator
+            viewModel.authUser.displayName = displayName;
+            viewModel.authUser.notifyChange();
+            RxAuth.updateProfile(auth, request).subscribe();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void onEmailClick() {
+        Context context = getView().getContext();
+        TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
+        binding.textInputLayout.setHint("Email");
+        binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        binding.editText.append(viewModel.authUser.email != null ? viewModel.authUser.email : "");
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            String email = binding.editText.getText().toString();
+            // TODO Show saving indicator
+            viewModel.authUser.email = email;
+            viewModel.authUser.notifyChange();
+            RxAuth.updateEmail(auth, email).subscribe();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void onPhotoClick() {
+        Toast.makeText(getView().getContext(), "Not implemented", Toast.LENGTH_SHORT).show();
     }
 
     public void onBankAccountOwnerClick() {
+        Context context = getView().getContext();
+        TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
+        binding.textInputLayout.setHint("Bank account owner");
+        binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
+        binding.editText.append(
+                viewModel.databaseUser.bankAccountOwner != null ? viewModel.databaseUser.bankAccountOwner : "");
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            // TODO Show saving indicator
+            viewModel.databaseUser.bankAccountOwner = binding.editText.getText().toString();
+            viewModel.databaseUser.notifyChange();
+            client.updateUser(auth.getCurrentUser().getUid(), viewModel.databaseUser).subscribe();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void onIbanClick() {
+        Context context = getView().getContext();
+        TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
+        binding.textInputLayout.setHint("IBAN");
+        binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        binding.editText.append(viewModel.databaseUser.iban != null ? viewModel.databaseUser.iban : "");
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            // TODO Show saving indicator
+            viewModel.databaseUser.iban = binding.editText.getText().toString();
+            viewModel.databaseUser.notifyChange();
+            client.updateUser(auth.getCurrentUser().getUid(), viewModel.databaseUser).subscribe();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void onAboutClick() {
+        Toast.makeText(getView().getContext(), "Not implemented", Toast.LENGTH_SHORT).show();
     }
 
     public void goUp() {
