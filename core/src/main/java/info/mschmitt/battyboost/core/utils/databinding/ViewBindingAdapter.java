@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.core.utils;
+package info.mschmitt.battyboost.core.utils.databinding;
 
 import android.databinding.BindingAdapter;
 import android.view.View;
