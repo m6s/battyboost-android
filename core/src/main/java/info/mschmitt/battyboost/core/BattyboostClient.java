@@ -31,12 +31,12 @@ public class BattyboostClient {
     public static final Function<DataSnapshot, Pos> POS_MAPPER = dataSnapshot -> dataSnapshot.getValue(Pos.class);
     public static final Function<DataSnapshot, Battery> BATTERY_MAPPER =
             dataSnapshot -> dataSnapshot.getValue(Battery.class);
-    private final GeoFire posGeoFire;
-    private final DatabaseReference usersRef;
-    private final DatabaseReference partnersRef;
-    private final DatabaseReference posListRef;
-    private final DatabaseReference batteriesRef;
-    private final DatabaseReference invitesRef;
+    public final GeoFire posGeoFire;
+    public final DatabaseReference usersRef;
+    public final DatabaseReference partnersRef;
+    public final DatabaseReference posListRef;
+    public final DatabaseReference batteriesRef;
+    public final DatabaseReference invitesRef;
 
     public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth) {
         usersRef = database.getReference("users");

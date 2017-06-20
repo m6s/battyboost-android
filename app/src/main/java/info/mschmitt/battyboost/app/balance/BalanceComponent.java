@@ -32,6 +32,5 @@ public class BalanceComponent {
         fragment.auth = auth;
         fragment.authUI = authUI;
         fragment.injected = true;
-        fragment.injected = true;
     }
 }

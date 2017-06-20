@@ -26,11 +26,11 @@ public class ScheduleComponent {
     }
 
     public void inject(ScheduleFragment fragment) {
+        fragment.router = router;
         fragment.database = database;
         fragment.client = client;
         fragment.auth = auth;
         fragment.authUI = authUI;
-        fragment.injected = true;
         fragment.injected = true;
     }
 }

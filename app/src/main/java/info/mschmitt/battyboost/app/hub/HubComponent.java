@@ -42,7 +42,7 @@ public class HubComponent {
     }
 
     public MapComponent plus(MapFragment fragment) {
-        return new MapComponent(client, database, router);
+        return new MapComponent(router, database, client);
     }
 
     public ScheduleComponent plus(ScheduleFragment fragment) {

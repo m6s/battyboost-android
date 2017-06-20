@@ -8,8 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.battyboost.app.balance.BalanceFragment;
 import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.map.MapFragment;
-import info.mschmitt.battyboost.app.profile.ProfileFragment;
 import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
+import info.mschmitt.battyboost.app.settings.SettingsFragment;
 
 /**
  * @author Matthias Schmitt
@@ -80,8 +80,7 @@ public class Router {
     public void showProfile(Fragment fragment) {
         FragmentActivity activity = fragment.getActivity();
         activity.getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.contentView, ProfileFragment.newInstance())
+                .beginTransaction().replace(R.id.contentView, SettingsFragment.newInstance())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();

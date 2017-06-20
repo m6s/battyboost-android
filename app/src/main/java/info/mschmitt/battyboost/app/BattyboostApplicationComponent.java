@@ -5,8 +5,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.hub.HubComponent;
 import info.mschmitt.battyboost.app.hub.HubFragment;
-import info.mschmitt.battyboost.app.profile.ProfileComponent;
-import info.mschmitt.battyboost.app.profile.ProfileFragment;
+import info.mschmitt.battyboost.app.settings.SettingsComponent;
+import info.mschmitt.battyboost.app.settings.SettingsFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -40,7 +40,7 @@ public class BattyboostApplicationComponent {
         return new HubComponent(router, database, client, auth, authUI);
     }
 
-    public ProfileComponent plus(ProfileFragment fragment) {
-        return new ProfileComponent(router, database, client, auth, authUI);
+    public SettingsComponent plus(SettingsFragment fragment) {
+        return new SettingsComponent(router, database, client, auth, authUI);
     }
 }

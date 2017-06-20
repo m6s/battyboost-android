@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
+import info.mschmitt.battyboost.app.R;
+import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.ScheduleViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.AuthUser;
@@ -30,6 +30,7 @@ public class ScheduleFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final int RC_SIGN_IN = 123;
     public ViewModel viewModel;
+    @Inject public Router router;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
     @Inject public FirebaseAuth auth;
@@ -94,6 +95,24 @@ public class ScheduleFragment extends Fragment {
     public void onPause() {
         compositeDisposable.dispose();
         super.onPause();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.schedule, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        MenuItem menuItem = menu.findItem(R.id.menu_item_settings);
+        menuItem.setOnMenuItemClickListener(this::onProfileMenuItemClick);
+        menuItem.setVisible(auth.getCurrentUser() != null);
+    }
+
+    private boolean onProfileMenuItemClick(MenuItem menuItem) {
+        router.showProfile(this);
+        return true;
     }
 
     public void onSignInClick() {

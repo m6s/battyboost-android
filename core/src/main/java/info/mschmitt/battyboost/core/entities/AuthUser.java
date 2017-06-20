@@ -19,4 +19,8 @@ public class AuthUser implements Serializable {
         Uri photoUri = firebaseUser.getPhotoUrl();
         photoUrl = photoUri == null ? null : photoUri.toString();
     }
+
+    public static AuthUser of(FirebaseUser firebaseUser) {
+        return firebaseUser == null ? null : new AuthUser(firebaseUser);
+    }
 }

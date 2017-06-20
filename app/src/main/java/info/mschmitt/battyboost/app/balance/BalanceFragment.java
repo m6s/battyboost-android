@@ -105,21 +105,13 @@ public class BalanceFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_item_sign_in);
-        menuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
-        menuItem.setVisible(auth.getCurrentUser() == null);
-        menuItem = menu.findItem(R.id.menu_item_profile);
+        MenuItem menuItem = menu.findItem(R.id.menu_item_settings);
         menuItem.setOnMenuItemClickListener(this::onProfileMenuItemClick);
         menuItem.setVisible(auth.getCurrentUser() != null);
     }
 
     private boolean onProfileMenuItemClick(MenuItem menuItem) {
         router.showProfile(this);
-        return true;
-    }
-
-    private boolean onSignInMenuItemClick(MenuItem menuItem) {
-        startActivityForResult(authUI.createSignInIntentBuilder().build(), RC_SIGN_IN);
         return true;
     }
 
