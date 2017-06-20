@@ -3,6 +3,7 @@ package info.mschmitt.battyboost.app.settings;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import info.mschmitt.battyboost.core.entities.AuthUser;
 import info.mschmitt.battyboost.core.entities.DatabaseUser;
 import info.mschmitt.battyboost.core.utils.RxOptional;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuthUI;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -124,7 +126,27 @@ public class SettingsFragment extends Fragment {
     }
 
     public void onSignOutClick() {
-        authUI.signOut(getActivity());
+        Disposable disposable = RxAuthUI.signOut(authUI, getActivity())
+                .subscribe(() -> Snackbar.make(getView(), "Signed out", Snackbar.LENGTH_SHORT).show());
+        compositeDisposable.add(disposable);
+    }
+
+    public void onDisplayNameClick() {
+    }
+
+    public void onEmailClick() {
+    }
+
+    public void onPhotoClick() {
+    }
+
+    public void onBankAccountOwnerClick() {
+    }
+
+    public void onIbanClick() {
+    }
+
+    public void onAboutClick() {
     }
 
     public void goUp() {
