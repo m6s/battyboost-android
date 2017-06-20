@@ -20,24 +20,22 @@ import info.mschmitt.battyboost.adminapp.user.UserFragment;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingComponent;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 
 /**
  * @author Matthias Schmitt
  */
 public class BattyboostServiceApplicationComponent {
     public final FirebaseDatabase database;
-    public final RxAuth rxAuth;
+    public final FirebaseAuth auth;
     public final AuthUI authUI;
     public final BattyboostClient client;
     public final Router router;
 
     public BattyboostServiceApplicationComponent(BattyboostServiceApplication application) {
         database = FirebaseDatabase.getInstance();
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        rxAuth = new RxAuth(auth);
+        auth = FirebaseAuth.getInstance();
         authUI = AuthUI.getInstance();
-        client = new BattyboostClient(database, rxAuth);
+        client = new BattyboostClient(database, auth);
         router = new Router();
     }
 

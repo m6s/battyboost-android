@@ -77,8 +77,7 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
             if (partnerKey != null) {
                 DatabaseReference reference = database.getReference("partners").child(partnerKey);
                 Disposable disposable = RxDatabaseReference.valueEvents(reference)
-                        .filter(DataSnapshot::exists)
-                        .map(dataSnapshot -> dataSnapshot.getValue(Partner.class))
+                        .filter(DataSnapshot::exists).map(BattyboostClient.PARTNER_MAPPER)
                         .firstElement()
                         .subscribe(this::setPartner);
                 compositeDisposable.add(disposable);

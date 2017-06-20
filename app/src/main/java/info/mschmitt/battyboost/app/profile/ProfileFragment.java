@@ -3,12 +3,12 @@ package info.mschmitt.battyboost.app.profile;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -19,10 +19,8 @@ import info.mschmitt.battyboost.app.databinding.ProfileViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.AuthUser;
 import info.mschmitt.battyboost.core.entities.DatabaseUser;
-import info.mschmitt.battyboost.core.utils.RxOptional;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
-import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -38,7 +36,7 @@ public class ProfileFragment extends Fragment {
     @Inject public Router router;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
-    @Inject public RxAuth rxAuth;
+    @Inject public FirebaseAuth auth;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
@@ -60,7 +58,7 @@ public class ProfileFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setFirebaseUser(rxAuth.auth.getCurrentUser());
+        setFirebaseUser(auth.getCurrentUser());
         ProfileViewBinding binding = ProfileViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
@@ -74,32 +72,21 @@ public class ProfileFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        FirebaseUser firebaseUser = rxAuth.auth.getCurrentUser();
+        FirebaseUser firebaseUser = auth.getCurrentUser();
         if (firebaseUser == null) {
             onSignedOut();
             return;
         }
-        Disposable disposable = rxAuth.userChanges().subscribe(optional -> setFirebaseUser(optional.value));
+        setFirebaseUser(firebaseUser);
+        Disposable disposable =
+                RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> onSignedOut());
         compositeDisposable.add(disposable);
-        disposable = databaseUserChanges(firebaseUser).map(
-                optional -> optional.flatMap(BattyboostClient.OPTIONAL_DATABASE_USER_MAPPER))
-                .subscribe(optional -> setDatabaseUser(optional.value));
+        DatabaseReference usersRef = database.getReference("users").child(firebaseUser.getUid());
+        disposable = RxDatabaseReference.valueEvents(usersRef)
+                .filter(DataSnapshot::exists)
+                .map(BattyboostClient.DATABASE_USER_MAPPER)
+                .subscribe(this::setDatabaseUser);
         compositeDisposable.add(disposable);
-    }
-
-    @NonNull
-    private Observable<RxOptional<DataSnapshot>> databaseUserChanges(FirebaseUser firebaseUser) {
-        if (firebaseUser != null) {
-            DatabaseReference reference = database.getReference("users").child(firebaseUser.getUid());
-            return RxDatabaseReference.valueEvents(reference).map(RxOptional::new);
-        } else {
-            return Observable.just(RxOptional.<DataSnapshot>empty());
-        }
-    }
-
-    private void setDatabaseUser(DatabaseUser databaseUser) {
-        viewModel.databaseUser = databaseUser;
-        viewModel.notifyChange();
     }
 
     @Override
@@ -126,11 +113,13 @@ public class ProfileFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
     }
 
+    private void onSignedOut() {
+        viewModel.signedOut = true;
+        viewModel.notifyChange();
+        router.goBack(this);
+    }
+
     private void setFirebaseUser(FirebaseUser firebaseUser) {
-        if (firebaseUser == null) {
-            onSignedOut();
-            return;
-        }
         viewModel.authUser = new AuthUser(firebaseUser);
         viewModel.notifyChange();
     }
@@ -139,10 +128,9 @@ public class ProfileFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-    private void onSignedOut() {
-        viewModel.signedOut = true;
+    private void setDatabaseUser(DatabaseUser databaseUser) {
+        viewModel.databaseUser = databaseUser;
         viewModel.notifyChange();
-        router.goBack(this);
     }
 
     private boolean onSignOutMenuItemClick(MenuItem menuItem) {

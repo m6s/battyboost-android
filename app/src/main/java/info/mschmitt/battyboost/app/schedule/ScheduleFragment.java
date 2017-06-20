@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.databinding.ScheduleViewBinding;
@@ -31,7 +32,7 @@ public class ScheduleFragment extends Fragment {
     public ViewModel viewModel;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
-    @Inject public RxAuth rxAuth;
+    @Inject public FirebaseAuth auth;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
@@ -53,7 +54,7 @@ public class ScheduleFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setFirebaseUser(rxAuth.auth.getCurrentUser());
+        setFirebaseUser(auth.getCurrentUser());
         ScheduleViewBinding binding = ScheduleViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
@@ -76,7 +77,7 @@ public class ScheduleFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = rxAuth.userChanges().subscribe(optional -> {
+        Disposable disposable = RxAuth.userChanges(auth).subscribe(optional -> {
             setFirebaseUser(optional.value);
             viewModel.notifyChange();
         });
@@ -100,8 +101,7 @@ public class ScheduleFragment extends Fragment {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public String text;
-        public AuthUser firebaseUser;
+        @Bindable public AuthUser firebaseUser;
 
         @Bindable
         public boolean isSignedIn() {

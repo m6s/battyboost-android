@@ -8,7 +8,6 @@ import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.profile.ProfileComponent;
 import info.mschmitt.battyboost.app.profile.ProfileFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 
 /**
  * @author Matthias Schmitt
@@ -18,13 +17,13 @@ public class BattyboostApplicationComponent {
     public final AuthUI authUI;
     public final BattyboostClient client;
     public final Router router;
-    private final RxAuth rxAuth;
+    private final FirebaseAuth auth;
 
     public BattyboostApplicationComponent(BattyboostApplication application) {
         database = FirebaseDatabase.getInstance();
-        rxAuth = new RxAuth(FirebaseAuth.getInstance());
+        auth = FirebaseAuth.getInstance();
         authUI = AuthUI.getInstance();
-        client = new BattyboostClient(database, rxAuth);
+        client = new BattyboostClient(database, auth);
         router = new Router();
     }
 
@@ -38,10 +37,10 @@ public class BattyboostApplicationComponent {
     }
 
     public HubComponent plus(HubFragment fragment) {
-        return new HubComponent(router, database, client, rxAuth, authUI);
+        return new HubComponent(router, database, client, auth, authUI);
     }
 
     public ProfileComponent plus(ProfileFragment fragment) {
-        return new ProfileComponent(router, database, client, rxAuth, authUI);
+        return new ProfileComponent(router, database, client, auth, authUI);
     }
 }

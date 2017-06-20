@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
@@ -18,7 +19,6 @@ import info.mschmitt.battyboost.app.databinding.HubViewBinding;
 import info.mschmitt.battyboost.app.map.MapFragment;
 import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -34,7 +34,7 @@ public class HubFragment extends Fragment {
     @Inject public Router router;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
-    @Inject public RxAuth rxAuth;
+    @Inject public FirebaseAuth auth;
     @Inject public AuthUI authUI;
     @Inject public HubComponent component;
     @Inject public boolean injected;

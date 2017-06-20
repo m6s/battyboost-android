@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import com.firebase.ui.auth.AuthUI;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.R;
@@ -32,7 +33,7 @@ public class BalanceFragment extends Fragment {
     @Inject public Router router;
     @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
-    @Inject public RxAuth rxAuth;
+    @Inject public FirebaseAuth auth;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
@@ -54,7 +55,7 @@ public class BalanceFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setFirebaseUser(rxAuth.auth.getCurrentUser());
+        setFirebaseUser(auth.getCurrentUser());
         BalanceViewBinding binding = BalanceViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
@@ -77,7 +78,7 @@ public class BalanceFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = rxAuth.userChanges().subscribe(optional -> {
+        Disposable disposable = RxAuth.userChanges(auth).subscribe(optional -> {
             setFirebaseUser(optional.value);
             viewModel.notifyChange();
         });
@@ -106,10 +107,10 @@ public class BalanceFragment extends Fragment {
         super.onPrepareOptionsMenu(menu);
         MenuItem menuItem = menu.findItem(R.id.menu_item_sign_in);
         menuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
-        menuItem.setVisible(rxAuth.auth.getCurrentUser() == null);
+        menuItem.setVisible(auth.getCurrentUser() == null);
         menuItem = menu.findItem(R.id.menu_item_profile);
         menuItem.setOnMenuItemClickListener(this::onProfileMenuItemClick);
-        menuItem.setVisible(rxAuth.auth.getCurrentUser() != null);
+        menuItem.setVisible(auth.getCurrentUser() != null);
     }
 
     private boolean onProfileMenuItemClick(MenuItem menuItem) {
