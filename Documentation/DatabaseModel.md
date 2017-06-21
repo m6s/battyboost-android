@@ -57,14 +57,7 @@ pos/
         area: "berlin"
 ```
 
-`pos` stands for point of sale and can be queried to show the available batteries on a map. We may want to use
-[GeoFire](https://github.com/firebase/geofire-js) for locations and remove `latitude` and `longitude` from `pos`.
-
-```
-_geofirePos/
-    {posId}: location
-    ...
-```
+`pos` stands for point of sale and can be queried to show the available batteries on a map.
 
 ```
 weeklyOpeningHours/
@@ -122,18 +115,23 @@ partners/
         adminId: id<user>
         posId: id<pos>
         balanceCents: integer
-        batteries/
-            id<battery>: true
-            ...
-        transactions/
-            id<transaction>: true
-            ...
-        cashiers/
-            id<user>: true
-            ...
 ```
 
 `posId` only needed for dumb charging stations.
+
+partnerBatteries/
+    {partnerId}/
+            id<battery>: true
+            ...
+partnerTransactions/
+    {partnerId}/
+            id<transaction>: true
+            ...
+partnerCashiers/
+    {partnerId}/
+            id<user>: true
+            ...
+
 
 ```
 invites/
@@ -154,21 +152,25 @@ users/
         balanceCents: integer
         bankAccountOwner: string
         iban: string
-        batteries/
-            id<battery> : true
-            ...
-        transactions/
-            id<transaction> : true
-            ...
-        partners/
-            id<partner> : true
-            ...
 ```
 
 The Admin SDK allows access to the following properties via the FirebaseUser: displayName, email, photoUrl,
 providerData, providerId, uid, userMetadata, disabled, emailVerified
 
 `earliestBorrowTime` is the earliest `borrowTime` of all batteries currently borrowed by a user.
+
+userBatteries/
+    {userId}/
+            id<battery>: true
+            ...
+userTransactions/
+    {userId}/
+            id<transaction>: true
+            ...
+userPartners/
+    {userId}/
+            id<partner> : true
+            ...
 
 ## Database triggered functions
 

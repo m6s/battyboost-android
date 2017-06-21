@@ -9,11 +9,12 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.Toast;
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -22,6 +23,7 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PosEditingViewBinding;
 import info.mschmitt.battyboost.adminapp.pos.PosViewModel;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.GeoCoordinates;
 import info.mschmitt.battyboost.core.entities.Pos;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
@@ -33,6 +35,9 @@ import javax.inject.Inject;
  * @author Matthias Schmitt
  */
 public class PosEditingFragment extends Fragment {
+    private static final LatLngBounds BOUNDS_BERLIN =
+            new LatLngBounds(new LatLng(GeoCoordinates.BERLIN_LAT - 0.1, GeoCoordinates.BERLIN_LNG - 0.1),
+                    new LatLng(GeoCoordinates.BERLIN_LAT + 0.1, GeoCoordinates.BERLIN_LNG + 0.1));
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_POS_KEY = "POS_KEY";
     private static final int PLACE_PICKER_REQUEST = 1;
@@ -53,7 +58,7 @@ public class PosEditingFragment extends Fragment {
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
-        if (!GeoLocation.coordinatesValid(viewModel.pos.latitude, viewModel.pos.longitude)) {
+        if (!coordinatesValid(viewModel.pos.latitude, viewModel.pos.longitude)) {
             Toast.makeText(getContext(), "Not a valid geo location", Toast.LENGTH_LONG).show();
             return true;
         }
@@ -64,6 +69,15 @@ public class PosEditingFragment extends Fragment {
             disposable = client.updatePos(posKey, viewModel.pos).subscribe(() -> router.goUp(this));
         }
         compositeDisposable.add(disposable);
+        return true;
+    }
+
+    private static boolean coordinatesValid(double latitude, double longitude) {
+        if (latitude < -90 || latitude > 90) {
+            return false;
+        } else if (longitude < -180 || longitude > 180) {
+            return false;
+        }
         return true;
     }
 
@@ -124,7 +138,8 @@ public class PosEditingFragment extends Fragment {
             if (posKey != null) {
                 DatabaseReference reference = database.getReference("pos").child(posKey);
                 Disposable disposable = RxDatabaseReference.valueEvents(reference)
-                        .filter(DataSnapshot::exists).map(BattyboostClient.POS_MAPPER)
+                        .filter(DataSnapshot::exists)
+                        .map(BattyboostClient.POS_MAPPER)
                         .firstElement()
                         .subscribe(this::setPos);
                 compositeDisposable.add(disposable);
@@ -165,9 +180,9 @@ public class PosEditingFragment extends Fragment {
     }
 
     private boolean onPickPlaceMenuItemClick(MenuItem menuItem) {
-        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
         try {
-            startActivityForResult(builder.build(getActivity()), PLACE_PICKER_REQUEST);
+            Intent intent = new PlacePicker.IntentBuilder().setLatLngBounds(BOUNDS_BERLIN).build(getActivity());
+            startActivityForResult(intent, PLACE_PICKER_REQUEST);
         } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
         }

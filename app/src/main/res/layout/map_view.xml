@@ -34,10 +34,10 @@
                     android:theme="@style/AppThemeToolbar" />
             </android.support.design.widget.AppBarLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <FrameLayout
+                android:id="@+id/mapContentView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"></FrameLayout>
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
 </layout>

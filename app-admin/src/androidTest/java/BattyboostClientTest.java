@@ -42,6 +42,39 @@ public class BattyboostClientTest {
         FirebaseAuth auth = FirebaseAuth.getInstance(app);
         client = new BattyboostClient(database, auth);
     }
+//    @Test
+//    public void queryAtLocation() throws InterruptedException {
+//        double radius = 8589; // Fails
+////        double radius = 8587.8; //Passes
+//        CountDownLatch latch = new CountDownLatch(1);
+//        final boolean[] entered = {false};
+//        new GeoFire(database.getReference("_geofirePos")).queryAtLocation(new GeoLocation(0, 0), radius)
+//                .addGeoQueryEventListener(new GeoQueryEventListener() {
+//                    @Override
+//                    public void onKeyEntered(String key, GeoLocation location) {
+//                        entered[0] = true;
+//                    }
+//
+//                    @Override
+//                    public void onKeyExited(String key) {
+//                    }
+//
+//                    @Override
+//                    public void onKeyMoved(String key, GeoLocation location) {
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryReady() {
+//                        latch.countDown();
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryError(DatabaseError error) {
+//                    }
+//                });
+//        latch.await();
+//        Assert.assertTrue(entered[0]);
+//    }
 
     @Test
     public void addPartner() throws Exception {

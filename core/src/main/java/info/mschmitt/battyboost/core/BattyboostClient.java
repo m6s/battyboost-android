@@ -1,7 +1,6 @@
 package info.mschmitt.battyboost.core;
 
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
+import android.util.Pair;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,9 +28,10 @@ public class BattyboostClient {
     public static final Function<DataSnapshot, Partner> PARTNER_MAPPER =
             dataSnapshot -> dataSnapshot.getValue(Partner.class);
     public static final Function<DataSnapshot, Pos> POS_MAPPER = dataSnapshot -> dataSnapshot.getValue(Pos.class);
+    public static final Function<DataSnapshot, Pair<String, Pos>> KEY_POS_MAPPER =
+            dataSnapshot -> Pair.create(dataSnapshot.getKey(), dataSnapshot.getValue(Pos.class));
     public static final Function<DataSnapshot, Battery> BATTERY_MAPPER =
             dataSnapshot -> dataSnapshot.getValue(Battery.class);
-    public final GeoFire posGeoFire;
     public final DatabaseReference usersRef;
     public final DatabaseReference partnersRef;
     public final DatabaseReference posListRef;
@@ -44,7 +44,6 @@ public class BattyboostClient {
         posListRef = database.getReference("pos");
         batteriesRef = database.getReference("batteries");
         invitesRef = database.getReference("invites");
-        posGeoFire = new GeoFire(database.getReference("_geofirePos"));
         userCreations(auth).subscribe(this::onUserCreated); // TODO Create auth trigger function
     }
 
@@ -87,24 +86,19 @@ public class BattyboostClient {
     }
 
     public Single<String> addPos(Pos pos) {
-        GeoLocation geoLocation = new GeoLocation(pos.latitude, pos.longitude);
         DatabaseReference posRef = posListRef.push();
         String key = posRef.getKey();
-        return RxDatabaseReference.setValue(posRef, pos)
-                .doOnComplete(() -> posGeoFire.setLocation(key, geoLocation))
-                .toSingleDefault(key);
+        return RxDatabaseReference.setValue(posRef, pos).toSingleDefault(key);
     }
 
     public Completable updatePos(String posKey, Pos pos) {
-        GeoLocation geoLocation = new GeoLocation(pos.latitude, pos.longitude);
         DatabaseReference partnerRef = posListRef.child(posKey);
-        return RxDatabaseReference.setValue(partnerRef, pos)
-                .doOnComplete(() -> posGeoFire.setLocation(posKey, geoLocation));
+        return RxDatabaseReference.setValue(partnerRef, pos);
     }
 
     public Completable deletePos(String posKey) {
         DatabaseReference partnerRef = posListRef.child(posKey);
-        return RxDatabaseReference.removeValue(partnerRef).doOnComplete(() -> posGeoFire.removeLocation(posKey));
+        return RxDatabaseReference.removeValue(partnerRef);
     }
 
     public Completable updateUser(String userKey, DatabaseUser user) {
