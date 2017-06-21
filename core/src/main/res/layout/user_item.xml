@@ -1,4 +1,5 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="RtlHardcoded,HardcodedText">
 
@@ -11,18 +12,10 @@
         <import type="java.lang.String" />
     </data>
 
-    <LinearLayout
+    <info.mschmitt.battyboost.core.utils.design.SingleLineItemView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> holder.onClick()}"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@{holder.key}"
-            android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-    </LinearLayout>
+        app:text1="@{holder.key}" />
 </layout>
