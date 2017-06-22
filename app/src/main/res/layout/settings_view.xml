@@ -45,39 +45,16 @@
                     android:orientation="vertical">
 
                     <TextView
+                        style="@style/MaterialListSectionHeaderStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:text="Account"
-                        android:textAppearance="@style/AppTextAppearanceListItemSecondary"
-                        android:textColor="@color/primary"
-                        android:textStyle="bold" />
+                        android:text="Account" />
 
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="72dp"
-                        android:background="?android:attr/selectableItemBackground"
+                    <TextView
+                        style="@style/MaterialListButtonStyle"
                         android:onClick="@{() -> fragment.onSignInClick()}"
-                        android:orientation="vertical"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        app:visibleGone="@{fragment.viewModel.authUser == null}">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:text="Sign in"
-                            android:textAllCaps="true"
-                            android:textAppearance="@style/AppTextAppearanceListItemPrimary"
-                            android:textColor="@color/primary"
-                            android:textStyle="bold" />
-                    </FrameLayout>
+                        android:text="Sign in"
+                        app:visibleGone="@{fragment.viewModel.authUser == null}" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -85,183 +62,44 @@
                         android:orientation="vertical"
                         app:visibleGone="@{fragment.viewModel.authUser != null}">
 
-                        <LinearLayout
+                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:background="?android:attr/selectableItemBackground"
+                            android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onDisplayNameClick()}"
-                            android:orientation="vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp">
+                            app:text1="Display name"
+                            app:text2="@{fragment.viewModel.authUser.displayName}" />
 
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Display name"
-                                android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@{fragment.viewModel.authUser.displayName}"
-                                android:textAppearance="@style/AppTextAppearanceListItemSecondary"
-                                app:visibleGone="@{fragment.viewModel.authUser.displayName != null}" />
-
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:background="?android:attr/selectableItemBackground"
+                            android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onEmailClick()}"
-                            android:orientation="vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp">
+                            app:text1="Email"
+                            app:text2="@{fragment.viewModel.authUser.email}" />
 
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Email"
-                                android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@{fragment.viewModel.authUser.email}"
-                                android:textAppearance="@style/AppTextAppearanceListItemSecondary"
-                                app:visibleGone="@{fragment.viewModel.authUser.email != null}" />
-
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
                             android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:background="?android:attr/selectableItemBackground"
+                            android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onPhotoClick()}"
-                            android:orientation="vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp">
+                            app:text1="Photo" />
 
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Photo"
-                                android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:background="?android:attr/selectableItemBackground"
+                            android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onBankAccountOwnerClick()}"
-                            android:orientation="vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp">
+                            app:text1="Bank account owner"
+                            app:text2="@{fragment.viewModel.databaseUser.bankAccountOwner}" />
 
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Bank account owner"
-                                android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@{fragment.viewModel.databaseUser.bankAccountOwner}"
-                                android:textAppearance="@style/AppTextAppearanceListItemSecondary"
-                                app:visibleGone="@{fragment.viewModel.databaseUser.bankAccountOwner != null}" />
-
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:background="?android:attr/selectableItemBackground"
+                            android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onIbanClick()}"
-                            android:orientation="vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp">
+                            app:text1="IBAN"
+                            app:text2="@{fragment.viewModel.databaseUser.iban}" />
 
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="IBAN"
-                                android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="@{fragment.viewModel.databaseUser.iban}"
-                                android:textAppearance="@style/AppTextAppearanceListItemSecondary"
-                                app:visibleGone="@{fragment.viewModel.databaseUser.iban != null}" />
-
-                            <View
-                                android:layout_width="0px"
-                                android:layout_height="0px"
-                                android:layout_weight="1" />
-                        </LinearLayout>
-
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="72dp"
-                            android:background="?android:attr/selectableItemBackground"
+                        <TextView
+                            style="@style/MaterialListButtonStyle"
                             android:onClick="@{() -> fragment.onSignOutClick()}"
-                            android:orientation="vertical"
-                            android:paddingLeft="16dp"
-                            android:paddingRight="16dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical"
-                                android:text="Sign out"
-                                android:textAllCaps="true"
-                                android:textAppearance="@style/AppTextAppearanceListItemPrimary"
-                                android:textColor="@color/primary"
-                                android:textStyle="bold" />
-                        </FrameLayout>
+                            android:text="Sign out" />
                     </LinearLayout>
 
                     <View
@@ -270,44 +108,16 @@
                         android:background="?android:attr/listDivider" />
 
                     <TextView
+                        style="@style/MaterialListSectionHeaderStyle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:paddingBottom="8dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp"
-                        android:paddingTop="8dp"
-                        android:text="More"
-                        android:textAppearance="@style/AppTextAppearanceListItemSecondary"
-                        android:textColor="@color/primary"
-                        android:textStyle="bold" />
+                        android:text="More" />
 
-                    <LinearLayout
+                    <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
                         android:layout_width="match_parent"
-                        android:layout_height="72dp"
-                        android:background="?android:attr/selectableItemBackground"
+                        android:layout_height="wrap_content"
                         android:onClick="@{() -> fragment.onAboutClick()}"
-                        android:orientation="vertical"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="16dp">
-
-                        <View
-                            android:layout_width="0px"
-                            android:layout_height="0px"
-                            android:layout_weight="1" />
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="About"
-                            android:textAppearance="@style/AppTextAppearanceListItemPrimary" />
-
-                        <View
-                            android:layout_width="0px"
-                            android:layout_height="0px"
-                            android:layout_weight="1" />
-                    </LinearLayout>
+                        app:text1="About" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>

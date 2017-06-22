@@ -13,21 +13,19 @@ import info.mschmitt.battyboost.core.utils.ObjectsBackport;
 /**
  * @author Matthias Schmitt
  */
-public class ThreeLineItemView extends LinearLayout {
+public class MaterialTwoLineListItem extends LinearLayout {
     private final TextView textView1;
     private final TextView textView2;
-    private final TextView textView3;
     private String text1;
     private String text2;
-    private String text3;
 
-    public ThreeLineItemView(Context context) {
+    public MaterialTwoLineListItem(Context context) {
         this(context, null, 0);
     }
 
-    public ThreeLineItemView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public MaterialTwoLineListItem(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        inflate(context, R.layout.three_line_item_view, this);
+        inflate(context, R.layout.material_two_line_list_item, this);
         initAttributes(attrs, defStyleAttr);
         textView1 = (TextView) findViewById(R.id.textView1);
         textView1.setVisibility(text1 == null ? GONE : VISIBLE);
@@ -35,28 +33,24 @@ public class ThreeLineItemView extends LinearLayout {
         textView2 = (TextView) findViewById(R.id.textView2);
         textView2.setVisibility(text2 == null ? GONE : VISIBLE);
         textView2.setText(text2);
-        textView3 = (TextView) findViewById(R.id.textView3);
-        textView3.setVisibility(text3 == null ? GONE : VISIBLE);
-        textView3.setText(text3);
         setOrientation(LinearLayout.VERTICAL);
         int padding =
                 (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
         setPadding(padding, padding, padding, padding);
         int minHeight =
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 88, getResources().getDisplayMetrics());
+                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 72, getResources().getDisplayMetrics());
         setMinimumHeight(minHeight);
     }
 
     private void initAttributes(AttributeSet attrs, int defStyleAttr) {
         TypedArray typedArray =
-                getContext().obtainStyledAttributes(attrs, R.styleable.MultiLineItemView, defStyleAttr, 0);
-        text1 = typedArray.getString(R.styleable.MultiLineItemView_text1);
-        text2 = typedArray.getString(R.styleable.MultiLineItemView_text2);
-        text3 = typedArray.getString(R.styleable.MultiLineItemView_text3);
+                getContext().obtainStyledAttributes(attrs, R.styleable.MaterialMultiLineListItem, defStyleAttr, 0);
+        text1 = typedArray.getString(R.styleable.MaterialMultiLineListItem_text1);
+        text2 = typedArray.getString(R.styleable.MaterialMultiLineListItem_text2);
         typedArray.recycle();
     }
 
-    public ThreeLineItemView(Context context, @Nullable AttributeSet attrs) {
+    public MaterialTwoLineListItem(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
@@ -78,15 +72,5 @@ public class ThreeLineItemView extends LinearLayout {
             textView2.setVisibility(text2 == null ? GONE : VISIBLE);
         }
         textView2.setText(text2);
-    }
-
-    public void setText3(String text3) {
-        if (ObjectsBackport.equals(text3, this.text3)) {
-            return;
-        }
-        if (text3 == null || this.text3 == null) {
-            textView3.setVisibility(text3 == null ? GONE : VISIBLE);
-        }
-        textView3.setText(text3);
     }
 }

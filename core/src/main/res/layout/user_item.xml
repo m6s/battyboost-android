@@ -12,7 +12,7 @@
         <import type="java.lang.String" />
     </data>
 
-    <info.mschmitt.battyboost.core.utils.design.SingleLineItemView
+    <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
