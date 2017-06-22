@@ -75,6 +75,9 @@ public class SettingsFragment extends Fragment {
         activity.setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Settings");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeAsUpIndicator(0);
+        actionBar.setHomeActionContentDescription(0);
         binding.setFragment(this);
         return binding.getRoot();
     }
@@ -170,7 +173,7 @@ public class SettingsFragment extends Fragment {
     }
 
     public void onPhotoClick() {
-        Toast.makeText(getView().getContext(), "Not implemented", Toast.LENGTH_SHORT).show();
+        router.showPhoto(this);
     }
 
     public void onBankAccountOwnerClick() {

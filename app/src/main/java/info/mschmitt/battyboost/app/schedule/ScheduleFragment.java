@@ -110,7 +110,7 @@ public class ScheduleFragment extends Fragment {
     }
 
     private boolean onProfileMenuItemClick(MenuItem menuItem) {
-        router.showProfile(this);
+        router.showSettings(this);
         return true;
     }
 

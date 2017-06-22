@@ -110,7 +110,7 @@ public class BalanceFragment extends Fragment {
     }
 
     private boolean onProfileMenuItemClick(MenuItem menuItem) {
-        router.showProfile(this);
+        router.showSettings(this);
         return true;
     }
 

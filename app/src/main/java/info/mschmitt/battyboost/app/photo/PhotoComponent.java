@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.app.settings;
+package info.mschmitt.battyboost.app.photo;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -10,7 +10,7 @@ import info.mschmitt.battyboost.core.BattyboostClient;
 /**
  * @author Matthias Schmitt
  */
-public class SettingsComponent {
+public class PhotoComponent {
     private final Router router;
     private final FirebaseDatabase database;
     private final BattyboostClient client;
@@ -18,8 +18,8 @@ public class SettingsComponent {
     private final FirebaseStorage storage;
     private final AuthUI authUI;
 
-    public SettingsComponent(Router router, FirebaseDatabase database, BattyboostClient client, FirebaseAuth auth,
-                             FirebaseStorage storage, AuthUI authUI) {
+    public PhotoComponent(Router router, FirebaseDatabase database, BattyboostClient client, FirebaseAuth auth,
+                          FirebaseStorage storage, AuthUI authUI) {
         this.router = router;
         this.database = database;
         this.client = client;
@@ -28,11 +28,12 @@ public class SettingsComponent {
         this.authUI = authUI;
     }
 
-    public void inject(SettingsFragment fragment) {
+    public void inject(PhotoFragment fragment) {
         fragment.router = router;
         fragment.database = database;
         fragment.client = client;
         fragment.auth = auth;
+        fragment.storage = storage;
         fragment.authUI = authUI;
         fragment.injected = true;
     }

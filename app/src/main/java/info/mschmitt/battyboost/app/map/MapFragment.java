@@ -149,7 +149,7 @@ public class MapFragment extends Fragment {
     }
 
     private boolean onProfileMenuItemClick(MenuItem menuItem) {
-        router.showProfile(this);
+        router.showSettings(this);
         return true;
     }
 

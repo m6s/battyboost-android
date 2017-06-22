@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.battyboost.app.hub.HubFragment;
+import info.mschmitt.battyboost.app.photo.PhotoFragment;
 import info.mschmitt.battyboost.app.settings.SettingsFragment;
 
 import javax.inject.Inject;
@@ -76,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (childFragment instanceof SettingsFragment) {
             SettingsFragment settingsFragment = (SettingsFragment) childFragment;
             applicationComponent.plus(settingsFragment).inject(settingsFragment);
+        } else if (childFragment instanceof PhotoFragment) {
+            PhotoFragment photoFragment = (PhotoFragment) childFragment;
+            applicationComponent.plus(photoFragment).inject(photoFragment);
         }
         injectedFragments.put(childFragment, null);
     }

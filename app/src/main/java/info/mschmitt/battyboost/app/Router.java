@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.battyboost.app.balance.BalanceFragment;
 import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.map.MapFragment;
+import info.mschmitt.battyboost.app.photo.PhotoFragment;
 import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
 import info.mschmitt.battyboost.app.settings.SettingsFragment;
 
@@ -77,10 +78,18 @@ public class Router {
         fragmentTransaction.commitNow();
     }
 
-    public void showProfile(Fragment fragment) {
+    public void showSettings(Fragment fragment) {
         FragmentActivity activity = fragment.getActivity();
         activity.getSupportFragmentManager()
                 .beginTransaction().replace(R.id.contentView, SettingsFragment.newInstance())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void showPhoto(Fragment fragment) {
+        FragmentActivity activity = fragment.getActivity();
+        activity.getSupportFragmentManager().beginTransaction().replace(R.id.contentView, PhotoFragment.newInstance())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();
