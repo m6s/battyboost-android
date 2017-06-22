@@ -172,6 +172,10 @@ userPartners/
             id<partner> : true
             ...
 
+User's photos are kept in Firebase Storage:
+
+users/{userId}/photo.jpg (JPEG, square format)
+
 ## Database triggered functions
 
 All write access is through trigger functions. (See Functions.md for actual function definitions)
