@@ -1,6 +1,7 @@
 package info.mschmitt.battyboost.app.photo;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
@@ -130,8 +131,6 @@ public class PhotoFragment extends Fragment {
         inflater.inflate(R.menu.photo, menu);
         MenuItem menuItem = menu.findItem(R.id.menu_item_save);
         menuItem.setOnMenuItemClickListener(this::onSaveMenuItemClick);
-        menuItem = menu.findItem(R.id.menu_item_pick_photo);
-        menuItem.setOnMenuItemClickListener(this::onPickPhotoMenuItemClick);
     }
 
     private ActionBar getSupportActionBar() {
@@ -161,24 +160,37 @@ public class PhotoFragment extends Fragment {
         StorageReference photoRef =
                 client.usersStorageRef.child(currentUser.getUid()).child(UUID.randomUUID().toString() + ".jpg");
         RxStorageReference.Upload upload = RxStorageReference.putBytes(photoRef, bytes, METADATA_JPEG);
-        Disposable disposable = upload.events.filter(event -> event.inProgress).subscribe(event -> {
+        ProgressDialog progressDialog = new ProgressDialog(getView().getContext());
+        progressDialog.setMax(100);
+        progressDialog.setMessage("Uploading...");
+        Disposable uploadDisposable = upload.events.filter(event -> event.inProgress).subscribe(event -> {
             double progressPercent = (100.0 * event.bytesTransferred) / event.totalByteCount;
+            progressDialog.setProgress((int) progressPercent);
         }, throwable -> {});
-        upload.events.filter(event -> event.successful)
+        compositeDisposable.add(uploadDisposable);
+        Disposable disposable = upload.events.filter(event -> event.successful)
                 .flatMapCompletable(event -> RxAuth.updateProfile(auth,
                         new UserProfileChangeRequest.Builder().setPhotoUri(event.downloadUrl).build()))
                 .andThen(oldPhotoRef != null ? RxStorageReference.delete(oldPhotoRef) : Completable.complete())
-                .subscribe(() -> router.goBack(this), throwable -> {});
+                .subscribe(() -> {
+                    progressDialog.dismiss();
+                    router.goBack(this);
+                }, throwable -> progressDialog.dismiss());
         compositeDisposable.add(disposable);
+        progressDialog.setOnCancelListener(dialog -> {
+            uploadDisposable.dispose();
+            disposable.dispose();
+            upload.cancel();
+        });
+        progressDialog.show();
         upload.start();
     }
 
-    private boolean onPickPhotoMenuItemClick(MenuItem menuItem) {
+    public void onPickPhotoClick() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), RC_PICK_IMAGE);
-        return true;
     }
 
     public void goUp() {

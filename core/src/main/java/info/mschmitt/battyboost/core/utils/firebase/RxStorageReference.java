@@ -63,6 +63,10 @@ public class RxStorageReference {
         }
 
         protected abstract UploadTask startTask();
+
+        public boolean cancel() {
+            return task.cancel();
+        }
     }
 
     public static class UploadEvent {
