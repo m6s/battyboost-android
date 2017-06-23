@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.DatabaseUser;
 import info.mschmitt.battyboost.core.entities.Partner;
@@ -37,13 +39,15 @@ public class BattyboostClient {
     public final DatabaseReference posListRef;
     public final DatabaseReference batteriesRef;
     public final DatabaseReference invitesRef;
+    public final StorageReference usersStorageRef;
 
-    public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth) {
+    public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth, FirebaseStorage storage) {
         usersRef = database.getReference("users");
         partnersRef = database.getReference("partners");
         posListRef = database.getReference("pos");
         batteriesRef = database.getReference("batteries");
         invitesRef = database.getReference("invites");
+        usersStorageRef = storage.getReference().child("users");
         userCreations(auth).subscribe(this::onUserCreated); // TODO Create auth trigger function
     }
 

@@ -16,7 +16,6 @@ import android.view.*;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -24,15 +23,19 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.PhotoViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
+import info.mschmitt.battyboost.core.utils.firebase.RxStorageReference;
+import io.reactivex.Completable;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
 import java.io.*;
+import java.util.UUID;
 
 /**
  * @author Matthias Schmitt
@@ -40,6 +43,8 @@ import java.io.*;
 public class PhotoFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final int RC_PICK_IMAGE = 124;
+    private static final StorageMetadata METADATA_JPEG =
+            new StorageMetadata.Builder().setContentType("image/jpeg").build();
     public ViewModel viewModel;
     @Inject public Router router;
     @Inject public FirebaseDatabase database;
@@ -62,6 +67,7 @@ public class PhotoFragment extends Fragment {
                 && data != null
                 && data.getData() != null) {
             viewModel.photoUrl = data.getData();
+            viewModel.notifyChange();
             Glide.with(this).load(viewModel.photoUrl).into(getBinding().imageView);
         }
     }
@@ -78,12 +84,16 @@ public class PhotoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        if (viewModel.photoUrl == null) {
+            FirebaseUser currentUser = auth.getCurrentUser();
+            viewModel.photoUrl = currentUser.getPhotoUrl();
+            viewModel.notifyChange();
+        }
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setFirebaseUser(auth.getCurrentUser());
         PhotoViewBinding binding = PhotoViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
@@ -93,13 +103,7 @@ public class PhotoFragment extends Fragment {
         actionBar.setHomeAsUpIndicator(0);
         actionBar.setHomeActionContentDescription(0);
         binding.setFragment(this);
-        StorageReference photoRef =
-                storage.getReference().child("users").child(auth.getCurrentUser().getUid()).child("photo.jpg");
-        if (viewModel.photoUrl == null) {
-            Glide.with(this).using(new FirebaseImageLoader()).load(photoRef).into(binding.imageView);
-        } else {
-            Glide.with(this).load(viewModel.photoUrl).into(binding.imageView);
-        }
+        Glide.with(this).load(viewModel.photoUrl).into(binding.imageView);
         return binding.getRoot();
     }
 
@@ -130,53 +134,43 @@ public class PhotoFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onPickPhotoMenuItemClick);
     }
 
-    private void setFirebaseUser(FirebaseUser firebaseUser) {
-        viewModel.photoUrl = firebaseUser == null ? null : firebaseUser.getPhotoUrl();
-        viewModel.notifyChange();
-    }
-
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
+        if (viewModel.photoUrl == null) {
+            return false;
+        }
         try {
-            uploadPhoto(viewModel.photoUrl);
-            router.goBack(this);
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), viewModel.photoUrl);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] bytes = baos.toByteArray();
+            uploadPhoto(bytes);
         } catch (IOException e) {
             Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
         }
         return true;
     }
 
-    private void uploadPhoto(Uri dataUri) throws IOException {
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), dataUri);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] bytes = baos.toByteArray();
-        StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpeg").build();
-        StorageReference usersRef = storage.getReference().child("users");
-        StorageReference photoRef = usersRef.child(auth.getCurrentUser().getUid()).child("photo.jpg");
-        UploadTask uploadTask = photoRef.putBytes(bytes, metadata);
-        uploadTask.addOnProgressListener(
-                (snapshot) -> onPhotoUploadProgress(snapshot.getBytesTransferred(), snapshot.getTotalByteCount()))
-                .addOnCompleteListener(ignore -> onPhotoUploadComplete())
-                .addOnSuccessListener(taskSnapshot -> {
-                    // Handle successful uploads on complete
-                    Uri downloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                    UserProfileChangeRequest request =
-                            new UserProfileChangeRequest.Builder().setPhotoUri(downloadUrl).build();
-                    auth.getCurrentUser().updateProfile(request);
-                    viewModel.photoUrl = downloadUrl;
-                    viewModel.notifyChange();
-                });
-    }
-
-    private void onPhotoUploadProgress(long bytesTransferred, long totalBytesCount) {
-        double progressPercent = (100.0 * bytesTransferred) / totalBytesCount;
-    }
-
-    private void onPhotoUploadComplete() {
+    private void uploadPhoto(byte[] bytes) throws IOException {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        Uri oldPhotoUrl = currentUser.getPhotoUrl();
+        StorageReference oldPhotoRef = oldPhotoUrl == null ? null : storage.getReferenceFromUrl(oldPhotoUrl.toString());
+        StorageReference photoRef =
+                client.usersStorageRef.child(currentUser.getUid()).child(UUID.randomUUID().toString() + ".jpg");
+        RxStorageReference.Upload upload = RxStorageReference.putBytes(photoRef, bytes, METADATA_JPEG);
+        Disposable disposable = upload.events.filter(event -> event.inProgress).subscribe(event -> {
+            double progressPercent = (100.0 * event.bytesTransferred) / event.totalByteCount;
+        }, throwable -> {});
+        upload.events.filter(event -> event.successful)
+                .flatMapCompletable(event -> RxAuth.updateProfile(auth,
+                        new UserProfileChangeRequest.Builder().setPhotoUri(event.downloadUrl).build()))
+                .andThen(oldPhotoRef != null ? RxStorageReference.delete(oldPhotoRef) : Completable.complete())
+                .subscribe(() -> router.goBack(this), throwable -> {});
+        compositeDisposable.add(disposable);
+        upload.start();
     }
 
     private boolean onPickPhotoMenuItemClick(MenuItem menuItem) {
