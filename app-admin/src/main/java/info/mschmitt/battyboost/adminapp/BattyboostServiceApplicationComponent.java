@@ -3,6 +3,7 @@ package info.mschmitt.battyboost.adminapp;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.adminapp.hub.HubComponent;
 import info.mschmitt.battyboost.adminapp.hub.HubFragment;
 import info.mschmitt.battyboost.adminapp.partner.PartnerComponent;
@@ -30,12 +31,14 @@ public class BattyboostServiceApplicationComponent {
     public final AuthUI authUI;
     public final BattyboostClient client;
     public final Router router;
+    private final FirebaseStorage storage;
 
     public BattyboostServiceApplicationComponent(BattyboostServiceApplication application) {
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         authUI = AuthUI.getInstance();
-        client = new BattyboostClient(database, auth);
+        storage = FirebaseStorage.getInstance();
+        client = new BattyboostClient(database, auth, storage);
         router = new Router();
     }
 
