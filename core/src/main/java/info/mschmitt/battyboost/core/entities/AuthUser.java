@@ -35,6 +35,6 @@ public class AuthUser extends BaseObservable implements Serializable {
     private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
         ois.defaultReadObject();
         String uriString = (String) ois.readObject();
-        photoUrl = Uri.parse(uriString);
+        photoUrl = uriString == null ? null : Uri.parse(uriString);
     }
 }
