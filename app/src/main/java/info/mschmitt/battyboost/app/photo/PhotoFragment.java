@@ -208,7 +208,7 @@ public class PhotoFragment extends Fragment {
         private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
             ois.defaultReadObject();
             String uriString = (String) ois.readObject();
-            photoUrl = Uri.parse(uriString);
+            photoUrl = uriString == null ? null : Uri.parse(uriString);
         }
     }
 }
