@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
@@ -27,7 +28,7 @@ public class AdminConsole {
     private static final Function<DataSnapshot, Map<String, Battery>> BATTERY_MAP_MAPPER = dataSnapshot -> {
         Map<String, Battery> map = new HashMap<>((int) dataSnapshot.getChildrenCount());
         for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-            map.put(childSnapshot.getKey(), BattyboostClient.BATTERY_MAPPER.apply(childSnapshot));
+            map.put(childSnapshot.getKey(), BattyboostClient.BATTERY_MAPPER.apply(childSnapshot).value);
         }
         return map;
     };
@@ -41,7 +42,8 @@ public class AdminConsole {
         //noinspection ConstantConditions
         database = FirebaseDatabase.getInstance(app);
         FirebaseAuth auth = FirebaseAuth.getInstance(app);
-        client = new BattyboostClient(database, auth);
+        FirebaseStorage storage = FirebaseStorage.getInstance(app);
+        client = new BattyboostClient(database, auth, storage);
     }
 
     @Test

@@ -4,9 +4,15 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.photo.PhotoFragment;
 import info.mschmitt.battyboost.app.settings.SettingsFragment;
+import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -20,10 +26,13 @@ public class MainActivity extends AppCompatActivity {
     private final WeakHashMap<Fragment, Void> injectedFragments = new WeakHashMap<>();
     public ViewModel viewModel;
     @Inject public MainActivityComponent component;
-    @Inject public BattyboostApplicationComponent applicationComponent;
+    @Inject public FirebaseAuth auth;
+    @Inject public BattyboostClient client;
     @Inject public Router router;
+    @Inject public Store store;
     @Inject public boolean injected;
     private boolean postResumed;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +71,32 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        compositeDisposable.dispose();
         postResumed = false;
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        compositeDisposable = new CompositeDisposable();
+        Disposable disposable =
+                RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> {
+                    store.databaseUser = null;
+                    store.notifyChange();
+                });
+        compositeDisposable.add(disposable);
+        disposable = RxAuth.userChanges(auth)
+                .filter(optional -> optional.value != null)
+                .map(optional -> optional.value)
+                .switchMap(
+                        firebaseUser -> RxDatabaseReference.valueEvents(client.usersRef.child(firebaseUser.getUid())))
+                .map(BattyboostClient.DATABASE_USER_MAPPER)
+                .subscribe(optional -> {
+                    store.databaseUser = optional.value;
+                    store.notifyChange();
+                });
+        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -73,13 +106,13 @@ public class MainActivity extends AppCompatActivity {
         }
         if (childFragment instanceof HubFragment) {
             HubFragment hubFragment = (HubFragment) childFragment;
-            applicationComponent.plus(hubFragment).inject(hubFragment);
+            component.plus(hubFragment).inject(hubFragment);
         } else if (childFragment instanceof SettingsFragment) {
             SettingsFragment settingsFragment = (SettingsFragment) childFragment;
-            applicationComponent.plus(settingsFragment).inject(settingsFragment);
+            component.plus(settingsFragment).inject(settingsFragment);
         } else if (childFragment instanceof PhotoFragment) {
             PhotoFragment photoFragment = (PhotoFragment) childFragment;
-            applicationComponent.plus(photoFragment).inject(photoFragment);
+            component.plus(photoFragment).inject(photoFragment);
         }
         injectedFragments.put(childFragment, null);
     }

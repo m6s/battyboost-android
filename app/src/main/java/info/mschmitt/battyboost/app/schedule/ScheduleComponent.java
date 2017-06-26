@@ -4,6 +4,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.Router;
+import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -11,14 +12,17 @@ import info.mschmitt.battyboost.core.BattyboostClient;
  */
 public class ScheduleComponent {
     private final Router router;
+    private final Store store;
     private final FirebaseDatabase database;
     private final BattyboostClient client;
     private final FirebaseAuth auth;
     private final AuthUI authUI;
 
-    public ScheduleComponent(Router router, FirebaseDatabase database, BattyboostClient client, FirebaseAuth auth,
+    public ScheduleComponent(Router router, Store store, FirebaseDatabase database, BattyboostClient client,
+                             FirebaseAuth auth,
                              AuthUI authUI) {
         this.router = router;
+        this.store = store;
         this.database = database;
         this.client = client;
         this.auth = auth;
@@ -27,6 +31,7 @@ public class ScheduleComponent {
 
     public void inject(ScheduleFragment fragment) {
         fragment.router = router;
+        fragment.store = store;
         fragment.database = database;
         fragment.client = client;
         fragment.auth = auth;

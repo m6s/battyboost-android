@@ -1,6 +1,6 @@
 package info.mschmitt.battyboost.core;
 
-import android.util.Pair;
+import android.net.Uri;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +12,7 @@ import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.DatabaseUser;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.utils.RxOptional;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.Completable;
@@ -25,15 +26,34 @@ import java.util.UUID;
  * @author Matthias Schmitt
  */
 public class BattyboostClient {
-    public static final Function<DataSnapshot, DatabaseUser> DATABASE_USER_MAPPER =
-            dataSnapshot -> dataSnapshot.getValue(DatabaseUser.class);
-    public static final Function<DataSnapshot, Partner> PARTNER_MAPPER =
-            dataSnapshot -> dataSnapshot.getValue(Partner.class);
-    public static final Function<DataSnapshot, Pos> POS_MAPPER = dataSnapshot -> dataSnapshot.getValue(Pos.class);
-    public static final Function<DataSnapshot, Pair<String, Pos>> KEY_POS_MAPPER =
-            dataSnapshot -> Pair.create(dataSnapshot.getKey(), dataSnapshot.getValue(Pos.class));
-    public static final Function<DataSnapshot, Battery> BATTERY_MAPPER =
-            dataSnapshot -> dataSnapshot.getValue(Battery.class);
+    public static final Function<DataSnapshot, RxOptional<DatabaseUser>> DATABASE_USER_MAPPER = dataSnapshot -> {
+        DatabaseUser databaseUser = dataSnapshot.getValue(DatabaseUser.class);
+        if (databaseUser != null) {
+            databaseUser.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(databaseUser);
+    };
+    public static final Function<DataSnapshot, RxOptional<Partner>> PARTNER_MAPPER = dataSnapshot -> {
+        Partner partner = dataSnapshot.getValue(Partner.class);
+        if (partner != null) {
+            partner.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(partner);
+    };
+    public static final Function<DataSnapshot, RxOptional<Pos>> POS_MAPPER = dataSnapshot -> {
+        Pos pos = dataSnapshot.getValue(Pos.class);
+        if (pos != null) {
+            pos.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(pos);
+    };
+    public static final Function<DataSnapshot, RxOptional<Battery>> BATTERY_MAPPER = dataSnapshot -> {
+        Battery battery = dataSnapshot.getValue(Battery.class);
+        if (battery != null) {
+            battery.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(battery);
+    };
     public final DatabaseReference usersRef;
     public final DatabaseReference partnersRef;
     public final DatabaseReference posListRef;
@@ -71,6 +91,10 @@ public class BattyboostClient {
         String uid = firebaseUser.getUid();
         DatabaseReference userRef = usersRef.child(uid);
         DatabaseUser databaseUser = new DatabaseUser();
+        databaseUser.displayName = firebaseUser.getDisplayName();
+        databaseUser.email = firebaseUser.getEmail();
+        Uri photoUrl = firebaseUser.getPhotoUrl();
+        databaseUser.photoUrl = photoUrl != null ? photoUrl.toString() : null;
         userRef.setValue(databaseUser);
     }
 

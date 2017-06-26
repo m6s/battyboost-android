@@ -119,16 +119,17 @@ public class MapFragment extends Fragment {
 
     private void resumeMap(GoogleMap map) {
         Disposable disposable = RxDatabaseReference.childAddedEvents(client.posListRef)
-                .map(BattyboostClient.KEY_POS_MAPPER)
-                .subscribe(pair -> {
-                    Marker marker = map.addMarker(toMarkerOptions(pair.second));
-                    marker.setTag(pair);
-                    markerMap.put(pair.first, marker);
+                .map(BattyboostClient.POS_MAPPER)
+                .subscribe(optional -> {
+                    Pos pos = optional.value;
+                    Marker marker = map.addMarker(toMarkerOptions(pos));
+                    marker.setTag(pos);
+                    markerMap.put(pos.id, marker);
                 });
         compositeDisposable.add(disposable);
         disposable = RxDatabaseReference.childRemovedEvents(client.partnersRef)
-                .map(BattyboostClient.KEY_POS_MAPPER)
-                .subscribe(pair -> markerMap.remove(pair.first).remove());
+                .map(BattyboostClient.POS_MAPPER)
+                .subscribe(optional -> markerMap.remove(optional.value.id).remove());
         compositeDisposable.add(disposable);
         map.setOnMarkerClickListener(marker -> {
             Object tag = marker.getTag();

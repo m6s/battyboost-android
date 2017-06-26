@@ -71,7 +71,7 @@ public class UserFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        DatabaseReference reference = database.getReference("users").child(userKey);
+        DatabaseReference reference = client.usersRef.child(userKey);
         Disposable disposable = RxDatabaseReference.valueEvents(reference)
                 .filter(DataSnapshot::exists)
                 .map(dataSnapshot -> dataSnapshot.getValue(DatabaseUser.class))

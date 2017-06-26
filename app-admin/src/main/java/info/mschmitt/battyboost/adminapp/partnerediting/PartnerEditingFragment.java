@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
@@ -76,10 +75,8 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
         if (viewModel.partner == null) {
             if (partnerKey != null) {
                 DatabaseReference reference = database.getReference("partners").child(partnerKey);
-                Disposable disposable = RxDatabaseReference.valueEvents(reference)
-                        .filter(DataSnapshot::exists).map(BattyboostClient.PARTNER_MAPPER)
-                        .firstElement()
-                        .subscribe(this::setPartner);
+                Disposable disposable = RxDatabaseReference.valueEvents(reference).map(BattyboostClient.PARTNER_MAPPER)
+                        .firstElement().subscribe(optional -> setPartner(optional.value));
                 compositeDisposable.add(disposable);
             } else {
                 setPartner(new Partner());

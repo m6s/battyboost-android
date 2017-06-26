@@ -1,7 +1,6 @@
 package info.mschmitt.battyboost.app.schedule;
 
 import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -9,16 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
+import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.app.databinding.ScheduleViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.AuthUser;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -35,6 +31,7 @@ public class ScheduleFragment extends Fragment {
     @Inject public BattyboostClient client;
     @Inject public FirebaseAuth auth;
     @Inject public AuthUI authUI;
+    @Inject public Store store;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
 
@@ -55,7 +52,6 @@ public class ScheduleFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        setFirebaseUser(auth.getCurrentUser());
         ScheduleViewBinding binding = ScheduleViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
@@ -63,11 +59,6 @@ public class ScheduleFragment extends Fragment {
         actionBar.setTitle("Schedule");
         binding.setFragment(this);
         return binding.getRoot();
-    }
-
-    private void setFirebaseUser(FirebaseUser firebaseUser) {
-        viewModel.firebaseUser = firebaseUser == null ? null : new AuthUser(firebaseUser);
-        viewModel.notifyChange();
     }
 
     private ActionBar getSupportActionBar() {
@@ -78,11 +69,6 @@ public class ScheduleFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = RxAuth.userChanges(auth).subscribe(optional -> {
-            setFirebaseUser(optional.value);
-            viewModel.notifyChange();
-        });
-        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -118,12 +104,5 @@ public class ScheduleFragment extends Fragment {
         startActivityForResult(authUI.createSignInIntentBuilder().build(), RC_SIGN_IN);
     }
 
-    public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public AuthUser firebaseUser;
-
-        @Bindable
-        public boolean isSignedIn() {
-            return firebaseUser != null;
-        }
-    }
+    public static class ViewModel extends BaseObservable implements Serializable {}
 }

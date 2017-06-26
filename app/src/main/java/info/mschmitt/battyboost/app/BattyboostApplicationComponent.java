@@ -4,12 +4,6 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import info.mschmitt.battyboost.app.hub.HubComponent;
-import info.mschmitt.battyboost.app.hub.HubFragment;
-import info.mschmitt.battyboost.app.photo.PhotoComponent;
-import info.mschmitt.battyboost.app.photo.PhotoFragment;
-import info.mschmitt.battyboost.app.settings.SettingsComponent;
-import info.mschmitt.battyboost.app.settings.SettingsFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -22,6 +16,7 @@ public class BattyboostApplicationComponent {
     public final FirebaseAuth auth;
     public final FirebaseStorage storage;
     public final AuthUI authUI;
+    private final Store store;
 
     public BattyboostApplicationComponent(BattyboostApplication application) {
         database = FirebaseDatabase.getInstance();
@@ -30,6 +25,7 @@ public class BattyboostApplicationComponent {
         authUI = AuthUI.getInstance();
         client = new BattyboostClient(database, auth, storage);
         router = new Router();
+        store = new Store(client);
     }
 
     public void inject(BattyboostApplication application) {
@@ -38,18 +34,6 @@ public class BattyboostApplicationComponent {
     }
 
     public MainActivityComponent plus(MainActivity activity) {
-        return new MainActivityComponent(this);
-    }
-
-    public HubComponent plus(HubFragment fragment) {
-        return new HubComponent(router, database, client, auth, authUI);
-    }
-
-    public SettingsComponent plus(SettingsFragment fragment) {
-        return new SettingsComponent(router, database, client, auth, storage, authUI);
-    }
-
-    public PhotoComponent plus(PhotoFragment fragment) {
-        return new PhotoComponent(router, database, client, auth, storage, authUI);
+        return new MainActivityComponent(router, store, database, client, auth, storage, authUI);
     }
 }

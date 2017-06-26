@@ -152,6 +152,9 @@ users/
         balanceCents: integer
         bankAccountOwner: string
         iban: string
+        photoUrl: string;
+        email: string;
+        displayName: string;
 ```
 
 The Admin SDK allows access to the following properties via the FirebaseUser: displayName, email, photoUrl,

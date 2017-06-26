@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
@@ -73,8 +72,8 @@ public class PartnerFragment extends Fragment {
         compositeDisposable = new CompositeDisposable();
         DatabaseReference reference = database.getReference("partners").child(partnerKey);
         Disposable disposable = RxDatabaseReference.valueEvents(reference)
-                .filter(DataSnapshot::exists).map(BattyboostClient.PARTNER_MAPPER)
-                .subscribe(this::setPartner);
+                .map(BattyboostClient.PARTNER_MAPPER)
+                .subscribe(optional -> setPartner(optional.value));
         compositeDisposable.add(disposable);
     }
 
@@ -99,13 +98,13 @@ public class PartnerFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onDeleteMenuItemClick);
     }
 
-    private ActionBar getSupportActionBar() {
-        return ((AppCompatActivity) getActivity()).getSupportActionBar();
-    }
-
     private void setPartner(Partner partner) {
         viewModel.partner = partner;
         viewModel.notifyChange();
+    }
+
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     private boolean onDeleteMenuItemClick(MenuItem menuItem) {

@@ -15,7 +15,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
@@ -138,10 +137,8 @@ public class PosEditingFragment extends Fragment {
             if (posKey != null) {
                 DatabaseReference reference = database.getReference("pos").child(posKey);
                 Disposable disposable = RxDatabaseReference.valueEvents(reference)
-                        .filter(DataSnapshot::exists)
                         .map(BattyboostClient.POS_MAPPER)
-                        .firstElement()
-                        .subscribe(this::setPos);
+                        .firstElement().subscribe(optional -> setPos(optional.value));
                 compositeDisposable.add(disposable);
             } else {
                 setPos(new Pos());

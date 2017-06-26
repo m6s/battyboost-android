@@ -16,26 +16,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
-import com.firebase.ui.auth.AuthUI;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
+import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.app.databinding.PhotoViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxStorageReference;
 import io.reactivex.Completable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -48,11 +46,9 @@ public class PhotoFragment extends Fragment {
             new StorageMetadata.Builder().setContentType("image/jpeg").build();
     public ViewModel viewModel;
     @Inject public Router router;
-    @Inject public FirebaseDatabase database;
     @Inject public BattyboostClient client;
-    @Inject public FirebaseAuth auth;
+    @Inject public Store store;
     @Inject public FirebaseStorage storage;
-    @Inject public AuthUI authUI;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
 
@@ -67,9 +63,21 @@ public class PhotoFragment extends Fragment {
                 && resultCode == Activity.RESULT_OK
                 && data != null
                 && data.getData() != null) {
-            viewModel.photoUrl = data.getData();
-            viewModel.notifyChange();
-            Glide.with(this).load(viewModel.photoUrl).into(getBinding().imageView);
+            try {
+                Uri uri = data.getData();
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), uri);
+                File directory = getActivity().getCacheDir();
+                File file = File.createTempFile("photo", "jpg", directory);
+                FileOutputStream outputStream = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+                viewModel.file = file;
+                viewModel.notifyChange();
+            } catch (IOException e) {
+                Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            }
+            if (viewModel.file != null) {
+                Glide.with(this).load(viewModel.file).into(getBinding().imageView);
+            }
         }
     }
 
@@ -85,11 +93,6 @@ public class PhotoFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        if (viewModel.photoUrl == null) {
-            FirebaseUser currentUser = auth.getCurrentUser();
-            viewModel.photoUrl = currentUser.getPhotoUrl();
-            viewModel.notifyChange();
-        }
         setHasOptionsMenu(true);
     }
 
@@ -104,7 +107,11 @@ public class PhotoFragment extends Fragment {
         actionBar.setHomeAsUpIndicator(0);
         actionBar.setHomeActionContentDescription(0);
         binding.setFragment(this);
-        Glide.with(this).load(viewModel.photoUrl).into(binding.imageView);
+        if (viewModel.file != null) {
+            Glide.with(this).load(viewModel.file).into(binding.imageView);
+        } else {
+            Glide.with(this).load(store.databaseUser.photoUrl).into(binding.imageView);
+        }
         return binding.getRoot();
     }
 
@@ -138,28 +145,20 @@ public class PhotoFragment extends Fragment {
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
-        if (viewModel.photoUrl == null) {
-            return false;
-        }
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), viewModel.photoUrl);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] bytes = baos.toByteArray();
-            uploadPhoto(bytes);
-        } catch (IOException e) {
-            Toast.makeText(getContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+        if (viewModel.file == null) {
+            router.goBack(this);
+        } else {
+            uploadPhoto(viewModel.file);
         }
         return true;
     }
 
-    private void uploadPhoto(byte[] bytes) throws IOException {
-        FirebaseUser currentUser = auth.getCurrentUser();
-        Uri oldPhotoUrl = currentUser.getPhotoUrl();
-        StorageReference oldPhotoRef = oldPhotoUrl == null ? null : storage.getReferenceFromUrl(oldPhotoUrl.toString());
+    private void uploadPhoto(File file) {
+        String photoUrl = store.databaseUser.photoUrl;
+        StorageReference oldPhotoRef = photoUrl == null ? null : storage.getReferenceFromUrl(photoUrl);
         StorageReference photoRef =
-                client.usersStorageRef.child(currentUser.getUid()).child(UUID.randomUUID().toString() + ".jpg");
-        RxStorageReference.Upload upload = RxStorageReference.putBytes(photoRef, bytes, METADATA_JPEG);
+                client.usersStorageRef.child(store.databaseUser.id).child(UUID.randomUUID().toString() + ".jpg");
+        RxStorageReference.Upload upload = RxStorageReference.putFile(photoRef, Uri.fromFile(file), METADATA_JPEG);
         ProgressDialog progressDialog = new ProgressDialog(getView().getContext());
         progressDialog.setMax(100);
         progressDialog.setMessage("Uploading...");
@@ -169,8 +168,7 @@ public class PhotoFragment extends Fragment {
         }, throwable -> {});
         compositeDisposable.add(uploadDisposable);
         Disposable disposable = upload.events.filter(event -> event.successful)
-                .flatMapCompletable(event -> RxAuth.updateProfile(auth,
-                        new UserProfileChangeRequest.Builder().setPhotoUri(event.downloadUrl).build()))
+                .flatMapCompletable(event -> store.updatePhotoUrl(event.downloadUrl.toString()))
                 .andThen(oldPhotoRef != null ? RxStorageReference.delete(oldPhotoRef) : Completable.complete())
                 .subscribe(() -> {
                     progressDialog.dismiss();
@@ -198,17 +196,6 @@ public class PhotoFragment extends Fragment {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public transient Uri photoUrl;
-
-        private void writeObject(ObjectOutputStream oos) throws IOException {
-            oos.defaultWriteObject();
-            oos.writeObject(photoUrl == null ? null : photoUrl.toString());
-        }
-
-        private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
-            ois.defaultReadObject();
-            String uriString = (String) ois.readObject();
-            photoUrl = uriString == null ? null : Uri.parse(uriString);
-        }
+        @Bindable public File file;
     }
 }

@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
@@ -26,7 +27,7 @@ public class BattyboostClientTest {
     private static final Function<DataSnapshot, List<Partner>> PARTNER_LIST_MAPPER = dataSnapshot -> {
         ArrayList<Partner> list = new ArrayList<>();
         for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-            list.add(BattyboostClient.PARTNER_MAPPER.apply(childSnapshot));
+            list.add(BattyboostClient.PARTNER_MAPPER.apply(childSnapshot).value);
         }
         return list;
     };
@@ -40,7 +41,8 @@ public class BattyboostClientTest {
         //noinspection ConstantConditions
         database = FirebaseDatabase.getInstance(app);
         FirebaseAuth auth = FirebaseAuth.getInstance(app);
-        client = new BattyboostClient(database, auth);
+        FirebaseStorage storage = FirebaseStorage.getInstance(app);
+        client = new BattyboostClient(database, auth, storage);
     }
 //    @Test
 //    public void queryAtLocation() throws InterruptedException {
