@@ -49,7 +49,7 @@ public class MainActivityComponent {
     }
 
     public SettingsComponent plus(SettingsFragment fragment) {
-        return new SettingsComponent(router, store, authUI);
+        return new SettingsComponent(router, store, client, authUI);
     }
 
     public PhotoComponent plus(PhotoFragment fragment) {

@@ -25,7 +25,7 @@ public class BattyboostApplicationComponent {
         authUI = AuthUI.getInstance();
         client = new BattyboostClient(database, auth, storage);
         router = new Router();
-        store = new Store(client);
+        store = new Store();
     }
 
     public void inject(BattyboostApplication application) {

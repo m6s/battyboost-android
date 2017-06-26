@@ -134,6 +134,31 @@ public class BattyboostClient {
         return RxDatabaseReference.setValue(userRef, user);
     }
 
+    public Completable updateUserEmail(String userId, String email) {
+        DatabaseReference emailRef = usersRef.child(userId).child("email");
+        return RxDatabaseReference.setValue(emailRef, email);
+    }
+
+    public Completable updateUserDisplayName(String userId, String displayName) {
+        DatabaseReference displayNameRef = usersRef.child(userId).child("displayName");
+        return RxDatabaseReference.setValue(displayNameRef, displayName);
+    }
+
+    public Completable updateUserIban(String userId, String iban) {
+        DatabaseReference ibanRef = usersRef.child(userId).child("iban");
+        return RxDatabaseReference.setValue(ibanRef, iban);
+    }
+
+    public Completable updateUserBankAccountOwner(String userId, String owner) {
+        DatabaseReference ownerRef = usersRef.child(userId).child("bankAccountOwner");
+        return RxDatabaseReference.setValue(ownerRef, owner);
+    }
+
+    public Completable updateUserPhotoUrl(String userId, String url) {
+        DatabaseReference urlRef = usersRef.child(userId).child("photoUrl");
+        return RxDatabaseReference.setValue(urlRef, url);
+    }
+
     public Single<String> addBattery(UUID uuid, Battery battery) {
         DatabaseReference batteryRef = batteriesRef.child(uuid.toString());
         return RxDatabaseReference.setValue(batteryRef, battery).toSingleDefault(batteryRef.getKey());

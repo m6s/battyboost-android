@@ -167,8 +167,12 @@ public class PhotoFragment extends Fragment {
             progressDialog.setProgress((int) progressPercent);
         }, throwable -> {});
         compositeDisposable.add(uploadDisposable);
-        Disposable disposable = upload.events.filter(event -> event.successful)
-                .flatMapCompletable(event -> store.updatePhotoUrl(event.downloadUrl.toString()))
+        Disposable disposable = upload.events.filter(event -> event.successful).flatMapCompletable(event -> {
+            String url = event.downloadUrl.toString();
+            store.databaseUser.photoUrl = url;
+            store.databaseUser.notifyChange();
+            return client.updateUserPhotoUrl(store.databaseUser.id, url);
+        })
                 .andThen(oldPhotoRef != null ? RxStorageReference.delete(oldPhotoRef) : Completable.complete())
                 .subscribe(() -> {
                     progressDialog.dismiss();

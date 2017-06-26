@@ -18,6 +18,7 @@ import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.app.databinding.SettingsViewBinding;
 import info.mschmitt.battyboost.app.databinding.TextInputDialogBinding;
+import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuthUI;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -36,6 +37,7 @@ public class SettingsFragment extends Fragment {
     @Inject public Store store;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
+    @Inject public BattyboostClient client;
     private CompositeDisposable compositeDisposable;
 
     public static Fragment newInstance() {
@@ -106,11 +108,12 @@ public class SettingsFragment extends Fragment {
         if (store.databaseUser.displayName != null) {
             binding.editText.append(store.databaseUser.displayName);
         }
-        new AlertDialog.Builder(context).setView(binding.getRoot())
-                .setPositiveButton("Save",
-                        (dialog, which) -> store.updateDisplayName(binding.editText.getText().toString()).subscribe())
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
-                .show();
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            String displayName = binding.editText.getText().toString();
+            client.updateUserDisplayName(store.databaseUser.id, displayName).subscribe();
+            store.databaseUser.displayName = displayName;
+            store.databaseUser.notifyChange();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
         // TODO Show saving indicator
     }
 
@@ -122,11 +125,12 @@ public class SettingsFragment extends Fragment {
         if (store.databaseUser.email != null) {
             binding.editText.append(store.databaseUser.email);
         }
-        new AlertDialog.Builder(context).setView(binding.getRoot())
-                .setPositiveButton("Save",
-                        (dialog, which) -> store.updateEmail(binding.editText.getText().toString()).subscribe())
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
-                .show();
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            String email = binding.editText.getText().toString();
+            client.updateUserEmail(store.databaseUser.id, email).subscribe();
+            store.databaseUser.email = email;
+            store.databaseUser.notifyChange();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void onPhotoClick() {
@@ -139,12 +143,12 @@ public class SettingsFragment extends Fragment {
         binding.textInputLayout.setHint("Bank account owner");
         binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
         binding.editText.append(store.databaseUser.bankAccountOwner != null ? store.databaseUser.bankAccountOwner : "");
-        new AlertDialog.Builder(context).setView(binding.getRoot())
-                .setPositiveButton("Save",
-                        (dialog, which) -> store.updateBankAccountOwner(binding.editText.getText().toString())
-                                .subscribe())
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
-                .show();
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            String owner = binding.editText.getText().toString();
+            client.updateUserBankAccountOwner(store.databaseUser.id, owner).subscribe();
+            store.databaseUser.bankAccountOwner = owner;
+            store.databaseUser.notifyChange();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void onIbanClick() {
@@ -153,11 +157,12 @@ public class SettingsFragment extends Fragment {
         binding.textInputLayout.setHint("IBAN");
         binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         binding.editText.append(store.databaseUser.iban != null ? store.databaseUser.iban : "");
-        new AlertDialog.Builder(context).setView(binding.getRoot())
-                .setPositiveButton("Save",
-                        (dialog, which) -> store.updateIban(binding.editText.getText().toString()).subscribe())
-                .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
-                .show();
+        new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
+            String iban = binding.editText.getText().toString();
+            client.updateUserIban(store.databaseUser.id, iban).subscribe();
+            store.databaseUser.iban = iban;
+            store.databaseUser.notifyChange();
+        }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
     public void onAboutClick() {

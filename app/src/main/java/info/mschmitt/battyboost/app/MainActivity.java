@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         Disposable disposable =
                 RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> {
                     store.databaseUser = null;
+                    store.initialized = true;
                     store.notifyChange();
                 });
         compositeDisposable.add(disposable);
@@ -94,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                 .map(BattyboostClient.DATABASE_USER_MAPPER)
                 .subscribe(optional -> {
                     store.databaseUser = optional.value;
+                    store.initialized = true;
                     store.notifyChange();
                 });
         compositeDisposable.add(disposable);
