@@ -1,0 +1,109 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="info.mschmitt.battyboost.partnerapp.stepper.StepperFragment" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/primary"
+                    android:theme="@style/AppThemeToolbar"
+                    app:navigationOnClickListener="@{() -> fragment.goUp()}" />
+            </android.support.design.widget.AppBarLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Stepper" />
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="0px"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@color/darkerWhite"
+                    android:orientation="horizontal">
+
+                    <Button
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="0px"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:drawableLeft="@drawable/ic_chevron_left_black_24dp"
+                        android:gravity="left|center_vertical"
+                        android:onClick="@{() -> fragment.onPrevClick()}"
+                        android:text="Back"
+                        app:visibleInvisible="@{fragment.viewModel.step &gt; 0}" />
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_weight="1"
+                        android:max="@{fragment.viewModel.stepCount}"
+                        android:progress="@{fragment.viewModel.step}" />
+
+                    <FrameLayout
+                        android:layout_width="0px"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <Button
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:drawableRight="@drawable/ic_chevron_right_black_24dp"
+                            android:gravity="right|center_vertical"
+                            android:onClick="@{() -> fragment.onNextClick()}"
+                            android:text="Next"
+                            app:visibleInvisible="@{fragment.viewModel.step &lt; fragment.viewModel.stepCount - 1}" />
+
+                        <Button
+                            style="?android:attr/borderlessButtonStyle"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="right|center_vertical"
+                            android:onClick="@{() -> fragment.onSaveClick()}"
+                            android:paddingRight="24dp"
+                            android:text="Save"
+                            app:visibleInvisible="@{fragment.viewModel.step == fragment.viewModel.stepCount - 1}" />
+                    </FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

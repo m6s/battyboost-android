@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.partnerapp.cart;
+package info.mschmitt.battyboost.partnerapp.stepper;
 
 import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
@@ -8,20 +8,20 @@ import info.mschmitt.battyboost.partnerapp.Router;
 /**
  * @author Matthias Schmitt
  */
-public class CartComponent {
+public class StepperComponent {
     private final Router router;
     private final Cache cache;
     private final BattyboostClient client;
     private final AuthUI authUI;
 
-    public CartComponent(Router router, Cache cache, BattyboostClient client, AuthUI authUI) {
+    public StepperComponent(Router router, Cache cache, BattyboostClient client, AuthUI authUI) {
         this.router = router;
         this.cache = cache;
         this.client = client;
         this.authUI = authUI;
     }
 
-    public void inject(CartFragment fragment) {
+    public void inject(StepperFragment fragment) {
         fragment.router = router;
         fragment.cache = cache;
         fragment.client = client;

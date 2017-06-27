@@ -1,6 +1,7 @@
-package info.mschmitt.battyboost.partnerapp.cart;
+package info.mschmitt.battyboost.partnerapp.stepper;
 
 import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -12,7 +13,7 @@ import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
-import info.mschmitt.battyboost.partnerapp.databinding.CartViewBinding;
+import info.mschmitt.battyboost.partnerapp.databinding.StepperViewBinding;
 import io.reactivex.disposables.CompositeDisposable;
 
 import javax.inject.Inject;
@@ -21,7 +22,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class CartFragment extends Fragment {
+public class StepperFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     public ViewModel viewModel;
     @Inject public Router router;
@@ -32,7 +33,7 @@ public class CartFragment extends Fragment {
     private CompositeDisposable compositeDisposable;
 
     public static Fragment newInstance() {
-        return new CartFragment();
+        return new StepperFragment();
     }
 
     @Override
@@ -47,11 +48,11 @@ public class CartFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        CartViewBinding binding = CartViewBinding.inflate(inflater, container, false);
+        StepperViewBinding binding = StepperViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Cart");
+        actionBar.setTitle("Stepper");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(0);
         actionBar.setHomeActionContentDescription(0);
@@ -81,9 +82,21 @@ public class CartFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
+    public void onPrevClick() {
+    }
+
+    public void onNextClick() {
+    }
+
+    public void onSaveClick() {
+    }
+
     public void goUp() {
         router.goUp(this);
     }
 
-    public static class ViewModel extends BaseObservable implements Serializable {}
+    public static class ViewModel extends BaseObservable implements Serializable {
+        @Bindable public int stepCount = 3;
+        @Bindable public int step;
+    }
 }

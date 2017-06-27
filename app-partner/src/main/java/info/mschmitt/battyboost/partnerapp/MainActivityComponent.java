@@ -4,8 +4,8 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.partnerapp.cart.CartComponent;
-import info.mschmitt.battyboost.partnerapp.cart.CartFragment;
+import info.mschmitt.battyboost.partnerapp.stepper.StepperComponent;
+import info.mschmitt.battyboost.partnerapp.stepper.StepperFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListComponent;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 
@@ -43,7 +43,7 @@ public class MainActivityComponent {
         return new TransactionListComponent(router, cache, database, client, authUI);
     }
 
-    public CartComponent plus(CartFragment fragment) {
-        return new CartComponent(router, cache, client, authUI);
+    public StepperComponent plus(StepperFragment fragment) {
+        return new StepperComponent(router, cache, client, authUI);
     }
 }
