@@ -1,8 +1,8 @@
 package info.mschmitt.battyboost.app.settings;
 
 import com.firebase.ui.auth.AuthUI;
+import info.mschmitt.battyboost.app.Cache;
 import info.mschmitt.battyboost.app.Router;
-import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -10,20 +10,20 @@ import info.mschmitt.battyboost.core.BattyboostClient;
  */
 public class SettingsComponent {
     private final Router router;
-    private final Store store;
+    private final Cache cache;
     private final BattyboostClient client;
     private final AuthUI authUI;
 
-    public SettingsComponent(Router router, Store store, BattyboostClient client, AuthUI authUI) {
+    public SettingsComponent(Router router, Cache cache, BattyboostClient client, AuthUI authUI) {
         this.router = router;
-        this.store = store;
+        this.cache = cache;
         this.client = client;
         this.authUI = authUI;
     }
 
     public void inject(SettingsFragment fragment) {
         fragment.router = router;
-        fragment.store = store;
+        fragment.cache = cache;
         fragment.client = client;
         fragment.authUI = authUI;
         fragment.injected = true;

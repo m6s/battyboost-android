@@ -16,18 +16,19 @@ import info.mschmitt.battyboost.core.BattyboostClient;
  * @author Matthias Schmitt
  */
 public class MainActivityComponent {
+    private final MainActivity activity;
     private final Router router;
-    private final Store store;
     private final FirebaseDatabase database;
     private final BattyboostClient client;
     private final FirebaseAuth auth;
     private final FirebaseStorage storage;
     private final AuthUI authUI;
 
-    public MainActivityComponent(Router router, Store store, FirebaseDatabase database, BattyboostClient client,
+    public MainActivityComponent(MainActivity activity, Router router, FirebaseDatabase database,
+                                 BattyboostClient client,
                                  FirebaseAuth auth, FirebaseStorage storage, AuthUI authUI) {
+        this.activity = activity;
         this.router = router;
-        this.store = store;
         this.database = database;
         this.client = client;
         this.auth = auth;
@@ -40,19 +41,18 @@ public class MainActivityComponent {
         activity.auth = auth;
         activity.client = client;
         activity.router = router;
-        activity.store = store;
         activity.injected = true;
     }
 
     public HubComponent plus(HubFragment fragment) {
-        return new HubComponent(router, store, database, client, auth, authUI);
+        return new HubComponent(router, activity.cache, database, client, auth, authUI);
     }
 
     public SettingsComponent plus(SettingsFragment fragment) {
-        return new SettingsComponent(router, store, client, authUI);
+        return new SettingsComponent(router, activity.cache, client, authUI);
     }
 
     public PhotoComponent plus(PhotoFragment fragment) {
-        return new PhotoComponent(router, store, client, storage);
+        return new PhotoComponent(router, activity.cache, client, storage);
     }
 }

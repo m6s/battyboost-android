@@ -34,13 +34,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         BattyboostServiceApplication application = (BattyboostServiceApplication) getApplication();
         application.onAttachActivity(this);
+        if (!injected) {
+            throw new IllegalStateException("Not injected");
+        }
+        onPreCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         DataBindingUtil.setContentView(this, R.layout.main_activity);
         if (savedInstanceState == null) {
             router.showHub(this);
         }
+    }
+
+    private void onPreCreate(Bundle savedInstanceState) {
+        viewModel = savedInstanceState == null ? new ViewModel()
+                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
     }
 
     @Override

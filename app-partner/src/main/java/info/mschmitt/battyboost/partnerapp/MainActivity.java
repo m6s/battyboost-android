@@ -1,65 +1,86 @@
 package info.mschmitt.battyboost.partnerapp;
 
-import android.databinding.Bindable;
 import android.databinding.DataBindingUtil;
-import android.databinding.Observable;
-import android.databinding.PropertyChangeRegistry;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
-import info.mschmitt.battyboost.partnerapp.databinding.MainActivityBinding;
+import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.WeakHashMap;
 
 /**
  * @author Matthias Schmitt
  */
-public class MainActivity extends AppCompatActivity implements Observable {
+public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
-    private final PropertyChangeRegistry propertyChangeRegistry = new PropertyChangeRegistry();
-    @Bindable public String text;
+    private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
+    private final WeakHashMap<Fragment, Void> injectedFragments = new WeakHashMap<>();
+    @Inject public MainActivityComponent component;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public FirebaseAuth auth;
-    @Inject public AuthUI authUI;
+    @Inject public Router router;
+    @Inject public Cache cache;
     @Inject public boolean injected;
+    private ViewModel viewModel;
     private CompositeDisposable compositeDisposable;
-
-    public void onScanClick() {
-    }
-
-    @Override
-    public void addOnPropertyChangedCallback(OnPropertyChangedCallback onPropertyChangedCallback) {
-        propertyChangeRegistry.add(onPropertyChangedCallback);
-    }
-
-    @Override
-    public void removeOnPropertyChangedCallback(OnPropertyChangedCallback onPropertyChangedCallback) {
-        propertyChangeRegistry.remove(onPropertyChangedCallback);
-    }
+    private boolean postResumed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         BattyboostPartnerApplication application = (BattyboostPartnerApplication) getApplication();
         application.onAttachActivity(this);
+        if (!injected) {
+            throw new IllegalStateException("Not injected");
+        }
+        onPreCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
-        MainActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.main_activity);
-        binding.setActivity(this);
+        DataBindingUtil.setContentView(this, R.layout.main_activity);
+        if (savedInstanceState == null) {
+            router.showTransactionList(this);
+        }
+    }
+
+    private void onPreCreate(Bundle savedInstanceState) {
+        viewModel = savedInstanceState == null ? new ViewModel()
+                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        postResumed = true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(STATE_VIEW_MODEL, viewModel);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!postResumed) {
+            // https://www.reddit.com/r/androiddev/comments/4d2aje/ever_launched_a_fragmenttransaction_in_response/
+            // https://developer.android.com/topic/libraries/support-library/revisions.html#26-0-0-beta1
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
     protected void onPause() {
         compositeDisposable.dispose();
+        postResumed = false;
         super.onPause();
     }
 
@@ -67,43 +88,38 @@ public class MainActivity extends AppCompatActivity implements Observable {
     protected void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = RxAuth.userChanges(auth).subscribe(optional -> {
-            FirebaseUser user = optional.value;
-            text = user == null ? "Please log in" : "Hello " + user.getDisplayName() + "!";
-            propertyChangeRegistry.notifyChange(MainActivity.this, BR.text);
-        });
+        Disposable disposable =
+                RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> {
+                    cache.databaseUser = null;
+                    cache.initialized = true;
+                    cache.notifyChange();
+                });
+        compositeDisposable.add(disposable);
+        disposable = RxAuth.userChanges(auth)
+                .filter(optional -> optional.value != null)
+                .map(optional -> optional.value)
+                .switchMap(
+                        firebaseUser -> RxDatabaseReference.valueEvents(client.usersRef.child(firebaseUser.getUid())))
+                .map(BattyboostClient.DATABASE_USER_MAPPER)
+                .subscribe(optional -> {
+                    cache.databaseUser = optional.value;
+                    cache.initialized = true;
+                    cache.notifyChange();
+                });
         compositeDisposable.add(disposable);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem signInOutMenuItem = menu.findItem(R.id.menu_item_sign_in_out);
-        if (auth.getCurrentUser() != null) {
-            signInOutMenuItem.setTitle("Sign out");
-            signInOutMenuItem.setOnMenuItemClickListener(this::onSignOutMenuItemClick);
-        } else {
-            signInOutMenuItem.setTitle("Sign in");
-            signInOutMenuItem.setOnMenuItemClickListener(this::onSignInMenuItemClick);
+    public void onAttachFragment(Fragment childFragment) {
+        if (injectedFragments.containsKey(childFragment)) {
+            return;
         }
-        return super.onPrepareOptionsMenu(menu);
+        if (childFragment instanceof TransactionListFragment) {
+            TransactionListFragment transactionListFragment = (TransactionListFragment) childFragment;
+            component.plus(transactionListFragment).inject(transactionListFragment);
+        }
+        injectedFragments.put(childFragment, null);
     }
 
-    private boolean onSignInMenuItemClick(MenuItem menuItem) {
-        startActivityForResult(authUI.createSignInIntentBuilder().build(), RC_SIGN_IN);
-        return true;
-    }
-
-    private boolean onSignOutMenuItemClick(MenuItem menuItem) {
-        authUI.signOut(this).addOnSuccessListener(ignore -> {
-//            if (getView() != null) {Snackbar.make(getView(), "Signed out", Snackbar.LENGTH_SHORT).show();}
-        });
-        return true;
-    }
+    private static class ViewModel implements Serializable {}
 }

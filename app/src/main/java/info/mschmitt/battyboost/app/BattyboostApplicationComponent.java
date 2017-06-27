@@ -16,7 +16,6 @@ public class BattyboostApplicationComponent {
     public final FirebaseAuth auth;
     public final FirebaseStorage storage;
     public final AuthUI authUI;
-    private final Store store;
 
     public BattyboostApplicationComponent(BattyboostApplication application) {
         database = FirebaseDatabase.getInstance();
@@ -25,7 +24,6 @@ public class BattyboostApplicationComponent {
         authUI = AuthUI.getInstance();
         client = new BattyboostClient(database, auth, storage);
         router = new Router();
-        store = new Store();
     }
 
     public void inject(BattyboostApplication application) {
@@ -34,6 +32,6 @@ public class BattyboostApplicationComponent {
     }
 
     public MainActivityComponent plus(MainActivity activity) {
-        return new MainActivityComponent(router, store, database, client, auth, storage, authUI);
+        return new MainActivityComponent(activity, router, database, client, auth, storage, authUI);
     }
 }

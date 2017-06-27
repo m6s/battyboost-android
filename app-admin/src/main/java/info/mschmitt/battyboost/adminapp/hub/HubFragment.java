@@ -66,10 +66,14 @@ public class HubFragment extends Fragment implements DrawerFragment.DrawerListen
         if (!injected) {
             throw new IllegalStateException("Not injected");
         }
+        onPreCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    private void onPreCreate(Bundle savedInstanceState) {
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        setHasOptionsMenu(true);
     }
 
     @Override

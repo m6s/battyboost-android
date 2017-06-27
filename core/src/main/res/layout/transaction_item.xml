@@ -1,0 +1,19 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="RtlHardcoded,HardcodedText">
+
+    <data>
+
+        <variable
+            name="holder"
+            type="info.mschmitt.battyboost.core.ui.TransactionRecyclerAdapter.TransactionHolder" />
+    </data>
+
+    <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="@{() -> holder.onClick()}"
+        app:text1="@{holder.key}" />
+</layout>

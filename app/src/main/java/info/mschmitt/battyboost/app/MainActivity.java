@@ -1,5 +1,6 @@
 package info.mschmitt.battyboost.app;
 
+import android.databinding.BaseObservable;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,13 +24,14 @@ import java.util.WeakHashMap;
  */
 public class MainActivity extends AppCompatActivity {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
+    private static final String STATE_CACHE = "CACHE";
     private final WeakHashMap<Fragment, Void> injectedFragments = new WeakHashMap<>();
     public ViewModel viewModel;
+    public Cache cache;
     @Inject public MainActivityComponent component;
     @Inject public FirebaseAuth auth;
     @Inject public BattyboostClient client;
     @Inject public Router router;
-    @Inject public Store store;
     @Inject public boolean injected;
     private boolean postResumed;
     private CompositeDisposable compositeDisposable;
@@ -38,13 +40,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         BattyboostApplication application = (BattyboostApplication) getApplication();
         application.onAttachActivity(this);
+        if (!injected) {
+            throw new IllegalStateException("Not injected");
+        }
+        onPreCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         DataBindingUtil.setContentView(this, R.layout.main_activity);
         if (savedInstanceState == null) {
             router.showHub(this);
         }
+    }
+
+    private void onPreCreate(Bundle savedInstanceState) {
+        viewModel = savedInstanceState == null ? new ViewModel()
+                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        cache = savedInstanceState == null ? new Cache() : (Cache) savedInstanceState.getSerializable(STATE_CACHE);
     }
 
     @Override
@@ -57,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
+        outState.putSerializable(STATE_CACHE, cache);
     }
 
     @Override
@@ -82,9 +93,9 @@ public class MainActivity extends AppCompatActivity {
         compositeDisposable = new CompositeDisposable();
         Disposable disposable =
                 RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> {
-                    store.databaseUser = null;
-                    store.initialized = true;
-                    store.notifyChange();
+                    cache.databaseUser = null;
+                    cache.initialized = true;
+                    cache.notifyChange();
                 });
         compositeDisposable.add(disposable);
         disposable = RxAuth.userChanges(auth)
@@ -94,9 +105,9 @@ public class MainActivity extends AppCompatActivity {
                         firebaseUser -> RxDatabaseReference.valueEvents(client.usersRef.child(firebaseUser.getUid())))
                 .map(BattyboostClient.DATABASE_USER_MAPPER)
                 .subscribe(optional -> {
-                    store.databaseUser = optional.value;
-                    store.initialized = true;
-                    store.notifyChange();
+                    cache.databaseUser = optional.value;
+                    cache.initialized = true;
+                    cache.notifyChange();
                 });
         compositeDisposable.add(disposable);
     }
@@ -119,5 +130,5 @@ public class MainActivity extends AppCompatActivity {
         injectedFragments.put(childFragment, null);
     }
 
-    private static class ViewModel implements Serializable {}
+    private static class ViewModel extends BaseObservable implements Serializable {}
 }

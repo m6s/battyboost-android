@@ -19,9 +19,9 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
+import info.mschmitt.battyboost.app.Cache;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
-import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.app.databinding.PhotoViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxStorageReference;
@@ -47,7 +47,7 @@ public class PhotoFragment extends Fragment {
     public ViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
-    @Inject public Store store;
+    @Inject public Cache cache;
     @Inject public FirebaseStorage storage;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
@@ -110,7 +110,7 @@ public class PhotoFragment extends Fragment {
         if (viewModel.file != null) {
             Glide.with(this).load(viewModel.file).into(binding.imageView);
         } else {
-            Glide.with(this).load(store.databaseUser.photoUrl).into(binding.imageView);
+            Glide.with(this).load(cache.databaseUser.photoUrl).into(binding.imageView);
         }
         return binding.getRoot();
     }
@@ -154,10 +154,10 @@ public class PhotoFragment extends Fragment {
     }
 
     private void uploadPhoto(File file) {
-        String photoUrl = store.databaseUser.photoUrl;
+        String photoUrl = cache.databaseUser.photoUrl;
         StorageReference oldPhotoRef = photoUrl == null ? null : storage.getReferenceFromUrl(photoUrl);
         StorageReference photoRef =
-                client.usersStorageRef.child(store.databaseUser.id).child(UUID.randomUUID().toString() + ".jpg");
+                client.usersStorageRef.child(cache.databaseUser.id).child(UUID.randomUUID().toString() + ".jpg");
         RxStorageReference.Upload upload = RxStorageReference.putFile(photoRef, Uri.fromFile(file), METADATA_JPEG);
         ProgressDialog progressDialog = new ProgressDialog(getView().getContext());
         progressDialog.setMax(100);
@@ -169,9 +169,9 @@ public class PhotoFragment extends Fragment {
         compositeDisposable.add(uploadDisposable);
         Disposable disposable = upload.events.filter(event -> event.successful).flatMapCompletable(event -> {
             String url = event.downloadUrl.toString();
-            store.databaseUser.photoUrl = url;
-            store.databaseUser.notifyChange();
-            return client.updateUserPhotoUrl(store.databaseUser.id, url);
+            cache.databaseUser.photoUrl = url;
+            cache.databaseUser.notifyChange();
+            return client.updateUserPhotoUrl(cache.databaseUser.id, url);
         })
                 .andThen(oldPhotoRef != null ? RxStorageReference.delete(oldPhotoRef) : Completable.complete())
                 .subscribe(() -> {

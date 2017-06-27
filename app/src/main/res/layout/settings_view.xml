@@ -54,27 +54,27 @@
                         style="@style/MaterialListButtonStyle"
                         android:onClick="@{() -> fragment.onSignInClick()}"
                         android:text="Sign in"
-                        app:visibleGone="@{fragment.store.databaseUser == null}" />
+                        app:visibleGone="@{fragment.cache.databaseUser == null}" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        app:visibleGone="@{fragment.store.databaseUser != null}">
+                        app:visibleGone="@{fragment.cache.databaseUser != null}">
 
                         <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onDisplayNameClick()}"
                             app:text1="Display name"
-                            app:text2="@{fragment.store.databaseUser.displayName}" />
+                            app:text2="@{fragment.cache.databaseUser.displayName}" />
 
                         <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onEmailClick()}"
                             app:text1="Email"
-                            app:text2="@{fragment.store.databaseUser.email}" />
+                            app:text2="@{fragment.cache.databaseUser.email}" />
 
                         <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
                             android:layout_width="match_parent"
@@ -87,14 +87,14 @@
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onBankAccountOwnerClick()}"
                             app:text1="Bank account owner"
-                            app:text2="@{fragment.store.databaseUser.bankAccountOwner}" />
+                            app:text2="@{fragment.cache.databaseUser.bankAccountOwner}" />
 
                         <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onIbanClick()}"
                             app:text1="IBAN"
-                            app:text2="@{fragment.store.databaseUser.iban}" />
+                            app:text2="@{fragment.cache.databaseUser.iban}" />
 
                         <TextView
                             style="@style/MaterialListButtonStyle"

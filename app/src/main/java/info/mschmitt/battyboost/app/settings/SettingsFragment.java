@@ -14,8 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
+import info.mschmitt.battyboost.app.Cache;
 import info.mschmitt.battyboost.app.Router;
-import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.app.databinding.SettingsViewBinding;
 import info.mschmitt.battyboost.app.databinding.TextInputDialogBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
@@ -34,7 +34,7 @@ public class SettingsFragment extends Fragment {
     private static final int RC_SIGN_IN = 123;
     public ViewModel viewModel;
     @Inject public Router router;
-    @Inject public Store store;
+    @Inject public Cache cache;
     @Inject public AuthUI authUI;
     @Inject public boolean injected;
     @Inject public BattyboostClient client;
@@ -105,14 +105,14 @@ public class SettingsFragment extends Fragment {
         TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
         binding.textInputLayout.setHint("Display name");
         binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        if (store.databaseUser.displayName != null) {
-            binding.editText.append(store.databaseUser.displayName);
+        if (cache.databaseUser.displayName != null) {
+            binding.editText.append(cache.databaseUser.displayName);
         }
         new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
             String displayName = binding.editText.getText().toString();
-            client.updateUserDisplayName(store.databaseUser.id, displayName).subscribe();
-            store.databaseUser.displayName = displayName;
-            store.databaseUser.notifyChange();
+            client.updateUserDisplayName(cache.databaseUser.id, displayName).subscribe();
+            cache.databaseUser.displayName = displayName;
+            cache.databaseUser.notifyChange();
         }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
         // TODO Show saving indicator
     }
@@ -122,14 +122,14 @@ public class SettingsFragment extends Fragment {
         TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
         binding.textInputLayout.setHint("Email");
         binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        if (store.databaseUser.email != null) {
-            binding.editText.append(store.databaseUser.email);
+        if (cache.databaseUser.email != null) {
+            binding.editText.append(cache.databaseUser.email);
         }
         new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
             String email = binding.editText.getText().toString();
-            client.updateUserEmail(store.databaseUser.id, email).subscribe();
-            store.databaseUser.email = email;
-            store.databaseUser.notifyChange();
+            client.updateUserEmail(cache.databaseUser.id, email).subscribe();
+            cache.databaseUser.email = email;
+            cache.databaseUser.notifyChange();
         }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
@@ -142,12 +142,12 @@ public class SettingsFragment extends Fragment {
         TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
         binding.textInputLayout.setHint("Bank account owner");
         binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PERSON_NAME);
-        binding.editText.append(store.databaseUser.bankAccountOwner != null ? store.databaseUser.bankAccountOwner : "");
+        binding.editText.append(cache.databaseUser.bankAccountOwner != null ? cache.databaseUser.bankAccountOwner : "");
         new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
             String owner = binding.editText.getText().toString();
-            client.updateUserBankAccountOwner(store.databaseUser.id, owner).subscribe();
-            store.databaseUser.bankAccountOwner = owner;
-            store.databaseUser.notifyChange();
+            client.updateUserBankAccountOwner(cache.databaseUser.id, owner).subscribe();
+            cache.databaseUser.bankAccountOwner = owner;
+            cache.databaseUser.notifyChange();
         }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 
@@ -156,12 +156,12 @@ public class SettingsFragment extends Fragment {
         TextInputDialogBinding binding = TextInputDialogBinding.inflate(LayoutInflater.from(context));
         binding.textInputLayout.setHint("IBAN");
         binding.editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        binding.editText.append(store.databaseUser.iban != null ? store.databaseUser.iban : "");
+        binding.editText.append(cache.databaseUser.iban != null ? cache.databaseUser.iban : "");
         new AlertDialog.Builder(context).setView(binding.getRoot()).setPositiveButton("Save", (dialog, which) -> {
             String iban = binding.editText.getText().toString();
-            client.updateUserIban(store.databaseUser.id, iban).subscribe();
-            store.databaseUser.iban = iban;
-            store.databaseUser.notifyChange();
+            client.updateUserIban(cache.databaseUser.id, iban).subscribe();
+            cache.databaseUser.iban = iban;
+            cache.databaseUser.notifyChange();
         }).setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel()).show();
     }
 

@@ -66,7 +66,11 @@ public class HubFragment extends Fragment {
         if (!injected) {
             throw new IllegalStateException("Not injected");
         }
+        onPreCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
+    }
+
+    private void onPreCreate(Bundle savedInstanceState) {
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
     }

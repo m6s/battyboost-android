@@ -9,9 +9,9 @@ import android.view.*;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+import info.mschmitt.battyboost.app.Cache;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
-import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.app.databinding.BalanceViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import io.reactivex.disposables.CompositeDisposable;
@@ -31,7 +31,7 @@ public class BalanceFragment extends Fragment {
     @Inject public BattyboostClient client;
     @Inject public FirebaseAuth auth;
     @Inject public AuthUI authUI;
-    @Inject public Store store;
+    @Inject public Cache cache;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
 

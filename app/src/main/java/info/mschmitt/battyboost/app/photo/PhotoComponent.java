@@ -1,8 +1,8 @@
 package info.mschmitt.battyboost.app.photo;
 
 import com.google.firebase.storage.FirebaseStorage;
+import info.mschmitt.battyboost.app.Cache;
 import info.mschmitt.battyboost.app.Router;
-import info.mschmitt.battyboost.app.Store;
 import info.mschmitt.battyboost.core.BattyboostClient;
 
 /**
@@ -10,20 +10,20 @@ import info.mschmitt.battyboost.core.BattyboostClient;
  */
 public class PhotoComponent {
     private final Router router;
-    private final Store store;
+    private final Cache cache;
     private final BattyboostClient client;
     private final FirebaseStorage storage;
 
-    public PhotoComponent(Router router, Store store, BattyboostClient client, FirebaseStorage storage) {
+    public PhotoComponent(Router router, Cache cache, BattyboostClient client, FirebaseStorage storage) {
         this.router = router;
-        this.store = store;
+        this.cache = cache;
         this.client = client;
         this.storage = storage;
     }
 
     public void inject(PhotoFragment fragment) {
         fragment.router = router;
-        fragment.store = store;
+        fragment.cache = cache;
         fragment.client = client;
         fragment.storage = storage;
         fragment.injected = true;
