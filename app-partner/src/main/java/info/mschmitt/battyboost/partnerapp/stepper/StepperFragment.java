@@ -83,9 +83,15 @@ public class StepperFragment extends Fragment {
     }
 
     public void onPrevClick() {
+        viewModel.completedSteps--;
+        viewModel.remainingSteps++;
+        viewModel.notifyChange();
     }
 
     public void onNextClick() {
+        viewModel.completedSteps++;
+        viewModel.remainingSteps--;
+        viewModel.notifyChange();
     }
 
     public void onSaveClick() {
@@ -96,7 +102,8 @@ public class StepperFragment extends Fragment {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public int stepCount = 3;
-        @Bindable public int step;
+        @Bindable public int skippedSteps;
+        @Bindable public int completedSteps;
+        @Bindable public int remainingSteps = 3;
     }
 }

@@ -64,7 +64,7 @@
                         android:gravity="left|center_vertical"
                         android:onClick="@{() -> fragment.onPrevClick()}"
                         android:text="Back"
-                        app:visibleInvisible="@{fragment.viewModel.step &gt; 0}" />
+                        app:visibleInvisible="@{fragment.viewModel.skippedSteps + fragment.viewModel.completedSteps &gt; 0}" />
 
                     <ProgressBar
                         style="?android:attr/progressBarStyleHorizontal"
@@ -74,8 +74,8 @@
                         android:layout_marginLeft="12dp"
                         android:layout_marginRight="12dp"
                         android:layout_weight="1"
-                        android:max="@{fragment.viewModel.stepCount}"
-                        android:progress="@{fragment.viewModel.step}" />
+                        android:max="@{fragment.viewModel.skippedSteps + fragment.viewModel.completedSteps + fragment.viewModel.remainingSteps}"
+                        android:progress="@{fragment.viewModel.skippedSteps + fragment.viewModel.completedSteps}" />
 
                     <FrameLayout
                         android:layout_width="0px"
@@ -90,7 +90,7 @@
                             android:gravity="right|center_vertical"
                             android:onClick="@{() -> fragment.onNextClick()}"
                             android:text="Next"
-                            app:visibleInvisible="@{fragment.viewModel.step &lt; fragment.viewModel.stepCount - 1}" />
+                            app:visibleInvisible="@{fragment.viewModel.remainingSteps &gt; 0}" />
 
                         <Button
                             style="?android:attr/borderlessButtonStyle"
@@ -100,7 +100,7 @@
                             android:onClick="@{() -> fragment.onSaveClick()}"
                             android:paddingRight="24dp"
                             android:text="Save"
-                            app:visibleInvisible="@{fragment.viewModel.step == fragment.viewModel.stepCount - 1}" />
+                            app:visibleInvisible="@{fragment.viewModel.remainingSteps == 0}" />
                     </FrameLayout>
                 </LinearLayout>
             </LinearLayout>
