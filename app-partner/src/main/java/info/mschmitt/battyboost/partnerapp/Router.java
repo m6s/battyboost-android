@@ -1,7 +1,10 @@
 package info.mschmitt.battyboost.partnerapp;
 
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import info.mschmitt.battyboost.partnerapp.cart.CartFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 
 /**
@@ -13,6 +16,16 @@ public class Router {
                 .beginTransaction()
                 .replace(R.id.contentView, TransactionListFragment.newInstance())
                 .commitNow();
+    }
+
+    public void showCart(Fragment fragment) {
+        FragmentActivity activity = fragment.getActivity();
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.contentView, CartFragment.newInstance())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(null)
+                .commit();
     }
 
     public void goUp(Fragment fragment) {

@@ -105,6 +105,7 @@ public class TransactionListFragment extends Fragment {
     }
 
     public void onAddClick() {
+        router.showCart(this);
     }
 
     public void onSignInClick() {
