@@ -15,6 +15,6 @@
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> holder.onClick()}"
-        app:text1="@{holder.key}"
+        app:text1="@{holder.partner.id}"
         app:text2="@{`` + holder.partner.name}" />
 </layout>

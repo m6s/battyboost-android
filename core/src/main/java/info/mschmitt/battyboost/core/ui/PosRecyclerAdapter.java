@@ -25,19 +25,20 @@ public class PosRecyclerAdapter extends FirebaseRecyclerAdapter<Pos, PosRecycler
 
     @Override
     protected void populateViewHolder(PosHolder viewHolder, Pos pos, int position) {
-        viewHolder.key = getRef(position).getKey();
+        if (pos.id == null) {
+            pos.id = getRef(position).getKey();
+        }
         viewHolder.listener = listener;
         viewHolder.pos = pos;
         viewHolder.notifyChange();
     }
 
     public interface OnPosClickListener {
-        void onPosClick(String key, Pos pos);
+        void onPosClick(Pos pos);
     }
 
     public static class PosHolder extends RecyclerView.ViewHolder implements Observable {
         private final PropertyChangeRegistry propertyChangeRegistry = new PropertyChangeRegistry();
-        @Bindable public String key;
         @Bindable public Pos pos;
         private OnPosClickListener listener;
 
@@ -48,7 +49,7 @@ public class PosRecyclerAdapter extends FirebaseRecyclerAdapter<Pos, PosRecycler
         }
 
         public void onClick() {
-            listener.onPosClick(key, pos);
+            listener.onPosClick(pos);
         }
 
         @Override

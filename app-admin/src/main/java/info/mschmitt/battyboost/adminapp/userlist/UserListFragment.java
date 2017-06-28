@@ -63,8 +63,8 @@ public class UserListFragment extends Fragment {
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
-    private void onUserClick(String key, BusinessUser user) {
-        router.showUser(this, key);
+    private void onUserClick(BusinessUser user) {
+        router.showUser(this, user.id);
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {}

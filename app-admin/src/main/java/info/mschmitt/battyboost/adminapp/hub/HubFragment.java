@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
+import info.mschmitt.battyboost.adminapp.batterylist.BatteryListFragment;
 import info.mschmitt.battyboost.adminapp.databinding.HubViewBinding;
 import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListFragment;
@@ -57,6 +58,9 @@ public class HubFragment extends Fragment implements DrawerFragment.DrawerListen
         } else if (childFragment instanceof UserListFragment) {
             UserListFragment userListFragment = (UserListFragment) childFragment;
             component.plus(userListFragment).inject(userListFragment);
+        } else if (childFragment instanceof BatteryListFragment) {
+            BatteryListFragment batteryListFragment = (BatteryListFragment) childFragment;
+            component.plus(batteryListFragment).inject(batteryListFragment);
         }
         injectedFragments.put(childFragment, null);
     }
@@ -134,6 +138,8 @@ public class HubFragment extends Fragment implements DrawerFragment.DrawerListen
             actionBar.setTitle("POS");
         } else if (fragment instanceof UserListFragment) {
             actionBar.setTitle("Users");
+        } else if (fragment instanceof BatteryListFragment) {
+            actionBar.setTitle("Batteries");
         } else {
             throw new AssertionError();
         }
@@ -151,6 +157,9 @@ public class HubFragment extends Fragment implements DrawerFragment.DrawerListen
                 break;
             case USER_LIST:
                 router.showUserList(this);
+                break;
+            case BATTERY_LIST:
+                router.showBatteryList(this);
                 break;
             default:
                 throw new AssertionError();

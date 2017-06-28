@@ -78,11 +78,11 @@ public class PosSelectionFragment extends Fragment {
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
-    private void onPosClick(String key, Pos pos) {
+    private void onPosClick(Pos pos) {
         router.goBack(this);
         PosSelectionListener posSelectionListener = getPosSelectionListener();
         if (posSelectionListener != null) {
-            posSelectionListener.onPosIdSelected(key);
+            posSelectionListener.onPosIdSelected(pos.id);
         }
     }
 

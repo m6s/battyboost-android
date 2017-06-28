@@ -90,12 +90,20 @@ public class DrawerFragment extends Fragment {
         }
     }
 
+    public void onBatteriesClick() {
+        setSelectedItem(DrawerItem.BATTERY_LIST);
+        DrawerListener drawerListener = getDrawerListener();
+        if (drawerListener != null) {
+            drawerListener.onDrawerItemSelected(this, DrawerItem.BATTERY_LIST);
+        }
+    }
+
     public <T extends Fragment & DrawerListener> void setTargetFragment(T targetFragment) {
         setTargetFragment(targetFragment, 0);
     }
 
     public enum DrawerItem {
-        PARTNER_LIST, POS_LIST, USER_LIST
+        PARTNER_LIST, POS_LIST, USER_LIST, BATTERY_LIST
     }
 
     public interface DrawerListener {

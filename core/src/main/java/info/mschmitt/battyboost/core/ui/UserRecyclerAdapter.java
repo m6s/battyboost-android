@@ -25,19 +25,20 @@ public class UserRecyclerAdapter extends FirebaseRecyclerAdapter<BusinessUser, U
 
     @Override
     protected void populateViewHolder(UserHolder viewHolder, BusinessUser user, int position) {
-        viewHolder.key = getRef(position).getKey();
+        if (user.id == null) {
+            user.id = getRef(position).getKey();
+        }
         viewHolder.listener = listener;
         viewHolder.user = user;
         viewHolder.notifyChange();
     }
 
     public interface OnUserClickListener {
-        void onUserClick(String key, BusinessUser user);
+        void onUserClick(BusinessUser user);
     }
 
     public static class UserHolder extends RecyclerView.ViewHolder implements Observable {
         private final PropertyChangeRegistry propertyChangeRegistry = new PropertyChangeRegistry();
-        @Bindable public String key;
         @Bindable public BusinessUser user;
         private OnUserClickListener listener;
 
@@ -48,7 +49,7 @@ public class UserRecyclerAdapter extends FirebaseRecyclerAdapter<BusinessUser, U
         }
 
         public void onClick() {
-            listener.onUserClick(key, user);
+            listener.onUserClick(user);
         }
 
         @Override

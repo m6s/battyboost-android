@@ -68,8 +68,8 @@ public class PartnerListFragment extends Fragment {
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
-    private void onPartnerClick(String key, Partner partner) {
-        router.showPartner(this, key);
+    private void onPartnerClick(Partner partner) {
+        router.showPartner(this, partner.id);
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {}

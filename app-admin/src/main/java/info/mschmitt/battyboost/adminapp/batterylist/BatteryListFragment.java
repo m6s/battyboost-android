@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.adminapp.poslist;
+package info.mschmitt.battyboost.adminapp.batterylist;
 
 import android.databinding.BaseObservable;
 import android.os.Bundle;
@@ -10,10 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
-import info.mschmitt.battyboost.adminapp.databinding.PosListViewBinding;
+import info.mschmitt.battyboost.adminapp.databinding.BatteryListViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.Pos;
-import info.mschmitt.battyboost.core.ui.PosRecyclerAdapter;
+import info.mschmitt.battyboost.core.entities.Battery;
+import info.mschmitt.battyboost.core.ui.BatteryRecyclerAdapter;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class PosListFragment extends Fragment {
+public class BatteryListFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     public ViewModel viewModel;
     @Inject public Router router;
@@ -30,11 +30,11 @@ public class PosListFragment extends Fragment {
     @Inject public boolean injected;
 
     public static Fragment newInstance() {
-        return new PosListFragment();
+        return new BatteryListFragment();
     }
 
     public void onAddClick() {
-        router.showPosEditing(this, null);
+//        router.showBatteryEditing(this, null);
     }
 
     @Override
@@ -49,8 +49,9 @@ public class PosListFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        PosListViewBinding binding = PosListViewBinding.inflate(inflater, container, false);
-        PosRecyclerAdapter adapter = new PosRecyclerAdapter(database.getReference("pos"), this::onPosClick);
+        BatteryListViewBinding binding = BatteryListViewBinding.inflate(inflater, container, false);
+        BatteryRecyclerAdapter adapter =
+                new BatteryRecyclerAdapter(database.getReference("batteries"), this::onBatteryClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -67,8 +68,8 @@ public class PosListFragment extends Fragment {
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
-    private void onPosClick(Pos pos) {
-        router.showPos(this, pos.id);
+    private void onBatteryClick(Battery battery) {
+//        router.showBattery(this, battery.id);
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {}

@@ -48,5 +48,16 @@
             android:text="Users"
             android:textAppearance="@android:style/TextAppearance.Medium"
             android:textColor="@{fragment.viewModel.drawerItem == DrawerItem.USER_LIST ? @color/primaryAccent : @android:color/secondary_text_light}" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:gravity="left"
+            android:onClick="@{() -> fragment.onBatteriesClick()}"
+            android:padding="16dp"
+            android:text="Batteries"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textColor="@{fragment.viewModel.drawerItem == DrawerItem.USER_LIST ? @color/primaryAccent : @android:color/secondary_text_light}" />
     </LinearLayout>
 </layout>

@@ -9,47 +9,47 @@ import android.view.View;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 import info.mschmitt.battyboost.core.R;
-import info.mschmitt.battyboost.core.databinding.PartnerItemBinding;
-import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.databinding.BatteryItemBinding;
+import info.mschmitt.battyboost.core.entities.Battery;
 
 /**
  * @author Matthias Schmitt
  */
-public class PartnerRecyclerAdapter extends FirebaseRecyclerAdapter<Partner, PartnerRecyclerAdapter.PartnerHolder> {
-    private final OnPartnerClickListener listener;
+public class BatteryRecyclerAdapter extends FirebaseRecyclerAdapter<Battery, BatteryRecyclerAdapter.BatteryHolder> {
+    private final OnBatteryClickListener listener;
 
-    public PartnerRecyclerAdapter(Query ref, OnPartnerClickListener listener) {
-        super(Partner.class, R.layout.partner_item, PartnerHolder.class, ref);
+    public BatteryRecyclerAdapter(Query ref, OnBatteryClickListener listener) {
+        super(Battery.class, R.layout.battery_item, BatteryHolder.class, ref);
         this.listener = listener;
     }
 
     @Override
-    protected void populateViewHolder(PartnerHolder viewHolder, Partner partner, int position) {
-        if (partner.id == null) {
-            partner.id = getRef(position).getKey();
+    protected void populateViewHolder(BatteryHolder viewHolder, Battery battery, int position) {
+        if (battery.id == null) {
+            battery.id = getRef(position).getKey();
         }
         viewHolder.listener = listener;
-        viewHolder.partner = partner;
+        viewHolder.battery = battery;
         viewHolder.notifyChange();
     }
 
-    public interface OnPartnerClickListener {
-        void onPartnerClick(Partner partner);
+    public interface OnBatteryClickListener {
+        void onBatteryClick(Battery battery);
     }
 
-    public static class PartnerHolder extends RecyclerView.ViewHolder implements Observable {
+    public static class BatteryHolder extends RecyclerView.ViewHolder implements Observable {
         private final PropertyChangeRegistry propertyChangeRegistry = new PropertyChangeRegistry();
-        @Bindable public Partner partner;
-        private OnPartnerClickListener listener;
+        @Bindable public Battery battery;
+        private OnBatteryClickListener listener;
 
-        public PartnerHolder(View itemView) {
+        public BatteryHolder(View itemView) {
             super(itemView);
-            PartnerItemBinding binding = DataBindingUtil.bind(itemView);
+            BatteryItemBinding binding = DataBindingUtil.bind(itemView);
             binding.setHolder(this);
         }
 
         public void onClick() {
-            listener.onPartnerClick(partner);
+            listener.onBatteryClick(battery);
         }
 
         @Override

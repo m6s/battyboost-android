@@ -1,21 +1,20 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="RtlHardcoded,HardcodedText">
+    tools:ignore="HardcodedText">
 
     <data>
 
         <variable
             name="holder"
-            type="info.mschmitt.battyboost.core.ui.UserRecyclerAdapter.UserHolder" />
-
-        <import type="java.lang.String" />
+            type="info.mschmitt.battyboost.core.ui.BatteryRecyclerAdapter.BatteryHolder" />
     </data>
 
-    <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
+    <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:onClick="@{() -> holder.onClick()}"
-        app:text1="@{holder.user.id}" />
+        app:text1="@{holder.battery.id}"
+        app:text2="@{holder.battery.qr}" />
 </layout>

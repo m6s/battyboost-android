@@ -26,19 +26,20 @@ public class TransactionRecyclerAdapter
 
     @Override
     protected void populateViewHolder(TransactionHolder viewHolder, BusinessTransaction transaction, int position) {
-        viewHolder.key = getRef(position).getKey();
+        if (transaction.id == null) {
+            transaction.id = getRef(position).getKey();
+        }
         viewHolder.listener = listener;
         viewHolder.transaction = transaction;
         viewHolder.notifyChange();
     }
 
     public interface OnTransactionClickListener {
-        void onTransactionClick(String key, BusinessTransaction transaction);
+        void onTransactionClick(BusinessTransaction transaction);
     }
 
     public static class TransactionHolder extends RecyclerView.ViewHolder implements Observable {
         private final PropertyChangeRegistry propertyChangeRegistry = new PropertyChangeRegistry();
-        @Bindable public String key;
         @Bindable public BusinessTransaction transaction;
         private OnTransactionClickListener listener;
 
@@ -49,7 +50,7 @@ public class TransactionRecyclerAdapter
         }
 
         public void onClick() {
-            listener.onTransactionClick(key, transaction);
+            listener.onTransactionClick(transaction);
         }
 
         @Override

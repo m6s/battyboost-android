@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import info.mschmitt.battyboost.adminapp.batterylist.BatteryListFragment;
 import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
 import info.mschmitt.battyboost.adminapp.hub.HubFragment;
 import info.mschmitt.battyboost.adminapp.partner.PartnerFragment;
@@ -27,6 +28,7 @@ public class Router {
     private static final String PARTNER_LIST_TAG = PartnerListFragment.class.getSimpleName();
     private static final String POS_LIST_TAG = PosListFragment.class.getSimpleName();
     private static final String USER_LIST_TAG = UserListFragment.class.getSimpleName();
+    private static final String BATTERY_LIST_TAG = BatteryListFragment.class.getSimpleName();
 
     public void showHub(AppCompatActivity activity) {
         activity.getSupportFragmentManager()
@@ -132,6 +134,23 @@ public class Router {
         if (fragment == null) {
             fragment = UserListFragment.newInstance();
             fragmentTransaction.add(R.id.detailsContentView, fragment, USER_LIST_TAG);
+        } else {
+            fragmentTransaction.attach(fragment);
+        }
+        fragmentTransaction.commitNow();
+    }
+
+    public void showBatteryList(HubFragment hubFragment) {
+        FragmentManager fragmentManager = hubFragment.getChildFragmentManager();
+        Fragment old = fragmentManager.findFragmentById(R.id.detailsContentView);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (old != null) {
+            fragmentTransaction.detach(old);
+        }
+        Fragment fragment = fragmentManager.findFragmentByTag(BATTERY_LIST_TAG);
+        if (fragment == null) {
+            fragment = BatteryListFragment.newInstance();
+            fragmentTransaction.add(R.id.detailsContentView, fragment, BATTERY_LIST_TAG);
         } else {
             fragmentTransaction.attach(fragment);
         }

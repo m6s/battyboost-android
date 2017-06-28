@@ -2,6 +2,8 @@ package info.mschmitt.battyboost.adminapp.hub;
 
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
+import info.mschmitt.battyboost.adminapp.batterylist.BatteryListComponent;
+import info.mschmitt.battyboost.adminapp.batterylist.BatteryListFragment;
 import info.mschmitt.battyboost.adminapp.drawer.DrawerComponent;
 import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListComponent;
@@ -46,5 +48,9 @@ public class HubComponent {
 
     public UserListComponent plus(UserListFragment userListFragment) {
         return new UserListComponent(router, database, client);
+    }
+
+    public BatteryListComponent plus(BatteryListFragment userListFragment) {
+        return new BatteryListComponent(router, database, client);
     }
 }
