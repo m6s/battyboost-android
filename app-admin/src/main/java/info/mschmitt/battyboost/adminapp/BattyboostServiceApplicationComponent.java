@@ -4,6 +4,10 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import info.mschmitt.battyboost.adminapp.battery.BatteryComponent;
+import info.mschmitt.battyboost.adminapp.battery.BatteryFragment;
+import info.mschmitt.battyboost.adminapp.batteryediting.BatteryEditingComponent;
+import info.mschmitt.battyboost.adminapp.batteryediting.BatteryEditingFragment;
 import info.mschmitt.battyboost.adminapp.hub.HubComponent;
 import info.mschmitt.battyboost.adminapp.hub.HubFragment;
 import info.mschmitt.battyboost.adminapp.partner.PartnerComponent;
@@ -81,5 +85,13 @@ public class BattyboostServiceApplicationComponent {
 
     public UserEditingComponent plus(UserEditingFragment fragment) {
         return new UserEditingComponent(router, database, client);
+    }
+
+    public BatteryComponent plus(BatteryFragment fragment) {
+        return new BatteryComponent(router, database, client);
+    }
+
+    public BatteryEditingComponent plus(BatteryEditingFragment fragment) {
+        return new BatteryEditingComponent(router, database, client);
     }
 }

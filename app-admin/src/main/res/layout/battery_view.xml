@@ -1,0 +1,86 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry,SpUsage">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="info.mschmitt.battyboost.adminapp.battery.BatteryFragment" />
+
+        <import type="java.lang.String" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/primary"
+                    android:theme="@style/AppThemeToolbar"
+                    app:navigationOnClickListener="@{() -> fragment.goUp()}" />
+            </android.support.design.widget.AppBarLayout>
+
+            <android.support.v4.widget.NestedScrollView
+                android:id="@+id/nestedScrollView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`QR`}"
+                        app:text="@{fragment.viewModel.battery.qr}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Manufacturing time`}"
+                        app:text="@{`` + fragment.viewModel.battery.manufacturingTime}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Charge cycle count`}"
+                        app:text="@{`` + fragment.viewModel.battery.chargeCycleCount}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`Borrow time`}"
+                        app:text="@{`` + fragment.viewModel.battery.borrowTime}" />
+                </LinearLayout>
+            </android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

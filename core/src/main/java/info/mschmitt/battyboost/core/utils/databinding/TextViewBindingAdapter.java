@@ -29,6 +29,27 @@ public class TextViewBindingAdapter {
         return string.isEmpty() ? 0 : Integer.parseInt(string);
     }
 
+    @BindingAdapter("longText")
+    public static void setLongText(TextView textView, long longText) {
+        String text = Long.toString(longText);
+        CharSequence charSequence = textView.getText();
+        String string = charSequence.toString();
+        if (string.isEmpty()) {
+            textView.setText(text);
+            return;
+        }
+        int oldIntText = Integer.parseInt(string);
+        if (longText != oldIntText) {
+            textView.setText(text);
+        }
+    }
+
+    @InverseBindingAdapter(attribute = "longText", event = "android:textAttrChanged")
+    public static long getLongText(TextView textView) {
+        String string = textView.getText().toString();
+        return string.isEmpty() ? 0 : Long.parseLong(string);
+    }
+
     @BindingAdapter("doubleText")
     public static void setDoubleText(TextView textView, double doubleText) {
         String text = Double.toString(doubleText);

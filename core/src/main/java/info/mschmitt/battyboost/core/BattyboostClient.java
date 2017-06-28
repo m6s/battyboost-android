@@ -20,8 +20,6 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 
-import java.util.UUID;
-
 /**
  * @author Matthias Schmitt
  */
@@ -159,10 +157,16 @@ public class BattyboostClient {
         return RxDatabaseReference.setValue(urlRef, url);
     }
 
-    public Single<String> addBattery(UUID uuid, Battery battery) {
-        DatabaseReference batteryRef = batteriesRef.child(uuid.toString());
+    public Single<String> addBattery(Battery battery) {
+        DatabaseReference batteryRef = batteriesRef.push();
         return RxDatabaseReference.setValue(batteryRef, battery).toSingleDefault(batteryRef.getKey());
     }
+
+    public Completable updateBattery(String batteryKey, Battery battery) {
+        DatabaseReference batteryRef = batteriesRef.child(batteryKey);
+        return RxDatabaseReference.setValue(batteryRef, battery);
+    }
+
 
     /**
      * The token will be cleared on first use.

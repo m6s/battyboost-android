@@ -34,7 +34,7 @@ public class BatteryListFragment extends Fragment {
     }
 
     public void onAddClick() {
-//        router.showBatteryEditing(this, null);
+        router.showBatteryEditing(this, null);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class BatteryListFragment extends Fragment {
     }
 
     private void onBatteryClick(Battery battery) {
-//        router.showBattery(this, battery.id);
+        router.showBattery(this, battery.id);
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {}

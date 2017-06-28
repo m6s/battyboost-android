@@ -4,6 +4,8 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import info.mschmitt.battyboost.adminapp.battery.BatteryFragment;
+import info.mschmitt.battyboost.adminapp.batteryediting.BatteryEditingFragment;
 import info.mschmitt.battyboost.adminapp.hub.HubFragment;
 import info.mschmitt.battyboost.adminapp.partner.PartnerFragment;
 import info.mschmitt.battyboost.adminapp.partnerediting.PartnerEditingFragment;
@@ -107,6 +109,12 @@ public class MainActivity extends AppCompatActivity {
         } else if (childFragment instanceof UserEditingFragment) {
             UserEditingFragment userEditingFragment = (UserEditingFragment) childFragment;
             applicationComponent.plus(userEditingFragment).inject(userEditingFragment);
+        } else if (childFragment instanceof BatteryFragment) {
+            BatteryFragment batteryFragment = (BatteryFragment) childFragment;
+            applicationComponent.plus(batteryFragment).inject(batteryFragment);
+        } else if (childFragment instanceof BatteryEditingFragment) {
+            BatteryEditingFragment batteryEditingFragment = (BatteryEditingFragment) childFragment;
+            applicationComponent.plus(batteryEditingFragment).inject(batteryEditingFragment);
         }
         injectedFragments.put(childFragment, null);
     }

@@ -4,6 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import info.mschmitt.battyboost.adminapp.battery.BatteryFragment;
+import info.mschmitt.battyboost.adminapp.batteryediting.BatteryEditingFragment;
 import info.mschmitt.battyboost.adminapp.batterylist.BatteryListFragment;
 import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
 import info.mschmitt.battyboost.adminapp.hub.HubFragment;
@@ -17,6 +19,7 @@ import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.adminapp.user.UserFragment;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
 import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
+import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.BusinessUser;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
@@ -155,6 +158,24 @@ public class Router {
             fragmentTransaction.attach(fragment);
         }
         fragmentTransaction.commitNow();
+    }
+
+    public void showBattery(Fragment fragment, String batteryId) {
+        FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.contentView, BatteryFragment.newInstance(batteryId))
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void showBatteryEditing(Fragment fragment, Battery battery) {
+        FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .replace(R.id.contentView, BatteryEditingFragment.newInstance(battery))
+                .addToBackStack(null)
+                .commit();
     }
 
     public void showUser(Fragment fragment, String userId) {
