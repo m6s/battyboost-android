@@ -110,7 +110,7 @@ public class PhotoFragment extends Fragment {
         if (viewModel.file != null) {
             Glide.with(this).load(viewModel.file).into(binding.imageView);
         } else {
-            Glide.with(this).load(cache.databaseUser.photoUrl).into(binding.imageView);
+            Glide.with(this).load(cache.user.photoUrl).into(binding.imageView);
         }
         return binding.getRoot();
     }
@@ -154,10 +154,10 @@ public class PhotoFragment extends Fragment {
     }
 
     private void uploadPhoto(File file) {
-        String photoUrl = cache.databaseUser.photoUrl;
+        String photoUrl = cache.user.photoUrl;
         StorageReference oldPhotoRef = photoUrl == null ? null : storage.getReferenceFromUrl(photoUrl);
         StorageReference photoRef =
-                client.usersStorageRef.child(cache.databaseUser.id).child(UUID.randomUUID().toString() + ".jpg");
+                client.usersStorageRef.child(cache.user.id).child(UUID.randomUUID().toString() + ".jpg");
         RxStorageReference.Upload upload = RxStorageReference.putFile(photoRef, Uri.fromFile(file), METADATA_JPEG);
         ProgressDialog progressDialog = new ProgressDialog(getView().getContext());
         progressDialog.setMax(100);
@@ -169,9 +169,9 @@ public class PhotoFragment extends Fragment {
         compositeDisposable.add(uploadDisposable);
         Disposable disposable = upload.events.filter(event -> event.successful).flatMapCompletable(event -> {
             String url = event.downloadUrl.toString();
-            cache.databaseUser.photoUrl = url;
-            cache.databaseUser.notifyChange();
-            return client.updateUserPhotoUrl(cache.databaseUser.id, url);
+            cache.user.photoUrl = url;
+            cache.user.notifyChange();
+            return client.updateUserPhotoUrl(cache.user.id, url);
         })
                 .andThen(oldPhotoRef != null ? RxStorageReference.delete(oldPhotoRef) : Completable.complete())
                 .subscribe(() -> {

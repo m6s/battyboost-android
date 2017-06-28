@@ -2,7 +2,7 @@ package info.mschmitt.battyboost.app;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
-import info.mschmitt.battyboost.core.entities.DatabaseUser;
+import info.mschmitt.battyboost.core.entities.BusinessUser;
 
 import java.io.Serializable;
 
@@ -11,5 +11,5 @@ import java.io.Serializable;
  */
 public class Cache extends BaseObservable implements Serializable {
     @Bindable public boolean initialized;
-    @Bindable public DatabaseUser databaseUser;
+    @Bindable public BusinessUser user;
 }

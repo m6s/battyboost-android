@@ -57,7 +57,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Balance cents"
                             android:inputType="number|numberSigned"
-                            app:intText="@={fragment.viewModel.databaseUser.balanceCents}" />
+                            app:intText="@={fragment.viewModel.user.balanceCents}" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
@@ -71,7 +71,7 @@
                             android:layout_height="wrap_content"
                             android:hint="Bank account owner"
                             android:inputType="text|textPersonName"
-                            android:text="@={fragment.viewModel.databaseUser.bankAccountOwner}" />
+                            android:text="@={fragment.viewModel.user.bankAccountOwner}" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
@@ -85,7 +85,7 @@
                             android:layout_height="wrap_content"
                             android:hint="IBAN"
                             android:inputType="text|textPhonetic"
-                            android:text="@={fragment.viewModel.databaseUser.iban}" />
+                            android:text="@={fragment.viewModel.user.iban}" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>

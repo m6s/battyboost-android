@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         compositeDisposable = new CompositeDisposable();
         Disposable disposable =
                 RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> {
-                    cache.databaseUser = null;
+                    cache.user = null;
                     cache.initialized = true;
                     cache.notifyChange();
                 });
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                         firebaseUser -> RxDatabaseReference.valueEvents(client.usersRef.child(firebaseUser.getUid())))
                 .map(BattyboostClient.DATABASE_USER_MAPPER)
                 .subscribe(optional -> {
-                    cache.databaseUser = optional.value;
+                    cache.user = optional.value;
                     cache.initialized = true;
                     cache.notifyChange();
                 });

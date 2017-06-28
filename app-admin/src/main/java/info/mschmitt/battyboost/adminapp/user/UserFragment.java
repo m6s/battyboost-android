@@ -12,7 +12,7 @@ import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.DatabaseUser;
+import info.mschmitt.battyboost.core.entities.BusinessUser;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -74,8 +74,8 @@ public class UserFragment extends Fragment {
         DatabaseReference reference = client.usersRef.child(userKey);
         Disposable disposable = RxDatabaseReference.valueEvents(reference)
                 .filter(DataSnapshot::exists)
-                .map(dataSnapshot -> dataSnapshot.getValue(DatabaseUser.class))
-                .subscribe(this::setUser);
+                .map(BattyboostClient.DATABASE_USER_MAPPER)
+                .subscribe(optional -> setUser(optional.value));
         compositeDisposable.add(disposable);
     }
 
@@ -98,21 +98,24 @@ public class UserFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onEditMenuItemClick);
     }
 
+    private void setUser(BusinessUser user) {
+        viewModel.user = user;
+        viewModel.notifyChange();
+    }
+
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     private boolean onEditMenuItemClick(MenuItem menuItem) {
-        router.showUserEditing(this, userKey);
+        if (viewModel.user == null) {
+            return false;
+        }
+        router.showUserEditing(this, viewModel.user);
         return true;
     }
 
     public void goUp() {
         router.goUp(this);
-    }
-
-    private void setUser(DatabaseUser user) {
-        viewModel.databaseUser = user;
-        viewModel.notifyChange();
     }
 }

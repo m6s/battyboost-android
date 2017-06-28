@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
+    private static final String STATE_CACHE = "CACHE";
     private final WeakHashMap<Fragment, Void> injectedFragments = new WeakHashMap<>();
     @Inject public MainActivityComponent component;
     @Inject public BattyboostClient client;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private void onPreCreate(Bundle savedInstanceState) {
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        cache = savedInstanceState == null ? new Cache() : (Cache) savedInstanceState.getSerializable(STATE_CACHE);
     }
 
     @Override
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
+        outState.putSerializable(STATE_CACHE, cache);
     }
 
     @Override
@@ -91,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         compositeDisposable = new CompositeDisposable();
         Disposable disposable =
                 RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> {
-                    cache.databaseUser = null;
+                    cache.user = null;
                     cache.initialized = true;
                     cache.notifyChange();
                 });
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
                         firebaseUser -> RxDatabaseReference.valueEvents(client.usersRef.child(firebaseUser.getUid())))
                 .map(BattyboostClient.DATABASE_USER_MAPPER)
                 .subscribe(optional -> {
-                    cache.databaseUser = optional.value;
+                    cache.user = optional.value;
                     cache.initialized = true;
                     cache.notifyChange();
                 });

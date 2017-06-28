@@ -114,7 +114,10 @@ public class PosFragment extends Fragment {
     }
 
     private boolean onEditMenuItemClick(MenuItem menuItem) {
-        router.showPosEditing(this, posKey);
+        if (viewModel.pos == null) {
+            return false;
+        }
+        router.showPosEditing(this, viewModel.pos);
         return true;
     }
 

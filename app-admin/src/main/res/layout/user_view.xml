@@ -49,7 +49,7 @@
                     <include
                         layout="@layout/text_output_layout"
                         app:label="@{`Balance cents`}"
-                        app:text="@{`` + fragment.viewModel.databaseUser.balanceCents}" />
+                        app:text="@{`` + fragment.viewModel.user.balanceCents}" />
 
                     <View
                         android:layout_width="match_parent"
@@ -58,7 +58,7 @@
                     <include
                         layout="@layout/text_output_layout"
                         app:label="@{`Bank account owner`}"
-                        app:text="@{fragment.viewModel.databaseUser.bankAccountOwner}" />
+                        app:text="@{fragment.viewModel.user.bankAccountOwner}" />
 
                     <View
                         android:layout_width="match_parent"
@@ -67,7 +67,7 @@
                     <include
                         layout="@layout/text_output_layout"
                         app:label="@{`IBAN`}"
-                        app:text="@{fragment.viewModel.databaseUser.iban}" />
+                        app:text="@{fragment.viewModel.user.iban}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>

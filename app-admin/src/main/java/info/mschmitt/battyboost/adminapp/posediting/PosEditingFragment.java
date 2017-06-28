@@ -15,7 +15,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
@@ -24,7 +23,6 @@ import info.mschmitt.battyboost.adminapp.pos.PosViewModel;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.GeoCoordinates;
 import info.mschmitt.battyboost.core.entities.Pos;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -38,7 +36,7 @@ public class PosEditingFragment extends Fragment {
             new LatLngBounds(new LatLng(GeoCoordinates.BERLIN_LAT - 0.1, GeoCoordinates.BERLIN_LNG - 0.1),
                     new LatLng(GeoCoordinates.BERLIN_LAT + 0.1, GeoCoordinates.BERLIN_LNG + 0.1));
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
-    private static final String ARG_POS_KEY = "POS_KEY";
+    private static final String ARG_POS = "POS";
     private static final int PLACE_PICKER_REQUEST = 1;
     public PosViewModel viewModel;
     @Inject public Router router;
@@ -46,12 +44,11 @@ public class PosEditingFragment extends Fragment {
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
-    private String posKey;
 
-    public static Fragment newInstance(String key) {
+    public static Fragment newInstance(Pos pos) {
         PosEditingFragment fragment = new PosEditingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_POS_KEY, key);
+        args.putSerializable(ARG_POS, pos);
         fragment.setArguments(args);
         return fragment;
     }
@@ -62,10 +59,10 @@ public class PosEditingFragment extends Fragment {
             return true;
         }
         Disposable disposable;
-        if (posKey == null) {
+        if (viewModel.pos.id == null) {
             disposable = client.addPos(viewModel.pos).subscribe(s -> router.goUp(this));
         } else {
-            disposable = client.updatePos(posKey, viewModel.pos).subscribe(() -> router.goUp(this));
+            disposable = client.updatePos(viewModel.pos.id, viewModel.pos).subscribe(() -> router.goUp(this));
         }
         compositeDisposable.add(disposable);
         return true;
@@ -108,10 +105,16 @@ public class PosEditingFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new PosViewModel()
-                : (PosViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        Bundle args = getArguments();
-        posKey = args.getString(ARG_POS_KEY);
+        if (savedInstanceState == null) {
+            viewModel = new PosViewModel();
+            Bundle args = getArguments();
+            viewModel.pos = (Pos) args.getSerializable(ARG_POS);
+            if (viewModel.pos == null) {
+                viewModel.pos = new Pos();
+            }
+        } else {
+            viewModel = (PosViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -133,17 +136,6 @@ public class PosEditingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        if (viewModel.pos == null) {
-            if (posKey != null) {
-                DatabaseReference reference = database.getReference("pos").child(posKey);
-                Disposable disposable = RxDatabaseReference.valueEvents(reference)
-                        .map(BattyboostClient.POS_MAPPER)
-                        .firstElement().subscribe(optional -> setPos(optional.value));
-                compositeDisposable.add(disposable);
-            } else {
-                setPos(new Pos());
-            }
-        }
     }
 
     @Override
@@ -165,11 +157,6 @@ public class PosEditingFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onSaveMenuItemClick);
         menuItem = menu.findItem(R.id.menu_item_pick_place);
         menuItem.setOnMenuItemClickListener(this::onPickPlaceMenuItemClick);
-    }
-
-    private void setPos(Pos pos) {
-        viewModel.pos = pos;
-        viewModel.notifyChange();
     }
 
     private ActionBar getSupportActionBar() {

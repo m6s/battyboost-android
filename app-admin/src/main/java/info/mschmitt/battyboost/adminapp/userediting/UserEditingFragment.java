@@ -5,16 +5,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserEditingViewBinding;
 import info.mschmitt.battyboost.adminapp.user.UserViewModel;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.DatabaseUser;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.entities.BusinessUser;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -25,19 +22,18 @@ import javax.inject.Inject;
  */
 public class UserEditingFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
-    private static final String ARG_USER_KEY = "USER_KEY";
+    private static final String ARG_USER = "USER";
     public UserViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
-    private String userKey;
 
-    public static Fragment newInstance(String key) {
+    public static Fragment newInstance(BusinessUser user) {
         UserEditingFragment fragment = new UserEditingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_USER_KEY, key);
+        args.putSerializable(ARG_USER, user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,10 +44,16 @@ public class UserEditingFragment extends Fragment {
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new UserViewModel()
-                : (UserViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        Bundle args = getArguments();
-        userKey = args.getString(ARG_USER_KEY);
+        if (savedInstanceState == null) {
+            viewModel = new UserViewModel();
+            Bundle args = getArguments();
+            viewModel.user = (BusinessUser) args.getSerializable(ARG_USER);
+            if (viewModel.user == null) {
+                viewModel.user = new BusinessUser();
+            }
+        } else {
+            viewModel = (UserViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -73,19 +75,6 @@ public class UserEditingFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        if (viewModel.databaseUser == null) {
-            if (userKey != null) {
-                DatabaseReference reference = database.getReference("users").child(userKey);
-                Disposable disposable = RxDatabaseReference.valueEvents(reference)
-                        .filter(DataSnapshot::exists)
-                        .map(dataSnapshot -> dataSnapshot.getValue(DatabaseUser.class))
-                        .firstElement()
-                        .subscribe(this::setUser);
-                compositeDisposable.add(disposable);
-            } else {
-                setUser(new DatabaseUser());
-            }
-        }
     }
 
     @Override
@@ -107,17 +96,12 @@ public class UserEditingFragment extends Fragment {
         saveMenuItem.setOnMenuItemClickListener(this::onSaveMenuItemClick);
     }
 
-    private void setUser(DatabaseUser user) {
-        viewModel.databaseUser = user;
-        viewModel.notifyChange();
-    }
-
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
-        Disposable disposable = client.updateUser(userKey, viewModel.databaseUser).subscribe(() -> router.goUp(this));
+        Disposable disposable = client.updateUser(viewModel.user.id, viewModel.user).subscribe(() -> router.goUp(this));
         compositeDisposable.add(disposable);
         return true;
     }

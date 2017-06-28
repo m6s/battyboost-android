@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.entities.DatabaseUser;
+import info.mschmitt.battyboost.core.entities.BusinessUser;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
 import info.mschmitt.battyboost.core.utils.RxOptional;
@@ -26,12 +26,12 @@ import java.util.UUID;
  * @author Matthias Schmitt
  */
 public class BattyboostClient {
-    public static final Function<DataSnapshot, RxOptional<DatabaseUser>> DATABASE_USER_MAPPER = dataSnapshot -> {
-        DatabaseUser databaseUser = dataSnapshot.getValue(DatabaseUser.class);
-        if (databaseUser != null) {
-            databaseUser.id = dataSnapshot.getKey();
+    public static final Function<DataSnapshot, RxOptional<BusinessUser>> DATABASE_USER_MAPPER = dataSnapshot -> {
+        BusinessUser businessUser = dataSnapshot.getValue(BusinessUser.class);
+        if (businessUser != null) {
+            businessUser.id = dataSnapshot.getKey();
         }
-        return new RxOptional<>(databaseUser);
+        return new RxOptional<>(businessUser);
     };
     public static final Function<DataSnapshot, RxOptional<Partner>> PARTNER_MAPPER = dataSnapshot -> {
         Partner partner = dataSnapshot.getValue(Partner.class);
@@ -90,12 +90,12 @@ public class BattyboostClient {
     private void onUserCreated(FirebaseUser firebaseUser) {
         String uid = firebaseUser.getUid();
         DatabaseReference userRef = usersRef.child(uid);
-        DatabaseUser databaseUser = new DatabaseUser();
-        databaseUser.displayName = firebaseUser.getDisplayName();
-        databaseUser.email = firebaseUser.getEmail();
+        BusinessUser businessUser = new BusinessUser();
+        businessUser.displayName = firebaseUser.getDisplayName();
+        businessUser.email = firebaseUser.getEmail();
         Uri photoUrl = firebaseUser.getPhotoUrl();
-        databaseUser.photoUrl = photoUrl != null ? photoUrl.toString() : null;
-        userRef.setValue(databaseUser);
+        businessUser.photoUrl = photoUrl != null ? photoUrl.toString() : null;
+        userRef.setValue(businessUser);
     }
 
     public Single<String> addPartner(Partner partner) {
@@ -129,7 +129,7 @@ public class BattyboostClient {
         return RxDatabaseReference.removeValue(partnerRef);
     }
 
-    public Completable updateUser(String userKey, DatabaseUser user) {
+    public Completable updateUser(String userKey, BusinessUser user) {
         DatabaseReference userRef = usersRef.child(userKey);
         return RxDatabaseReference.setValue(userRef, user);
     }

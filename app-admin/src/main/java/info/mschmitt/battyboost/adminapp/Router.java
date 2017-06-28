@@ -16,6 +16,9 @@ import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.adminapp.user.UserFragment;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
 import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
+import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.entities.Pos;
 
 /**
  * @author Matthias Schmitt
@@ -55,20 +58,20 @@ public class Router {
         fragmentTransaction.commitNow();
     }
 
-    public void showPartner(Fragment fragment, String key) {
+    public void showPartner(Fragment fragment, String partnerId) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.contentView, PartnerFragment.newInstance(key))
+                .replace(R.id.contentView, PartnerFragment.newInstance(partnerId))
                 .addToBackStack(null)
                 .commit();
     }
 
-    public void showPartnerEditing(Fragment fragment, String key) {
+    public void showPartnerEditing(Fragment fragment, Partner partner) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.contentView, PartnerEditingFragment.newInstance(key))
+                .replace(R.id.contentView, PartnerEditingFragment.newInstance(partner))
                 .addToBackStack(null)
                 .commit();
     }
@@ -90,20 +93,20 @@ public class Router {
         fragmentTransaction.commitNow();
     }
 
-    public void showPos(Fragment fragment, String key) {
+    public void showPos(Fragment fragment, String posId) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.contentView, PosFragment.newInstance(key))
+                .replace(R.id.contentView, PosFragment.newInstance(posId))
                 .addToBackStack(null)
                 .commit();
     }
 
-    public void showPosEditing(Fragment fragment, String key) {
+    public void showPosEditing(Fragment fragment, Pos pos) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.contentView, PosEditingFragment.newInstance(key))
+                .replace(R.id.contentView, PosEditingFragment.newInstance(pos))
                 .addToBackStack(null)
                 .commit();
     }
@@ -135,20 +138,20 @@ public class Router {
         fragmentTransaction.commitNow();
     }
 
-    public void showUser(Fragment fragment, String key) {
+    public void showUser(Fragment fragment, String userId) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.contentView, UserFragment.newInstance(key))
+                .replace(R.id.contentView, UserFragment.newInstance(userId))
                 .addToBackStack(null)
                 .commit();
     }
 
-    public void showUserEditing(Fragment fragment, String key) {
+    public void showUserEditing(Fragment fragment, BusinessUser user) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
-                .replace(R.id.contentView, UserEditingFragment.newInstance(key))
+                .replace(R.id.contentView, UserEditingFragment.newInstance(user))
                 .addToBackStack(null)
                 .commit();
     }

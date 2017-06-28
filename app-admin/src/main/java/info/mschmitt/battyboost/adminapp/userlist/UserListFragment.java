@@ -12,7 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserListViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.entities.DatabaseUser;
+import info.mschmitt.battyboost.core.entities.BusinessUser;
 import info.mschmitt.battyboost.core.ui.UserRecyclerAdapter;
 
 import javax.inject.Inject;
@@ -63,7 +63,7 @@ public class UserListFragment extends Fragment {
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
-    private void onUserClick(String key, DatabaseUser user) {
+    private void onUserClick(String key, BusinessUser user) {
         router.showUser(this, key);
     }
 

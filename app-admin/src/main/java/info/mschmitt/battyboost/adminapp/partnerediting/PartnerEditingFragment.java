@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
@@ -14,7 +13,6 @@ import info.mschmitt.battyboost.adminapp.partner.PartnerViewModel;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -25,19 +23,18 @@ import javax.inject.Inject;
  */
 public class PartnerEditingFragment extends Fragment implements PosSelectionFragment.PosSelectionListener {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
-    private static final String ARG_PARTNER_KEY = "PARTNER_KEY";
+    private static final String ARG_PARTNER = "PARTNER";
     public PartnerViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
-    private String partnerKey;
 
-    public static Fragment newInstance(String key) {
+    public static Fragment newInstance(Partner partner) {
         PartnerEditingFragment fragment = new PartnerEditingFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARTNER_KEY, key);
+        args.putSerializable(ARG_PARTNER, partner);
         fragment.setArguments(args);
         return fragment;
     }
@@ -48,9 +45,16 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
             throw new IllegalStateException("Not injected");
         }
         super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new PartnerViewModel()
-                : (PartnerViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        partnerKey = getArguments().getString(ARG_PARTNER_KEY);
+        if (savedInstanceState == null) {
+            viewModel = new PartnerViewModel();
+            Bundle args = getArguments();
+            viewModel.partner = (Partner) args.getSerializable(ARG_PARTNER);
+            if (viewModel.partner == null) {
+                viewModel.partner = new Partner();
+            }
+        } else {
+            viewModel = (PartnerViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        }
         setHasOptionsMenu(true);
     }
 
@@ -72,21 +76,6 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        if (viewModel.partner == null) {
-            if (partnerKey != null) {
-                DatabaseReference reference = database.getReference("partners").child(partnerKey);
-                Disposable disposable = RxDatabaseReference.valueEvents(reference).map(BattyboostClient.PARTNER_MAPPER)
-                        .firstElement().subscribe(optional -> setPartner(optional.value));
-                compositeDisposable.add(disposable);
-            } else {
-                setPartner(new Partner());
-            }
-        }
-    }
-
-    private void setPartner(Partner partner) {
-        viewModel.partner = partner;
-        viewModel.notifyChange();
     }
 
     @Override
@@ -114,10 +103,11 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
         Disposable disposable;
-        if (partnerKey == null) {
+        if (viewModel.partner.id == null) {
             disposable = client.addPartner(viewModel.partner).subscribe(s -> router.goUp(this));
         } else {
-            disposable = client.updatePartner(partnerKey, viewModel.partner).subscribe(() -> router.goUp(this));
+            disposable =
+                    client.updatePartner(viewModel.partner.id, viewModel.partner).subscribe(() -> router.goUp(this));
         }
         compositeDisposable.add(disposable);
         return true;

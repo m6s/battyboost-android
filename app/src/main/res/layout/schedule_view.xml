@@ -36,7 +36,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:visibleGone="@{fragment.cache.databaseUser != null}">
+                app:visibleGone="@{fragment.cache.user != null}">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -54,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@android:color/background_light"
-                app:visibleGone="@{fragment.cache.databaseUser == null}">
+                app:visibleGone="@{fragment.cache.user == null}">
 
                 <Button
                     style="?borderlessButtonStyle"

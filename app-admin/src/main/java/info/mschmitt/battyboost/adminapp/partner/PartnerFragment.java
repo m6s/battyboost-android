@@ -114,7 +114,10 @@ public class PartnerFragment extends Fragment {
     }
 
     private boolean onEditMenuItemClick(MenuItem menuItem) {
-        router.showPartnerEditing(this, partnerKey);
+        if (viewModel.partner == null) {
+            return false;
+        }
+        router.showPartnerEditing(this, viewModel.partner);
         return true;
     }
 

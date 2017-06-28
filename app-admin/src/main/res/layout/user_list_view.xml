@@ -7,8 +7,6 @@
         <variable
             name="fragment"
             type="info.mschmitt.battyboost.adminapp.userlist.UserListFragment" />
-
-        <import type="android.view.View" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
