@@ -12,11 +12,11 @@ checksum: alphanumeric-chars[CRC32(UTF-8(id)) % alphanumeric-chars.length}]
 
 alphanumeric-chars = {0...9, a .. z}
 
-Example for battery:
+## Example for battery:
 
 battyboost.com/qr?0084y5f0c0yf
 
-Example for user:
+## Example for user:
 
 battyboost.com/qr?0idj1xi6hi3z7
 
