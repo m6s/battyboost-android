@@ -95,7 +95,7 @@ public class TransactionListFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onSettingsMenuItemClick);
     }
 
-    private void onTransactionClick(String key, BusinessTransaction transaction) {
+    private void onTransactionClick(BusinessTransaction transaction) {
 //        router.showUser(this, key);
     }
 

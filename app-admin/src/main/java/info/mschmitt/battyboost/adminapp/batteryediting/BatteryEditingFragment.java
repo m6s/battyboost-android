@@ -12,6 +12,8 @@ import info.mschmitt.battyboost.adminapp.battery.BatteryViewModel;
 import info.mschmitt.battyboost.adminapp.databinding.BatteryEditingViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
+import info.mschmitt.battyboost.core.utils.ChecksumProcessor;
+import info.mschmitt.battyboost.core.utils.RandomStringGenerator;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -98,6 +100,13 @@ public class BatteryEditingFragment extends Fragment {
 
     private ActionBar getSupportActionBar() {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
+    public void onGenerateCodeClick() {
+        RandomStringGenerator randomStringGenerator = new RandomStringGenerator(10);
+        ChecksumProcessor checksumProcessor = new ChecksumProcessor();
+        viewModel.battery.qr = checksumProcessor.appendChecksum(randomStringGenerator.nextString());
+        viewModel.battery.notifyChange();
     }
 
     private boolean onSaveMenuItemClick(MenuItem menuItem) {

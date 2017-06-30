@@ -5,7 +5,7 @@
 ```
 chargers/
     {chargerId}/
-        posId: id<pos>
+        posId: {posId}
 ```
 
 `chargers` is for looking up the points of sale when updating the available battery count. A charging station will
@@ -17,30 +17,8 @@ notify the backend when a battery is removed or fully charged with the total amo
 chargingBatteries/
     {batteryId}/
         chargingCompleteTime: integer
-        posId: id<pos>
+        posId: {posId}
 ```
-
-## QR assignment
-
-```
-userQRs/
-    uuid: id<user>
-    ...
-```
-
-```
-batteryQRs/
-    uuid: id<battery>
-    ...
-```
-
-```
-allocatedQRs/
-    uuid: true
-    ...
-```
-
-Used to double-check valid QR
 
 ## Finding battyboost shops
 
@@ -88,19 +66,19 @@ publicHolidays/
 transactions/
     {transactionId}/
         type: "borrow" | "return"
-        batteryId: id<battery>
-        partnerId: id<partner>
-        borrowerId: id<user>
+        batteryId: {batteryId}
+        partnerId: {partnerId}
+        borrowerId: {userId}
         partnerCreditedCents: integer
         borrowerCreditedCents: integer
-        cashierId: id<user>
+        cashierId: {userId}
         time: integer
 ```
 
 ```
 batteries/
     {batteryId}/
-        qr: uuid<battery>
+        qr: string, indexed
         manufacturingTime: integer
         chargeCycleCount: integer
         borrowTime: integer
@@ -112,8 +90,8 @@ batteries/
 partners/
     {partnerId}/
         name: string
-        adminId: id<user>
-        posId: id<pos>
+        adminId: {userId}
+        posId: {posId}
         balanceCents: integer
 ```
 
@@ -121,15 +99,15 @@ partners/
 
 partnerBatteries/
     {partnerId}/
-            id<battery>: true
+            {batteryId}: true
             ...
 partnerTransactions/
     {partnerId}/
-            id<transaction>: true
+            {transactionId}: true
             ...
 partnerCashiers/
     {partnerId}/
-            id<user>: true
+            {userId}: true
             ...
 
 
@@ -147,7 +125,7 @@ The `adminId` user can add/remove cashier users.
 ```
 users/
     {userId}/
-        qr: uuid<user>
+        qr: string, indexed
         earliestBorrowTime: integer
         balanceCents: integer
         bankAccountOwner: string
@@ -164,15 +142,15 @@ providerData, providerId, uid, userMetadata, disabled, emailVerified
 
 userBatteries/
     {userId}/
-            id<battery>: true
+            {batteryId}: true
             ...
 userTransactions/
     {userId}/
-            id<transaction>: true
+            {transactionId}: true
             ...
 userPartners/
     {userId}/
-            id<partner> : true
+            {partnerId} : true
             ...
 
 User's photos are kept in Firebase Storage:
@@ -194,8 +172,8 @@ logic/
         addCashier/
             {execId}/
                 input/
-                    partnerId: id<partner>
-                    userId: id<user>
+                    partnerId: {partnerId}
+                    userId: {userId}
                 output/
                     succeeded: boolean
 ```

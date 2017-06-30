@@ -1,7 +1,18 @@
-Battery:
+## QR content
 
-battyboost.com/b?v=0&d=123e4567-e89b-12d3-a456-426655440000
+battyboost.com/qr?{version}{id}{checksum}
 
-User:
+version: 1 alphanumeric character, 0 to z
+battery id: 10 alphanumeric characters, random
+user id: 11 alphanumeric characters, random
+checksum: alphanumeric-chars[CRC32(UTF-8(id)) % alphanumeric-chars.length}]
+alphanumeric-chars = {0...9, a .. z}
 
-battyboost.com/u?v=0&d=123e4567-e89b-12d3-a456-426655440000
+Example for battery:
+
+battyboost.com/qr?0084y5f0c0yf
+
+Example for user:
+
+battyboost.com/qr?0idj1xi6hi3z7
+

@@ -12,6 +12,8 @@ import info.mschmitt.battyboost.adminapp.databinding.UserEditingViewBinding;
 import info.mschmitt.battyboost.adminapp.user.UserViewModel;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.utils.ChecksumProcessor;
+import info.mschmitt.battyboost.core.utils.RandomStringGenerator;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -36,6 +38,13 @@ public class UserEditingFragment extends Fragment {
         args.putSerializable(ARG_USER, user);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void onGenerateCodeClick() {
+        RandomStringGenerator randomStringGenerator = new RandomStringGenerator(11);
+        ChecksumProcessor checksumProcessor = new ChecksumProcessor();
+        viewModel.user.qr = checksumProcessor.appendChecksum(randomStringGenerator.nextString());
+        viewModel.user.notifyChange();
     }
 
     @Override
@@ -91,7 +100,7 @@ public class UserEditingFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.pos_editing, menu);
+        inflater.inflate(R.menu.user_editing, menu);
         MenuItem saveMenuItem = menu.findItem(R.id.menu_item_save);
         saveMenuItem.setOnMenuItemClickListener(this::onSaveMenuItemClick);
     }

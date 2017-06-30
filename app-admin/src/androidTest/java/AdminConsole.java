@@ -74,7 +74,7 @@ public class AdminConsole {
         calendar.set(Calendar.YEAR, 2016);
         Date date = calendar.getTime();
         battery.manufacturingTime = date.getTime();
-        String key = client.addBattery(UUID.randomUUID(), battery).blockingGet();
+        String key = client.addBattery(battery).blockingGet();
         Log.i(TAG, key);
     }
 }

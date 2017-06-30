@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 public class BusinessUser extends BaseObservable implements Serializable {
     @Exclude public String id;
+    public String qr;
     public int balanceCents;
     public String bankAccountOwner;
     public String iban;

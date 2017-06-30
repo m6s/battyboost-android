@@ -1,7 +1,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:ignore="HardcodedText">
+    tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry,SpUsage,ContentDescription">
 
     <data>
 
@@ -45,6 +45,49 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical"
                     android:padding="16dp">
+
+                    <android.support.constraint.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <android.support.constraint.Guideline
+                            android:id="@+id/guidelineLeft"
+                            android:layout_width="0px"
+                            android:layout_height="0px"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.2" />
+
+                        <android.support.constraint.Guideline
+                            android:id="@+id/guidelineRight"
+                            android:layout_width="0px"
+                            android:layout_height="0px"
+                            android:orientation="vertical"
+                            app:layout_constraintGuide_percent="0.8" />
+
+                        <ImageView
+                            android:id="@+id/qrImageView"
+                            android:layout_width="0px"
+                            android:layout_height="0px"
+                            android:background="#4000"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintDimensionRatio="1:1"
+                            app:layout_constraintLeft_toLeftOf="@id/guidelineLeft"
+                            app:layout_constraintRight_toRightOf="@id/guidelineRight"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </android.support.constraint.ConstraintLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
+
+                    <include
+                        layout="@layout/text_output_layout"
+                        app:label="@{`QR`}"
+                        app:text="@{fragment.viewModel.user.qr}" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="16dp" />
 
                     <include
                         layout="@layout/text_output_layout"
