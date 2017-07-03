@@ -9,6 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
 import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
 import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
@@ -79,6 +80,9 @@ public class MainActivity extends AppCompatActivity {
             // https://developer.android.com/topic/libraries/support-library/revisions.html#26-0-0-beta1
             return;
         }
+        if (router.goBack(this)) {
+            return;
+        }
         super.onBackPressed();
     }
 
@@ -128,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (childFragment instanceof GuidedRentalFragment) {
             GuidedRentalFragment guidedRentalFragment = (GuidedRentalFragment) childFragment;
             component.plus(guidedRentalFragment).inject(guidedRentalFragment);
+        } else if (childFragment instanceof CheckoutFragment) {
+            CheckoutFragment checkoutFragment = (CheckoutFragment) childFragment;
+            component.plus(checkoutFragment).inject(checkoutFragment);
         }
         injectedFragments.put(childFragment, null);
     }

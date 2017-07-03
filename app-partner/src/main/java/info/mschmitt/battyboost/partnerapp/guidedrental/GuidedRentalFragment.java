@@ -102,6 +102,7 @@ public class GuidedRentalFragment extends Fragment {
     }
 
     public void onFinishClick() {
+        router.showCheckout(this, viewModel.user, viewModel.battery);
     }
 
     public void goUp() {

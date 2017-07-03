@@ -1,5 +1,4 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry,SpUsage,ContentDescription,NestedWeights">
 
@@ -7,36 +6,65 @@
 
         <variable
             name="fragment"
-            type="info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment" />
+            type="info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:fitsSystemWindows="true">
 
-        <android.support.constraint.Guideline
-            android:id="@+id/guidelineLeft"
-            android:layout_width="0px"
-            android:layout_height="0px"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.2" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <android.support.constraint.Guideline
-            android:id="@+id/guidelineRight"
-            android:layout_width="0px"
-            android:layout_height="0px"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.8" />
+            <android.support.design.widget.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/photoImageView"
-            android:layout_width="0px"
-            android:layout_height="0px"
-            android:background="#4000"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </android.support.constraint.ConstraintLayout>
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/primary"
+                    android:theme="@style/AppThemeToolbar" />
+            </android.support.design.widget.AppBarLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="0px"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    style="?android:attr/buttonBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{() -> fragment.onAbortClick()}"
+                        android:text="Abort" />
+
+                    <Button
+                        style="?android:attr/buttonBarButtonStyle"
+                        android:layout_width="0px"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:onClick="@{() -> fragment.onConfirmClick()}"
+                        android:text="Confirm" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
