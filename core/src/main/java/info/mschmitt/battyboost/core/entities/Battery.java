@@ -13,5 +13,5 @@ public class Battery extends BaseObservable implements Serializable {
     public String qr;
     public long manufacturingTime;
     public int chargeCycleCount;
-    public long borrowTime;
+    public long rentalTime;
 }

@@ -4,8 +4,10 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.partnerapp.stepper.StepperComponent;
-import info.mschmitt.battyboost.partnerapp.stepper.StepperFragment;
+import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalComponent;
+import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
+import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroComponent;
+import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListComponent;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 
@@ -13,17 +15,17 @@ import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragme
  * @author Matthias Schmitt
  */
 public class MainActivityComponent {
+    private final MainActivity activity;
     private final Router router;
-    private final Cache cache;
     private final FirebaseDatabase database;
     private final BattyboostClient client;
     private final FirebaseAuth auth;
     private final AuthUI authUI;
 
-    public MainActivityComponent(Router router, Cache cache, FirebaseDatabase database, BattyboostClient client,
-                                 FirebaseAuth auth, AuthUI authUI) {
+    public MainActivityComponent(MainActivity activity, Router router, FirebaseDatabase database,
+                                 BattyboostClient client, FirebaseAuth auth, AuthUI authUI) {
+        this.activity = activity;
         this.router = router;
-        this.cache = cache;
         this.database = database;
         this.client = client;
         this.auth = auth;
@@ -35,15 +37,18 @@ public class MainActivityComponent {
         activity.auth = auth;
         activity.client = client;
         activity.router = router;
-        activity.cache = cache;
         activity.injected = true;
     }
 
     public TransactionListComponent plus(TransactionListFragment fragment) {
-        return new TransactionListComponent(router, cache, database, client, authUI);
+        return new TransactionListComponent(router, activity.cache, database, client, authUI);
     }
 
-    public StepperComponent plus(StepperFragment fragment) {
-        return new StepperComponent(router, cache, client, authUI);
+    public GuidedRentalComponent plus(GuidedRentalFragment fragment) {
+        return new GuidedRentalComponent(router, activity.cache, client, authUI);
+    }
+
+    public RentalIntroComponent plus(RentalIntroFragment fragment) {
+        return new RentalIntroComponent(router, activity.cache, client, authUI);
     }
 }

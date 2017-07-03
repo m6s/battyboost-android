@@ -4,7 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import info.mschmitt.battyboost.partnerapp.stepper.StepperFragment;
+import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
+import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 
 /**
@@ -18,10 +19,21 @@ public class Router {
                 .commitNow();
     }
 
+    public void showCreateTransaction(Fragment fragment) {
+        FragmentActivity activity = fragment.getActivity();
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.contentView, RentalIntroFragment.newInstance())
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(null)
+                .commit();
+    }
+
     public void showStepper(Fragment fragment) {
         FragmentActivity activity = fragment.getActivity();
         activity.getSupportFragmentManager()
-                .beginTransaction().replace(R.id.contentView, StepperFragment.newInstance())
+                .beginTransaction()
+                .replace(R.id.contentView, GuidedRentalFragment.newInstance())
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .addToBackStack(null)
                 .commit();

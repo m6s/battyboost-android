@@ -9,7 +9,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
-import info.mschmitt.battyboost.partnerapp.stepper.StepperFragment;
+import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
+import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -31,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
     @Inject public FirebaseDatabase database;
     @Inject public FirebaseAuth auth;
     @Inject public Router router;
-    @Inject public Cache cache;
     @Inject public boolean injected;
-    private ViewModel viewModel;
+    public Cache cache;
+    private MainViewModel viewModel;
     private CompositeDisposable compositeDisposable;
     private boolean postResumed;
 
@@ -53,8 +54,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onPreCreate(Bundle savedInstanceState) {
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        viewModel = savedInstanceState == null ? new MainViewModel()
+                : (MainViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         cache = savedInstanceState == null ? new Cache() : (Cache) savedInstanceState.getSerializable(STATE_CACHE);
     }
 
@@ -121,12 +122,15 @@ public class MainActivity extends AppCompatActivity {
         if (childFragment instanceof TransactionListFragment) {
             TransactionListFragment transactionListFragment = (TransactionListFragment) childFragment;
             component.plus(transactionListFragment).inject(transactionListFragment);
-        } else if (childFragment instanceof StepperFragment) {
-            StepperFragment stepperFragment = (StepperFragment) childFragment;
-            component.plus(stepperFragment).inject(stepperFragment);
+        } else if (childFragment instanceof RentalIntroFragment) {
+            RentalIntroFragment rentalIntroFragment = (RentalIntroFragment) childFragment;
+            component.plus(rentalIntroFragment).inject(rentalIntroFragment);
+        } else if (childFragment instanceof GuidedRentalFragment) {
+            GuidedRentalFragment guidedRentalFragment = (GuidedRentalFragment) childFragment;
+            component.plus(guidedRentalFragment).inject(guidedRentalFragment);
         }
         injectedFragments.put(childFragment, null);
     }
 
-    private static class ViewModel implements Serializable {}
+    private static class MainViewModel implements Serializable {}
 }

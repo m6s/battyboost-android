@@ -112,9 +112,9 @@
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Borrow time"
+                            android:hint="Rental time"
                             android:inputType="number"
-                            app:longText="@={fragment.viewModel.battery.borrowTime}" />
+                            app:longText="@={fragment.viewModel.battery.rentalTime}" />
                     </android.support.design.widget.TextInputLayout>
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>

@@ -105,7 +105,7 @@ public class TransactionListFragment extends Fragment {
     }
 
     public void onAddClick() {
-        router.showStepper(this);
+        router.showCreateTransaction(this);
     }
 
     public void onSignInClick() {

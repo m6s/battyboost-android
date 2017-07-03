@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.partnerapp.stepper;
+package info.mschmitt.battyboost.partnerapp.rentalintro;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
@@ -13,7 +13,7 @@ import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
-import info.mschmitt.battyboost.partnerapp.databinding.StepperViewBinding;
+import info.mschmitt.battyboost.partnerapp.databinding.RentalIntroViewBinding;
 import io.reactivex.disposables.CompositeDisposable;
 
 import javax.inject.Inject;
@@ -22,7 +22,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class StepperFragment extends Fragment {
+public class RentalIntroFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     public ViewModel viewModel;
     @Inject public Router router;
@@ -33,7 +33,7 @@ public class StepperFragment extends Fragment {
     private CompositeDisposable compositeDisposable;
 
     public static Fragment newInstance() {
-        return new StepperFragment();
+        return new RentalIntroFragment();
     }
 
     @Override
@@ -48,11 +48,11 @@ public class StepperFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        StepperViewBinding binding = StepperViewBinding.inflate(inflater, container, false);
+        RentalIntroViewBinding binding = RentalIntroViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Stepper");
+        actionBar.setTitle("Rental");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(0);
         actionBar.setHomeActionContentDescription(0);
@@ -82,28 +82,23 @@ public class StepperFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-    public void onPrevClick() {
-        viewModel.completedSteps--;
-        viewModel.remainingSteps++;
-        viewModel.notifyChange();
-    }
-
-    public void onNextClick() {
-        viewModel.completedSteps++;
-        viewModel.remainingSteps--;
-        viewModel.notifyChange();
-    }
-
-    public void onSaveClick() {
-    }
-
     public void goUp() {
         router.goUp(this);
     }
 
+    public void onRentClick() {
+        router.showStepper(this);
+    }
+
+    public void onReturnClick() {
+
+    }
+
+    public void onSwapClick() {
+
+    }
+
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public int skippedSteps;
-        @Bindable public int completedSteps;
-        @Bindable public int remainingSteps = 3;
+        @Bindable public boolean guided = true;
     }
 }

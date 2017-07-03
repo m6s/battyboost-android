@@ -49,7 +49,7 @@
                     android:layout_gravity="bottom|end"
                     android:layout_margin="10dp"
                     android:onClick="@{() -> fragment.onAddClick()}"
-                    app:srcCompat="@drawable/ic_photo_camera_white_24dp" />
+                    app:srcCompat="@drawable/ic_shopping_cart_white_24dp" />
             </FrameLayout>
 
             <FrameLayout

@@ -16,11 +16,9 @@ public class BattyboostPartnerApplicationComponent {
     public final BattyboostClient client;
     public final FirebaseStorage storage;
     public final Router router;
-    public final Cache cache;
 
     public BattyboostPartnerApplicationComponent(BattyboostPartnerApplication application) {
         router = new Router();
-        cache = new Cache();
         database = FirebaseDatabase.getInstance();
         auth = FirebaseAuth.getInstance();
         authUI = AuthUI.getInstance();
@@ -34,6 +32,6 @@ public class BattyboostPartnerApplicationComponent {
     }
 
     public MainActivityComponent plus(MainActivity activity) {
-        return new MainActivityComponent(router, cache, database, client, auth, authUI);
+        return new MainActivityComponent(activity, router, database, client, auth, authUI);
     }
 }

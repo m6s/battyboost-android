@@ -68,9 +68,9 @@ transactions/
         type: "borrow" | "return"
         batteryId: {batteryId}
         partnerId: {partnerId}
-        borrowerId: {userId}
+        renterId: {userId}
         partnerCreditedCents: integer
-        borrowerCreditedCents: integer
+        renterCreditedCents: integer
         cashierId: {userId}
         time: integer
 ```
@@ -81,7 +81,7 @@ batteries/
         qr: string, indexed
         manufacturingTime: integer
         chargeCycleCount: integer
-        borrowTime: integer
+        rentalTime: integer
 ```
 
 ## Partners
@@ -126,7 +126,7 @@ The `adminId` user can add/remove cashier users.
 users/
     {userId}/
         qr: string, indexed
-        earliestBorrowTime: integer
+        rentalTime: integer
         balanceCents: integer
         bankAccountOwner: string
         iban: string
@@ -138,7 +138,7 @@ users/
 The Admin SDK allows access to the following properties via the FirebaseUser: displayName, email, photoUrl,
 providerData, providerId, uid, userMetadata, disabled, emailVerified
 
-`earliestBorrowTime` is the earliest `borrowTime` of all batteries currently borrowed by a user.
+`rentalTime` is the earliest `rentalTime` of all batteries currently rented by a user.
 
 userBatteries/
     {userId}/

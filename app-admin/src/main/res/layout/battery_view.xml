@@ -111,8 +111,8 @@
 
                     <include
                         layout="@layout/text_output_layout"
-                        app:label="@{`Borrow time`}"
-                        app:text="@{`` + fragment.viewModel.battery.borrowTime}" />
+                        app:label="@{`Rental time`}"
+                        app:text="@{`` + fragment.viewModel.battery.rentalTime}" />
                 </LinearLayout>
             </android.support.v4.widget.NestedScrollView>
         </LinearLayout>
