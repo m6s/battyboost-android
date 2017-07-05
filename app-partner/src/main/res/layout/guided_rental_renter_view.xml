@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:includeFontPadding="false"
-            android:text="User code"
+            android:text="Renter code"
             android:textAppearance="@style/AppTextAppearanceTiny" />
 
         <View
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@{fragment.viewModel.user.qr ?? `Not set`}"
+            android:text="@{fragment.viewModel.renter.qr ?? `Not set`}"
             android:textAppearance="@style/AppTextAppearanceMedium" />
 
         <View
@@ -47,7 +47,7 @@
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:onClick="@{() -> fragment.onScanBatteryCodeClick()}"
+            android:onClick="@{() -> fragment.onScanRenterCodeClick()}"
             android:text="Scan" />
 
         <View
@@ -58,7 +58,7 @@
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:onClick="@{() -> fragment.onEnterBatteryCodeClick()}"
+            android:onClick="@{() -> fragment.onEnterRenterCodeClick()}"
             android:text="Enter manually" />
 
         <View

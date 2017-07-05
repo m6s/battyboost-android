@@ -17,7 +17,7 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.BatteryViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import info.mschmitt.battyboost.core.utils.zxing.ZXingImageLoader;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -77,7 +77,7 @@ public class BatteryFragment extends Fragment {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
         DatabaseReference reference = database.getReference("batteries").child(batteryKey);
-        Disposable disposable = RxDatabaseReference.valueEvents(reference)
+        Disposable disposable = RxQuery.valueEvents(reference)
                 .map(BattyboostClient.BATTERY_MAPPER)
                 .subscribe(optional -> setBattery(optional.value));
         compositeDisposable.add(disposable);

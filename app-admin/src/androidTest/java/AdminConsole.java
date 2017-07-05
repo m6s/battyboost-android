@@ -10,7 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import io.reactivex.functions.Function;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class AdminConsole {
     public void printBatteryQRs() throws Exception {
         DatabaseReference batteriesRef = database.getReference("batteries");
         Map<String, Battery> batteries =
-                RxDatabaseReference.valueEvents(batteriesRef).firstElement().map(BATTERY_MAP_MAPPER).blockingGet();
+                RxQuery.valueEvents(batteriesRef).firstElement().map(BATTERY_MAP_MAPPER).blockingGet();
         for (Map.Entry<String, Battery> entry : batteries.entrySet()) {
             String qrData = compileQRData(entry.getKey(), entry.getValue());
             String url = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + URLEncoder.encode(qrData,

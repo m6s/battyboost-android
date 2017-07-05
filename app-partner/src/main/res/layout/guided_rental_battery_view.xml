@@ -47,7 +47,7 @@
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:onClick="@{() -> fragment.onScanUserCodeClick()}"
+            android:onClick="@{() -> fragment.onScanBatteryCodeClick()}"
             android:text="Scan" />
 
         <View
@@ -58,7 +58,7 @@
             android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:onClick="@{() -> fragment.onEnterUserCodeClick()}"
+            android:onClick="@{() -> fragment.onEnterBatteryCodeClick()}"
             android:text="Enter manually" />
 
         <View

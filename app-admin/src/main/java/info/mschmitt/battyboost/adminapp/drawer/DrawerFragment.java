@@ -27,30 +27,6 @@ public class DrawerFragment extends Fragment {
         return new DrawerFragment();
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        if (!injected) {
-            throw new IllegalStateException("Not injected");
-        }
-        super.onCreate(savedInstanceState);
-        viewModel = savedInstanceState == null ? new ViewModel()
-                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        DrawerViewBinding binding = DrawerViewBinding.inflate(inflater, container, false);
-        binding.setFragment(this);
-        return binding.getRoot();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(STATE_VIEW_MODEL, viewModel);
-    }
-
     public void onPartnersClick() {
         setSelectedItem(DrawerItem.PARTNER_LIST);
         DrawerListener drawerListener = getDrawerListener();
@@ -98,8 +74,36 @@ public class DrawerFragment extends Fragment {
         }
     }
 
-    public <T extends Fragment & DrawerListener> void setTargetFragment(T targetFragment) {
-        setTargetFragment(targetFragment, 0);
+    @Override
+    public void setTargetFragment(Fragment fragment, int requestCode) {
+        if (!(fragment instanceof DrawerListener)) {
+            throw new IllegalArgumentException();
+        }
+        super.setTargetFragment(fragment, requestCode);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        if (!injected) {
+            throw new IllegalStateException("Not injected");
+        }
+        super.onCreate(savedInstanceState);
+        viewModel = savedInstanceState == null ? new ViewModel()
+                : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        DrawerViewBinding binding = DrawerViewBinding.inflate(inflater, container, false);
+        binding.setFragment(this);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
     public enum DrawerItem {

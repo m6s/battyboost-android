@@ -87,6 +87,7 @@ public class CheckoutFragment extends Fragment {
     }
 
     public void onAbortClick() {
+        router.showTransactionList(this);
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {}

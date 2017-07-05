@@ -18,7 +18,7 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.BusinessUser;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import info.mschmitt.battyboost.core.utils.zxing.ZXingImageLoader;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -78,7 +78,7 @@ public class UserFragment extends Fragment {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
         DatabaseReference reference = client.usersRef.child(userKey);
-        Disposable disposable = RxDatabaseReference.valueEvents(reference)
+        Disposable disposable = RxQuery.valueEvents(reference)
                 .filter(DataSnapshot::exists)
                 .map(BattyboostClient.DATABASE_USER_MAPPER)
                 .subscribe(optional -> setUser(optional.value));

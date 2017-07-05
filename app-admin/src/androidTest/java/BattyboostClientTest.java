@@ -9,7 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import io.reactivex.functions.Function;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -81,11 +81,10 @@ public class BattyboostClientTest {
     @Test
     public void addPartner() throws Exception {
         DatabaseReference partnersRef = database.getReference("partners");
-        List<Partner> partners =
-                RxDatabaseReference.valueEvents(partnersRef).firstElement().map(PARTNER_LIST_MAPPER).blockingGet();
+        List<Partner> partners = RxQuery.valueEvents(partnersRef).firstElement().map(PARTNER_LIST_MAPPER).blockingGet();
         int oldSize = partners.size();
         client.addPartner(new Partner()).blockingGet();
-        partners = RxDatabaseReference.valueEvents(partnersRef).firstElement().map(PARTNER_LIST_MAPPER).blockingGet();
+        partners = RxQuery.valueEvents(partnersRef).firstElement().map(PARTNER_LIST_MAPPER).blockingGet();
         Assert.assertEquals(partners.size(), oldSize + 1);
     }
 }

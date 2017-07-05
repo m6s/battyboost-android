@@ -15,6 +15,7 @@ import info.mschmitt.battyboost.core.entities.Pos;
 import info.mschmitt.battyboost.core.utils.RxOptional;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -75,7 +76,7 @@ public class BattyboostClient {
                 .map(optional -> optional.value)
                 .flatMapMaybe(firebaseUser -> {
                     DatabaseReference userRef = usersRef.child(firebaseUser.getUid());
-                    return RxDatabaseReference.valueEvents(userRef)
+                    return RxQuery.valueEvents(userRef)
                             .firstElement()
                             .filter(dataSnapshot -> !dataSnapshot.exists())
                             .map(ignore -> firebaseUser);

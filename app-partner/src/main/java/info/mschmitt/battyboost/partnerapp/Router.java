@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionFragment;
 import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
 import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
 import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroFragment;
@@ -20,7 +21,8 @@ public class Router {
         activity.getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.contentView, TransactionListFragment.newInstance())
-                .commitNow();
+                .addToBackStack(TransactionListFragment.class.getName())
+                .commit();
     }
 
     public void showCreateTransaction(Fragment fragment) {
@@ -65,5 +67,26 @@ public class Router {
         } else {
             return false;
         }
+    }
+
+    public void showTransactionList(CheckoutFragment fragment) {
+        FragmentManager fragmentManager = fragment.getFragmentManager();
+        fragmentManager.popBackStackImmediate(TransactionListFragment.class.getName(), 0);
+    }
+
+    public void dismiss(Fragment fragment) {
+        fragment.getActivity().getSupportFragmentManager().popBackStackImmediate();
+    }
+
+    public void showBatterySelection(GuidedRentalFragment fragment, Battery battery) {
+        FragmentActivity activity = fragment.getActivity();
+        BatterySelectionFragment batterySelectionFragment = BatterySelectionFragment.newInstance(battery);
+        batterySelectionFragment.setTargetFragment(fragment, 0);
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.contentView, batterySelectionFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(null)
+                .commit();
     }
 }

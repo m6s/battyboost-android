@@ -11,7 +11,7 @@ import info.mschmitt.battyboost.app.photo.PhotoFragment;
 import info.mschmitt.battyboost.app.settings.SettingsFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -101,8 +101,7 @@ public class MainActivity extends AppCompatActivity {
         disposable = RxAuth.userChanges(auth)
                 .filter(optional -> optional.value != null)
                 .map(optional -> optional.value)
-                .switchMap(
-                        firebaseUser -> RxDatabaseReference.valueEvents(client.usersRef.child(firebaseUser.getUid())))
+                .switchMap(firebaseUser -> RxQuery.valueEvents(client.usersRef.child(firebaseUser.getUid())))
                 .map(BattyboostClient.DATABASE_USER_MAPPER)
                 .subscribe(optional -> {
                     cache.user = optional.value;

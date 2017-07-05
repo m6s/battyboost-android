@@ -22,7 +22,7 @@ import info.mschmitt.battyboost.app.databinding.MapViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.GeoCoordinates;
 import info.mschmitt.battyboost.core.entities.Pos;
-import info.mschmitt.battyboost.core.utils.firebase.RxDatabaseReference;
+import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -118,7 +118,7 @@ public class MapFragment extends Fragment {
     }
 
     private void resumeMap(GoogleMap map) {
-        Disposable disposable = RxDatabaseReference.childAddedEvents(client.posListRef)
+        Disposable disposable = RxQuery.childAddedEvents(client.posListRef)
                 .map(BattyboostClient.POS_MAPPER)
                 .subscribe(optional -> {
                     Pos pos = optional.value;
@@ -127,7 +127,7 @@ public class MapFragment extends Fragment {
                     markerMap.put(pos.id, marker);
                 });
         compositeDisposable.add(disposable);
-        disposable = RxDatabaseReference.childRemovedEvents(client.partnersRef)
+        disposable = RxQuery.childRemovedEvents(client.partnersRef)
                 .map(BattyboostClient.POS_MAPPER)
                 .subscribe(optional -> markerMap.remove(optional.value.id).remove());
         compositeDisposable.add(disposable);
