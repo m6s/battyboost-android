@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.partnerapp.batteryscanner.BatteryScannerFragment;
 import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionFragment;
 import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
 import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
@@ -81,6 +82,18 @@ public class Router {
     public void showBatterySelection(GuidedRentalFragment fragment, Battery battery) {
         FragmentActivity activity = fragment.getActivity();
         BatterySelectionFragment batterySelectionFragment = BatterySelectionFragment.newInstance(battery);
+        batterySelectionFragment.setTargetFragment(fragment, 0);
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .add(R.id.contentView, batterySelectionFragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    public void showBatteryScanner(GuidedRentalFragment fragment, Battery battery) {
+        FragmentActivity activity = fragment.getActivity();
+        BatteryScannerFragment batterySelectionFragment = BatteryScannerFragment.newInstance(battery);
         batterySelectionFragment.setTargetFragment(fragment, 0);
         activity.getSupportFragmentManager()
                 .beginTransaction()

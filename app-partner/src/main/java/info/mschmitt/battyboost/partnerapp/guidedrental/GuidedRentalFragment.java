@@ -17,7 +17,7 @@ import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.BusinessUser;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
-import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionFragment;
+import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionListener;
 import info.mschmitt.battyboost.partnerapp.databinding.GuidedRentalViewBinding;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -27,7 +27,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class GuidedRentalFragment extends Fragment implements BatterySelectionFragment.BatterySelectionListener {
+public class GuidedRentalFragment extends Fragment implements BatterySelectionListener {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final Step[] steps = new Step[]{BatteryStep.INSTANCE, RenterStep.INSTANCE, VerifyStep.INSTANCE};
     public ViewModel viewModel;
@@ -122,6 +122,7 @@ public class GuidedRentalFragment extends Fragment implements BatterySelectionFr
     }
 
     public void onScanBatteryCodeClick() {
+        router.showBatteryScanner(this, viewModel.battery);
     }
 
     public void onEnterRenterCodeClick() {
@@ -131,7 +132,7 @@ public class GuidedRentalFragment extends Fragment implements BatterySelectionFr
     }
 
     @Override
-    public void onBatterySelected(BatterySelectionFragment sender, Battery battery) {
+    public void onBatterySelected(Fragment sender, Battery battery) {
         viewModel.battery = battery;
         viewModel.notifyChange();
     }

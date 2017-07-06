@@ -1,7 +1,8 @@
-package info.mschmitt.battyboost.partnerapp.batteryselection;
+package info.mschmitt.battyboost.partnerapp.batteryscanner;
 
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -13,22 +14,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.database.Query;
+import com.google.zxing.ResultPoint;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
-import info.mschmitt.battyboost.partnerapp.databinding.BatterySelectionViewBinding;
+import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionListener;
+import info.mschmitt.battyboost.partnerapp.databinding.BatteryScannerViewBinding;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Matthias Schmitt
  */
-public class BatterySelectionFragment extends Fragment {
+public class BatteryScannerFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private static final String ARG_BATTERY = "BATTERY";
     public ViewModel viewModel;
@@ -40,8 +47,8 @@ public class BatterySelectionFragment extends Fragment {
     private CompositeDisposable compositeDisposable;
     private Battery battery;
 
-    public static BatterySelectionFragment newInstance(Battery battery) {
-        BatterySelectionFragment fragment = new BatterySelectionFragment();
+    public static BatteryScannerFragment newInstance(Battery battery) {
+        BatteryScannerFragment fragment = new BatteryScannerFragment();
         Bundle arguments = new Bundle();
         arguments.putSerializable(ARG_BATTERY, battery);
         fragment.setArguments(arguments);
@@ -65,7 +72,7 @@ public class BatterySelectionFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        BatterySelectionViewBinding binding = BatterySelectionViewBinding.inflate(inflater, container, false);
+        BatteryScannerViewBinding binding = BatteryScannerViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -74,13 +81,41 @@ public class BatterySelectionFragment extends Fragment {
         actionBar.setHomeAsUpIndicator(0);
         actionBar.setHomeActionContentDescription(0);
         binding.setFragment(this);
+        binding.barcodeView.decodeSingle(new BarcodeCallback() {
+            @Override
+            public void barcodeResult(BarcodeResult result) {
+                viewModel.batteryCode = result.getText();
+                if (battery != null && viewModel.batteryCode.equals(battery.qr)) {
+                    router.dismiss(BatteryScannerFragment.this);
+                } else {
+                    // TODO Show loading indicator
+                    Query batteryQuery = client.batteriesRef.orderByChild("qr").equalTo(viewModel.batteryCode);
+                    Disposable disposable = RxQuery.valueEvents(batteryQuery)
+                            .map(RxQuery.FIRST_CHILD_MAPPER)
+                            .map(optional -> optional.flatMap(BattyboostClient.BATTERY_MAPPER))
+                            .subscribe(optional -> setBattery(optional.value));
+                    compositeDisposable.add(disposable);
+                }
+            }
+
+            @Override
+            public void possibleResultPoints(List<ResultPoint> resultPoints) {
+            }
+        });
+        IntentIntegrator integrator = IntentIntegrator.forSupportFragment(this);
+        binding.barcodeView.initializeFromIntent(integrator.createScanIntent());
         return binding.getRoot();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getBinding().barcodeView.resume();
         compositeDisposable = new CompositeDisposable();
+    }
+
+    private BatteryScannerViewBinding getBinding() {
+        return DataBindingUtil.getBinding(getView());
     }
 
     @Override
@@ -92,6 +127,7 @@ public class BatterySelectionFragment extends Fragment {
     @Override
     public void onPause() {
         compositeDisposable.dispose();
+        getBinding().barcodeView.pause();
         super.onPause();
     }
 
@@ -99,23 +135,15 @@ public class BatterySelectionFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-    public void onOkClick() {
-        if (viewModel.batteryCode == null || viewModel.batteryCode.isEmpty()) {
+    private void setBattery(Battery battery) {
+        if (battery == null) {
+            Snackbar.make(getView(), "Not a battery code", Snackbar.LENGTH_LONG).show();
+        } else {
             BatterySelectionListener listener = getBatterySelectionListener();
             if (listener != null) {
-                listener.onBatterySelected(this, null);
+                listener.onBatterySelected(this, battery);
             }
             router.dismiss(this);
-        } else if (battery != null && viewModel.batteryCode.equals(battery.qr)) {
-            router.dismiss(this);
-        } else {
-            // TODO Show loading indicator
-            Query batteryQuery = client.batteriesRef.orderByChild("qr").equalTo(viewModel.batteryCode);
-            Disposable disposable = RxQuery.valueEvents(batteryQuery)
-                    .map(RxQuery.FIRST_CHILD_MAPPER)
-                    .map(optional -> optional.flatMap(BattyboostClient.BATTERY_MAPPER))
-                    .subscribe(optional -> setBattery(optional.value));
-            compositeDisposable.add(disposable);
         }
     }
 
@@ -129,16 +157,7 @@ public class BatterySelectionFragment extends Fragment {
         return parentFragment instanceof BatterySelectionListener ? (BatterySelectionListener) parentFragment : null;
     }
 
-    private void setBattery(Battery battery) {
-        if (battery == null) {
-            Snackbar.make(getView(), "Not a battery code", Snackbar.LENGTH_LONG).show();
-        } else {
-            BatterySelectionListener listener = getBatterySelectionListener();
-            if (listener != null) {
-                listener.onBatterySelected(this, battery);
-            }
-            router.dismiss(this);
-        }
+    public void onOkClick() {
     }
 
     public void onCancelClick() {

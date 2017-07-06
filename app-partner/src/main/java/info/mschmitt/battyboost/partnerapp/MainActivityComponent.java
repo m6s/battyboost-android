@@ -4,6 +4,8 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.partnerapp.batteryscanner.BatteryScannerComponent;
+import info.mschmitt.battyboost.partnerapp.batteryscanner.BatteryScannerFragment;
 import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionComponent;
 import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionFragment;
 import info.mschmitt.battyboost.partnerapp.checkout.CheckoutComponent;
@@ -62,5 +64,9 @@ public class MainActivityComponent {
 
     public BatterySelectionComponent plus(BatterySelectionFragment fragment) {
         return new BatterySelectionComponent(router, activity.cache, client, authUI);
+    }
+
+    public BatteryScannerComponent plus(BatteryScannerFragment fragment) {
+        return new BatteryScannerComponent(router, activity.cache, client, authUI);
     }
 }

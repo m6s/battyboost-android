@@ -9,6 +9,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
+import info.mschmitt.battyboost.partnerapp.batteryscanner.BatteryScannerFragment;
 import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionFragment;
 import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
 import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
@@ -138,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
         } else if (childFragment instanceof BatterySelectionFragment) {
             BatterySelectionFragment batterySelectionFragment = (BatterySelectionFragment) childFragment;
             component.plus(batterySelectionFragment).inject(batterySelectionFragment);
+        } else if (childFragment instanceof BatteryScannerFragment) {
+            BatteryScannerFragment batteryScannerFragment = (BatteryScannerFragment) childFragment;
+            component.plus(batteryScannerFragment).inject(batteryScannerFragment);
         }
         injectedFragments.put(childFragment, null);
     }

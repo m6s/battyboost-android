@@ -57,7 +57,7 @@
                     app:fragment="@{fragment}" />
 
                 <include
-                    layout="@layout/guided_rental_verify_view"
+                    layout="@layout/guided_rental_summary_view"
                     android:layout_width="match_parent"
                     android:layout_height="0px"
                     android:layout_weight="1"
