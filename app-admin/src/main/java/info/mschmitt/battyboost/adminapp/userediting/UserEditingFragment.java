@@ -43,7 +43,7 @@ public class UserEditingFragment extends Fragment {
     public void onGenerateCodeClick() {
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator(11);
         ChecksumProcessor checksumProcessor = new ChecksumProcessor();
-        viewModel.user.qr = checksumProcessor.appendChecksum(randomStringGenerator.nextString());
+        viewModel.user.qr = 0 + checksumProcessor.appendChecksum(randomStringGenerator.nextString());
         viewModel.user.notifyChange();
     }
 

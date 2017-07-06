@@ -10,6 +10,19 @@
 - Analytics
 - Login
 - User management
+- 40ct per transaction, except swap
+- 1 EUR/24h
+
+Exceptions:
+
+- Partner handed out wrong battery
+- Client has no money
+- Batter defect in revocation period
+- Battery defect on return
+- Undo transaction
+- Accessory missing (cable)
+
+- Debit return
 
 ## Service App
 

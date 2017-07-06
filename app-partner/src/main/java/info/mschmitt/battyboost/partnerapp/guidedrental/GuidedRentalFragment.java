@@ -1,10 +1,14 @@
 package info.mschmitt.battyboost.partnerapp.guidedrental;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -122,6 +126,13 @@ public class GuidedRentalFragment extends Fragment implements BatterySelectionLi
     }
 
     public void onScanBatteryCodeClick() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA}, 1);
+                return;
+            }
+        }
         router.showBatteryScanner(this, viewModel.battery);
     }
 
