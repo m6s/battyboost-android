@@ -32,7 +32,7 @@
 - Akku kaput (Akkutausch) Bei Rückgabe?
 - Transactions rückgängig machen (Rückgabe?)
 
-- [ ] 10 min Widerruf
+- [x] 10 min Widerruf
 (Erste 2 Stunden umsonst) 1 Euro/24h !
 Vergütung: 20ct pro Aus- und Rückgabe = 40ct. Nicht für Umtausch
 
