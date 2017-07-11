@@ -1,0 +1,76 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry,SpUsage,ContentDescription,NestedWeights">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <View
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:includeFontPadding="false"
+            android:text="Renter code"
+            android:textAppearance="@style/AppTextAppearanceTiny" />
+
+        <View
+            android:layout_width="0px"
+            android:layout_height="7dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@{fragment.viewModel.renter.qr ?? `Not set`}"
+            android:textAppearance="@style/AppTextAppearanceMedium" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="40dp" />
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="@{() -> fragment.onScanRenterCodeClick()}"
+            android:text="Scan" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <Button
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:onClick="@{() -> fragment.onEnterRenterCodeClick()}"
+            android:text="Enter manually" />
+
+        <View
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:layout_weight="1" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:checked="@={fragment.viewModel.anonymous}"
+            android:text="Anonymous rental" />
+    </LinearLayout>
+</layout>

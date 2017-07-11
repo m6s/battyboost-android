@@ -9,7 +9,7 @@
 
         <variable
             name="fragment"
-            type="info.mschmitt.battyboost.partnerapp.rental.actions.RentalActionsFragment" />
+            type="info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroFragment" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
@@ -80,6 +80,13 @@
                     android:layout_width="0px"
                     android:layout_height="0px"
                     android:layout_weight="1" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:checked="@={fragment.viewModel.guided}"
+                    android:text="Guided mode" />
             </LinearLayout>
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>

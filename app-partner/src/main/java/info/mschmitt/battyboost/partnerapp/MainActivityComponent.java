@@ -4,10 +4,16 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.partnerapp.rental.RentalComponent;
-import info.mschmitt.battyboost.partnerapp.rental.RentalFragment;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerComponent;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerFragment;
+import info.mschmitt.battyboost.partnerapp.batteryscanner.BatteryScannerComponent;
+import info.mschmitt.battyboost.partnerapp.batteryscanner.BatteryScannerFragment;
+import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionComponent;
+import info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionFragment;
+import info.mschmitt.battyboost.partnerapp.checkout.CheckoutComponent;
+import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
+import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalComponent;
+import info.mschmitt.battyboost.partnerapp.guidedrental.GuidedRentalFragment;
+import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroComponent;
+import info.mschmitt.battyboost.partnerapp.rentalintro.RentalIntroFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListComponent;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 
@@ -44,11 +50,23 @@ public class MainActivityComponent {
         return new TransactionListComponent(router, activity.cache, database, client, authUI);
     }
 
-    public RentalComponent plus(RentalFragment fragment) {
-        return new RentalComponent(router, activity.cache, client, authUI);
+    public GuidedRentalComponent plus(GuidedRentalFragment fragment) {
+        return new GuidedRentalComponent(router, activity.cache, database, client, authUI);
     }
 
-    public ScannerComponent plus(ScannerFragment fragment) {
-        return new ScannerComponent(router, activity.cache, client, authUI);
+    public RentalIntroComponent plus(RentalIntroFragment fragment) {
+        return new RentalIntroComponent(router, activity.cache, client, authUI);
+    }
+
+    public CheckoutComponent plus(CheckoutFragment fragment) {
+        return new CheckoutComponent(router, activity.cache, client, authUI);
+    }
+
+    public BatterySelectionComponent plus(BatterySelectionFragment fragment) {
+        return new BatterySelectionComponent(router, activity.cache, client, authUI);
+    }
+
+    public BatteryScannerComponent plus(BatteryScannerFragment fragment) {
+        return new BatteryScannerComponent(router, activity.cache, client, authUI);
     }
 }

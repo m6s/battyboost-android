@@ -1,4 +1,5 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry,SpUsage,ContentDescription,NestedWeights">
 
@@ -6,13 +7,14 @@
 
         <variable
             name="fragment"
-            type="info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment" />
+            type="info.mschmitt.battyboost.partnerapp.batteryselection.BatterySelectionFragment" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/white"
         android:fitsSystemWindows="true">
 
         <LinearLayout
@@ -42,6 +44,28 @@
                     android:layout_height="0px"
                     android:layout_weight="1" />
 
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/textInputLayout"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    app:errorEnabled="true"
+                    app:hintAnimationEnabled="false">
+
+                    <android.support.design.widget.TextInputEditText
+                        android:id="@+id/editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Battery code"
+                        android:inputType="text|textNoSuggestions"
+                        android:text="@={fragment.viewModel.batteryCode}" />
+                </android.support.design.widget.TextInputLayout>
+
+                <View
+                    android:layout_width="0px"
+                    android:layout_height="0px"
+                    android:layout_weight="1" />
+
                 <LinearLayout
                     style="?android:attr/buttonBarStyle"
                     android:layout_width="match_parent"
@@ -53,16 +77,16 @@
                         android:layout_width="0px"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:onClick="@{() -> fragment.onAbortClick()}"
-                        android:text="Abort" />
+                        android:onClick="@{() -> fragment.onCancelClick()}"
+                        android:text="Cancel" />
 
                     <Button
                         style="?android:attr/buttonBarButtonStyle"
                         android:layout_width="0px"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:onClick="@{() -> fragment.onConfirmClick()}"
-                        android:text="Confirm" />
+                        android:onClick="@{() -> fragment.onOkClick()}"
+                        android:text="Ok" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>

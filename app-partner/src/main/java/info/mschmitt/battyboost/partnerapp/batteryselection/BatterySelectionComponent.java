@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.partnerapp.rental.scanner;
+package info.mschmitt.battyboost.partnerapp.batteryselection;
 
 import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
@@ -8,21 +8,24 @@ import info.mschmitt.battyboost.partnerapp.Router;
 /**
  * @author Matthias Schmitt
  */
-public class ScannerComponent {
+public class BatterySelectionComponent {
     private final Router router;
     private final Cache cache;
     private final BattyboostClient client;
     private final AuthUI authUI;
 
-    public ScannerComponent(Router router, Cache cache, BattyboostClient client, AuthUI authUI) {
+    public BatterySelectionComponent(Router router, Cache cache, BattyboostClient client, AuthUI authUI) {
         this.router = router;
         this.cache = cache;
         this.client = client;
         this.authUI = authUI;
     }
 
-    public void inject(ScannerFragment fragment) {
+    public void inject(BatterySelectionFragment fragment) {
         fragment.router = router;
+        fragment.cache = cache;
+        fragment.client = client;
+        fragment.authUI = authUI;
         fragment.injected = true;
     }
 }

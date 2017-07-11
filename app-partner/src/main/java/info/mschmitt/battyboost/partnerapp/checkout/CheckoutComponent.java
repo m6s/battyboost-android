@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.partnerapp.rental.checkout;
+package info.mschmitt.battyboost.partnerapp.checkout;
 
 import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
