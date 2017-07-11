@@ -6,8 +6,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.rental.RentalComponent;
 import info.mschmitt.battyboost.partnerapp.rental.RentalFragment;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerComponent;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerFragment;
+import info.mschmitt.battyboost.partnerapp.scanner.ScannerComponent;
+import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListComponent;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 
@@ -49,6 +49,7 @@ public class MainActivityComponent {
     }
 
     public ScannerComponent plus(ScannerFragment fragment) {
-        return new ScannerComponent(router, activity.cache, client, authUI);
+        return new ScannerComponent(router, activity.cache, client, authUI, onQrScannedListener,
+                onUButtonClickListener);
     }
 }

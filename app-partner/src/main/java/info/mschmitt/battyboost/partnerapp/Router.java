@@ -3,11 +3,10 @@ package info.mschmitt.battyboost.partnerapp;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
 import info.mschmitt.battyboost.partnerapp.rental.RentalFragment;
-import info.mschmitt.battyboost.partnerapp.rental.checkout.CheckoutFragment;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerFragment;
+import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 
 /**
@@ -25,8 +24,9 @@ public class Router {
     public void showCreateTransaction(Fragment fragment) {
         FragmentActivity activity = fragment.getActivity();
         activity.getSupportFragmentManager()
-                .beginTransaction().replace(R.id.contentView, RentalFragment.newInstance())
-                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN).addToBackStack(RentalFragment.class.getName())
+                .beginTransaction()
+                .replace(R.id.contentView, RentalFragment.newInstance())
+                .addToBackStack(RentalFragment.class.getName())
                 .commit();
     }
 //    public void showStepper(Fragment fragment) {
@@ -71,13 +71,13 @@ public class Router {
 //        fragment.getActivity().getSupportFragmentManager().popBackStackImmediate();
 //    }
 
-    public void showRentalOptions(ScannerFragment fragment, String qr) {
+    public void showRentalActions(RentalFragment fragment, String qr) {
     }
 
     public void showScanner(RentalFragment fragment) {
-//        FragmentManager fragmentManager = fragment.getChildFragmentManager();
-//        ScannerFragment drawerFragment = ScannerFragment.newInstance();
-//        fragmentManager.beginTransaction().replace(R.id.rentalContentView, drawerFragment).commitNow();
+        FragmentManager fragmentManager = fragment.getChildFragmentManager();
+        ScannerFragment drawerFragment = ScannerFragment.newInstance();
+        fragmentManager.beginTransaction().replace(R.id.rentalContentView, drawerFragment).commitNow();
     }
 //    public void showBatterySelection(GuidedRentalFragment fragment, Battery battery) {
 //        FragmentActivity activity = fragment.getActivity();

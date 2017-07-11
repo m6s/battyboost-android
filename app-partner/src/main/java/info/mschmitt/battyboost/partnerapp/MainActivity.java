@@ -4,13 +4,14 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import info.mschmitt.battyboost.partnerapp.rental.RentalFragment;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerFragment;
+import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -47,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
         }
         onPreCreate(savedInstanceState);
         super.onCreate(savedInstanceState);
+        // https://stackoverflow.com/a/28041425/2317680
+        getWindow().getDecorView()
+                .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         DataBindingUtil.setContentView(this, R.layout.main_activity);
         if (savedInstanceState == null) {
             router.showTransactionList(this);

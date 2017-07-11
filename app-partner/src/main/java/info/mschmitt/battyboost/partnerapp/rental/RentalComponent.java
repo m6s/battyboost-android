@@ -4,12 +4,12 @@ import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
-import info.mschmitt.battyboost.partnerapp.rental.actions.RentalActionsComponent;
-import info.mschmitt.battyboost.partnerapp.rental.actions.RentalActionsFragment;
-import info.mschmitt.battyboost.partnerapp.rental.checkout.CheckoutComponent;
-import info.mschmitt.battyboost.partnerapp.rental.checkout.CheckoutFragment;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerComponent;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerFragment;
+import info.mschmitt.battyboost.partnerapp.checkout.CheckoutComponent;
+import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
+import info.mschmitt.battyboost.partnerapp.rentalactions.RentalActionsComponent;
+import info.mschmitt.battyboost.partnerapp.rentalactions.RentalActionsFragment;
+import info.mschmitt.battyboost.partnerapp.scanner.ScannerComponent;
+import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 
 /**
  * @author Matthias Schmitt
@@ -37,7 +37,7 @@ public class RentalComponent {
     }
 
     public ScannerComponent plus(ScannerFragment fragment) {
-        return new ScannerComponent(router, cache, client, authUI);
+        return new ScannerComponent(router, cache, client, authUI, null, null);
     }
 
     public RentalActionsComponent plus(RentalActionsFragment fragment) {

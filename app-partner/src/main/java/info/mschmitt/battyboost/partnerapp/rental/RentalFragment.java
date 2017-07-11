@@ -11,10 +11,10 @@ import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.R;
 import info.mschmitt.battyboost.partnerapp.Router;
+import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
 import info.mschmitt.battyboost.partnerapp.databinding.RentalViewBinding;
-import info.mschmitt.battyboost.partnerapp.rental.actions.RentalActionsFragment;
-import info.mschmitt.battyboost.partnerapp.rental.checkout.CheckoutFragment;
-import info.mschmitt.battyboost.partnerapp.rental.scanner.ScannerFragment;
+import info.mschmitt.battyboost.partnerapp.rentalactions.RentalActionsFragment;
+import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 
 import javax.inject.Inject;
 import java.io.Serializable;

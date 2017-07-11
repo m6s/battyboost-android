@@ -7,7 +7,7 @@
 
         <variable
             name="fragment"
-            type="info.mschmitt.battyboost.partnerapp.rental.checkout.CheckoutFragment" />
+            type="info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment" />
     </data>
 
     <android.support.design.widget.CoordinatorLayout

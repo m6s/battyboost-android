@@ -85,7 +85,7 @@ public class TransactionListFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.transactionlist, menu);
+        inflater.inflate(R.menu.transaction_list, menu);
     }
 
     @Override

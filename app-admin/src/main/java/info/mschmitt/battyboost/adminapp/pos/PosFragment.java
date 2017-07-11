@@ -45,10 +45,10 @@ public class PosFragment extends Fragment {
         if (!injected) {
             throw new IllegalStateException("Not injected");
         }
+        super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new PosViewModel()
                 : (PosViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
         posKey = getArguments().getString(ARG_POS_KEY);
-        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
