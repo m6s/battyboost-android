@@ -2,10 +2,51 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry,SpUsage,ContentDescription,NestedWeights">
 
-    <android.support.design.widget.CoordinatorLayout
+    <data>
+
+        <variable
+            name="fragment"
+            type="info.mschmitt.battyboost.partnerapp.rental.RentalFragment" />
+    </data>
+
+    <FrameLayout
         android:id="@+id/rentalContentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#478"
-        android:fitsSystemWindows="true" />
+        android:fitsSystemWindows="true">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#f54" />
+
+        <com.journeyapps.barcodescanner.BarcodeView
+            android:id="@+id/barcodeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <com.journeyapps.barcodescanner.ViewfinderView
+            android:id="@+id/viewFinderView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <info.mschmitt.battyboost.core.utils.views.StatusBarPlaceholderView
+                android:layout_width="0px"
+                android:layout_height="0px" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/AppThemeToolbar" />
+        </LinearLayout>
+    </FrameLayout>
 </layout>
