@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.partnerapp.checkout;
+package info.mschmitt.battyboost.partnerapp.rental.checkout;
 
 import android.databinding.BaseObservable;
 import android.os.Bundle;

@@ -1,7 +1,6 @@
-package info.mschmitt.battyboost.partnerapp.rentalintro;
+package info.mschmitt.battyboost.partnerapp.rental.actions;
 
 import android.databinding.BaseObservable;
-import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -13,7 +12,7 @@ import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
-import info.mschmitt.battyboost.partnerapp.databinding.RentalIntroViewBinding;
+import info.mschmitt.battyboost.partnerapp.databinding.RentalActionsViewBinding;
 import io.reactivex.disposables.CompositeDisposable;
 
 import javax.inject.Inject;
@@ -22,7 +21,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class RentalIntroFragment extends Fragment {
+public class RentalActionsFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     public ViewModel viewModel;
     @Inject public Router router;
@@ -33,7 +32,7 @@ public class RentalIntroFragment extends Fragment {
     private CompositeDisposable compositeDisposable;
 
     public static Fragment newInstance() {
-        return new RentalIntroFragment();
+        return new RentalActionsFragment();
     }
 
     @Override
@@ -48,7 +47,7 @@ public class RentalIntroFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        RentalIntroViewBinding binding = RentalIntroViewBinding.inflate(inflater, container, false);
+        RentalActionsViewBinding binding = RentalActionsViewBinding.inflate(inflater, container, false);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(binding.toolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -87,18 +86,13 @@ public class RentalIntroFragment extends Fragment {
     }
 
     public void onRentClick() {
-        router.showStepper(this);
     }
 
     public void onReturnClick() {
-
     }
 
     public void onSwapClick() {
-
     }
 
-    public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public boolean guided = true;
-    }
+    public static class ViewModel extends BaseObservable implements Serializable {}
 }

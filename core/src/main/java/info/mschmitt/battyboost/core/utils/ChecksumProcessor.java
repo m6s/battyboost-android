@@ -13,7 +13,7 @@ public class ChecksumProcessor {
         return string + checksum(string);
     }
 
-    private char checksum(String string) {
+    public char checksum(String string) {
         try {
             CHECKSUM.reset();
             CHECKSUM.update(string.getBytes("UTF-8"));
@@ -22,9 +22,5 @@ public class ChecksumProcessor {
         }
         long value = CHECKSUM.getValue();
         return CharacterClasses.SYMBOL[(int) (value % CharacterClasses.SYMBOL.length)];
-    }
-
-    public boolean check(String string) {
-        return string.charAt(string.length() - 1) == checksum(string.substring(0, string.length() - 1));
     }
 }
