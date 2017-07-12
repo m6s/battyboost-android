@@ -10,7 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
 import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
-import info.mschmitt.battyboost.partnerapp.rental.RentalFragment;
+import info.mschmitt.battyboost.partnerapp.rentalactions.RentalActionsFragment;
 import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
 import io.reactivex.disposables.CompositeDisposable;
@@ -128,21 +128,12 @@ public class MainActivity extends AppCompatActivity {
         if (childFragment instanceof TransactionListFragment) {
             TransactionListFragment transactionListFragment = (TransactionListFragment) childFragment;
             component.plus(transactionListFragment).inject(transactionListFragment);
-//        } else if (childFragment instanceof RentalIntroFragment) {
-//            RentalIntroFragment rentalIntroFragment = (RentalIntroFragment) childFragment;
-//            component.plus(rentalIntroFragment).inject(rentalIntroFragment);
-//        } else if (childFragment instanceof GuidedRentalFragment) {
-//            GuidedRentalFragment guidedRentalFragment = (GuidedRentalFragment) childFragment;
-//            component.plus(guidedRentalFragment).inject(guidedRentalFragment);
-        } else if (childFragment instanceof RentalFragment) {
-            RentalFragment rentalFragment = (RentalFragment) childFragment;
-            component.plus(rentalFragment).inject(rentalFragment);
-//        } else if (childFragment instanceof BatterySelectionFragment) {
-//            BatterySelectionFragment batterySelectionFragment = (BatterySelectionFragment) childFragment;
-//            component.plus(batterySelectionFragment).inject(batterySelectionFragment);
         } else if (childFragment instanceof ScannerFragment) {
             ScannerFragment scannerFragment = (ScannerFragment) childFragment;
             component.plus(scannerFragment).inject(scannerFragment);
+        } else if (childFragment instanceof RentalActionsFragment) {
+            RentalActionsFragment rentalActionsFragment = (RentalActionsFragment) childFragment;
+            component.plus(rentalActionsFragment).inject(rentalActionsFragment);
         }
         injectedFragments.put(childFragment, null);
     }

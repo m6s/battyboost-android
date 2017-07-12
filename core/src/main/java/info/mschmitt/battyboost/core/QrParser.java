@@ -8,28 +8,47 @@ import java.io.Serializable;
  * @author Matthias Schmitt
  */
 public class QrParser {
+    public static final int USER_QR_LENGTH = 13;
+    public static final int BATTERY_QR_LENGTH = 12;
     private static final String PREFIX = "https://battyboost.com/qr?";
     private final ChecksumProcessor checksumProcessor = new ChecksumProcessor();
 
-    public ParsingResult parse(String text) {
+    public ParsingResult parseUrl(String url, Target target) {
+        if (url == null) {
+            return new ParsingResult(ValidationError.INVALID);
+        }
+        if (!url.startsWith(PREFIX)) {
+            return new ParsingResult(ValidationError.INVALID);
+        }
+        String text = url.substring(PREFIX.length());
+        return parse(text, target);
+    }
+
+    public ParsingResult parse(String text, Target target) {
+        if (text == null) {
+            return new ParsingResult(ValidationError.INVALID);
+        }
         int length = text.length();
-        if (length != PREFIX.length() + 12 && length != PREFIX.length() + 11) {
+        if (target == Target.BATTERY && length != BATTERY_QR_LENGTH) {
             return new ParsingResult(ValidationError.INVALID);
         }
-        if (!text.startsWith(PREFIX)) {
+        if (target == Target.USER && length != USER_QR_LENGTH) {
             return new ParsingResult(ValidationError.INVALID);
         }
-        String qrId = text.substring(PREFIX.length());
-        char version = qrId.charAt(0);
-        if (version != 0) {
+        char version = text.charAt(0);
+        if (version != '0') {
             return new ParsingResult(ValidationError.INVALID_VERSION);
         }
-        String id = qrId.substring(1, length - 1);
-        char checksum = qrId.charAt(length - 1);
+        String id = text.substring(1, length - 1);
+        char checksum = text.charAt(length - 1);
         if (checksum != checksumProcessor.checksum(id)) {
             return new ParsingResult(ValidationError.INVALID_CHECKSUM);
         }
-        return new ParsingResult(qrId);
+        return new ParsingResult(text);
+    }
+
+    public enum Target {
+        BATTERY, USER
     }
 
     public enum ValidationError {

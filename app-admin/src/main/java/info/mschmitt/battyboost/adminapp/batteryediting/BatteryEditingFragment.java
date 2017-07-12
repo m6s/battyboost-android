@@ -105,7 +105,7 @@ public class BatteryEditingFragment extends Fragment {
     public void onGenerateCodeClick() {
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator(10);
         ChecksumProcessor checksumProcessor = new ChecksumProcessor();
-        viewModel.battery.qr = 0 + checksumProcessor.appendChecksum(randomStringGenerator.nextString());
+        viewModel.battery.qr = "0" + checksumProcessor.appendChecksum(randomStringGenerator.nextString());
         viewModel.battery.notifyChange();
     }
 

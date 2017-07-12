@@ -27,6 +27,7 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 import info.mschmitt.battyboost.core.QrParser;
 import info.mschmitt.battyboost.partnerapp.R;
+import info.mschmitt.battyboost.partnerapp.Router;
 import info.mschmitt.battyboost.partnerapp.databinding.ScannerViewBinding;
 
 import javax.inject.Inject;
@@ -43,8 +44,7 @@ public class ScannerFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
     private final QrParser parser = new QrParser();
     public ViewModel viewModel;
-    @Inject public OnQrScannedListener onQrScannedListener;
-    @Inject public OnUpButtonClickListener onUButtonClickListener;
+    @Inject public Router router;
     @Inject public boolean injected;
     private BeepManager beepManager;
     private boolean resumed;
@@ -52,7 +52,12 @@ public class ScannerFragment extends Fragment {
         @Override
         public void barcodeResult(BarcodeResult result) {
             beepManager.playBeepSoundAndVibrate();
-            processQrCode(result.getText());
+            QrParser.ParsingResult parsingResult = parser.parseUrl(result.getText(), QrParser.Target.BATTERY);
+            if (parsingResult.error != null) {
+                onWrongQr();
+            } else {
+                router.showRentalActions(ScannerFragment.this, parsingResult.qr);
+            }
         }
 
         @Override
@@ -160,7 +165,7 @@ public class ScannerFragment extends Fragment {
     }
 
     public void goUp() {
-        onUButtonClickListener.onUpButtonClick();
+        router.goUp(this);
     }
 
     private void updateActionBar(ScannerViewBinding binding) {
@@ -168,7 +173,7 @@ public class ScannerFragment extends Fragment {
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(viewModel.manualEntry ? "Enter QR code" : "Scan QR code");
+        actionBar.setTitle(viewModel.manualEntry ? "Enter battery code" : "Scan battery QR");
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setHomeAsUpIndicator(0);
         actionBar.setHomeActionContentDescription(0);
@@ -189,15 +194,11 @@ public class ScannerFragment extends Fragment {
     }
 
     public void onOkClick() {
-        processQrCode(viewModel.batteryCode);
-    }
-
-    private void processQrCode(String text) {
-        QrParser.ParsingResult parsingResult = parser.parse(text);
-        if (parsingResult.error == null) {
+        QrParser.ParsingResult parsingResult = parser.parse(viewModel.batteryCode, QrParser.Target.BATTERY);
+        if (parsingResult.error != null) {
             onWrongQr();
         } else {
-            onQrScannedListener.onQrScanned(parsingResult.qr);
+            router.showRentalActions(this, parsingResult.qr);
         }
     }
 
@@ -237,14 +238,6 @@ public class ScannerFragment extends Fragment {
         updateActionBar(getBinding());
         getActivity().invalidateOptionsMenu();
         return true;
-    }
-
-    public interface OnQrScannedListener {
-        void onQrScanned(String qr);
-    }
-
-    public interface OnUpButtonClickListener {
-        void onUpButtonClick();
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {

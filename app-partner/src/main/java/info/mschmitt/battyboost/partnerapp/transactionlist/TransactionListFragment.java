@@ -105,7 +105,7 @@ public class TransactionListFragment extends Fragment {
     }
 
     public void onAddClick() {
-        router.showCreateTransaction(this);
+        router.showScanner(this);
     }
 
     public void onSignInClick() {
