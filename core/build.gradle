@@ -26,24 +26,7 @@ android {
 }
 
 dependencies {
-    compile 'com.google.zxing:core:3.3.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
-    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
-    compile 'com.firebaseui:firebase-ui-database:2.0.1'
-    compile 'com.firebaseui:firebase-ui-auth:2.0.1'
-    compile 'com.firebaseui:firebase-ui-storage:2.0.1'
-
-//    compile "com.google.firebase:firebase-auth:$FOO"
-//    compile "com.google.firebase:firebase-storage:$FOO"
-//    compile "com.google.firebase:firebase-database:$FOO"
-//    compile "com.google.android.gms:play-services-auth:$FOO"
-//
-//    compile "com.android.support:design:$BAR"
-//    compile "com.android.support:customtabs:$BAR"
-//    compile "com.android.support:cardview-v7:$BAR"
-//    compile "com.android.support:recyclerview-v7:$BAR"
-//    compile "com.android.support:support-v4:$BAR"
-//    compile "com.android.support:appcompat-v7:$BAR"
-//    compile "com.android.support:palette-v7:$BAR"
+    compile project(path: ':libs:support-android')
+    compile project(path: ':libs:support-firebase')
+    compile project(path: ':libs:support-zxing')
 }

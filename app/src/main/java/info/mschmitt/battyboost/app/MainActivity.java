@@ -10,8 +10,8 @@ import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.photo.PhotoFragment;
 import info.mschmitt.battyboost.app.settings.SettingsFragment;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
-import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
+import info.mschmitt.firebasesupport.RxAuth;
+import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 

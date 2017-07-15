@@ -10,7 +10,7 @@
             type="info.mschmitt.battyboost.core.ui.TransactionRecyclerAdapter.TransactionHolder" />
     </data>
 
-    <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
+    <info.mschmitt.androidsupport.design.MaterialSingleLineListItem
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"

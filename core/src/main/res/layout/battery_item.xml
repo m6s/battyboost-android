@@ -10,7 +10,7 @@
             type="info.mschmitt.battyboost.core.ui.BatteryRecyclerAdapter.BatteryHolder" />
     </data>
 
-    <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
+    <info.mschmitt.androidsupport.design.MaterialTwoLineListItem
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"

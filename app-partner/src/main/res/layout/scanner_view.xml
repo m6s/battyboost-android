@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <info.mschmitt.battyboost.core.utils.views.StatusBarPlaceholderView
+                <info.mschmitt.support.views.StatusBarPlaceholderView
                     android:layout_width="0px"
                     android:layout_height="0px" />
 

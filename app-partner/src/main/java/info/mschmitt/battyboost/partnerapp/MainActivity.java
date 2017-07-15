@@ -8,11 +8,11 @@ import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuth;
-import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
 import info.mschmitt.battyboost.partnerapp.rentalactions.RentalActionsFragment;
 import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
+import info.mschmitt.firebasesupport.RxAuth;
+import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 

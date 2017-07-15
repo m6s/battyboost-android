@@ -12,7 +12,7 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PartnerViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
-import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
+import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 

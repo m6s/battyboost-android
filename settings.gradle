@@ -1,1 +1,2 @@
-include ':app', ':core', ':app-partner', ':app-admin'
+include ':app', ':core', ':app-partner', ':app-admin', ':libs:support-android', ':libs:support-firebase',
+        ':libs:support-zxing'

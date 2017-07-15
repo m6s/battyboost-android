@@ -62,34 +62,34 @@
                         android:orientation="vertical"
                         app:visibleGone="@{fragment.cache.user != null}">
 
-                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
+                        <info.mschmitt.androidsupport.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onDisplayNameClick()}"
                             app:text1="Display name"
                             app:text2="@{fragment.cache.user.displayName}" />
 
-                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
+                        <info.mschmitt.androidsupport.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onEmailClick()}"
                             app:text1="Email"
                             app:text2="@{fragment.cache.user.email}" />
 
-                        <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
+                        <info.mschmitt.androidsupport.design.MaterialSingleLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onPhotoClick()}"
                             app:text1="Photo" />
 
-                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
+                        <info.mschmitt.androidsupport.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onBankAccountOwnerClick()}"
                             app:text1="Bank account owner"
                             app:text2="@{fragment.cache.user.bankAccountOwner}" />
 
-                        <info.mschmitt.battyboost.core.utils.design.MaterialTwoLineListItem
+                        <info.mschmitt.androidsupport.design.MaterialTwoLineListItem
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> fragment.onIbanClick()}"
@@ -113,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:text="More" />
 
-                    <info.mschmitt.battyboost.core.utils.design.MaterialSingleLineListItem
+                    <info.mschmitt.androidsupport.design.MaterialSingleLineListItem
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:onClick="@{() -> fragment.onAboutClick()}"

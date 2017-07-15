@@ -11,9 +11,9 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.battery.BatteryViewModel;
 import info.mschmitt.battyboost.adminapp.databinding.BatteryEditingViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.ChecksumProcessor;
+import info.mschmitt.battyboost.core.RandomStringGenerator;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.utils.ChecksumProcessor;
-import info.mschmitt.battyboost.core.utils.RandomStringGenerator;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 

@@ -1,7 +1,5 @@
 package info.mschmitt.battyboost.core;
 
-import info.mschmitt.battyboost.core.utils.ChecksumProcessor;
-
 import java.io.Serializable;
 
 /**

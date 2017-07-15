@@ -19,7 +19,7 @@ import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.SettingsViewBinding;
 import info.mschmitt.battyboost.app.databinding.TextInputDialogBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.utils.firebase.RxAuthUI;
+import info.mschmitt.firebasesupport.RxAuthUI;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 

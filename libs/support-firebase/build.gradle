@@ -1,0 +1,51 @@
+apply plugin: 'com.android.library'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "26.0.0"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        vectorDrawables.useSupportLibrary = true
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    packagingOptions {
+        exclude 'META-INF/rxjava.properties'
+    }
+}
+
+dependencies {
+    compile project(path: ':libs:support-android')
+    compile 'com.firebaseui:firebase-ui-database:2.0.1'
+    compile 'com.firebaseui:firebase-ui-auth:2.0.1'
+    compile 'com.firebaseui:firebase-ui-storage:2.0.1'
+//    compile "com.google.firebase:firebase-auth:$FOO"
+//    compile "com.google.firebase:firebase-storage:$FOO"
+//    compile "com.google.firebase:firebase-database:$FOO"
+//    compile "com.google.android.gms:play-services-auth:$FOO"
+//
+//    compile "com.android.support:design:$BAR"
+//    compile "com.android.support:customtabs:$BAR"
+//    compile "com.android.support:cardview-v7:$BAR"
+//    compile "com.android.support:recyclerview-v7:$BAR"
+//    compile "com.android.support:support-v4:$BAR"
+//    compile "com.android.support:appcompat-v7:$BAR"
+//    compile "com.android.support:palette-v7:$BAR"
+}

@@ -10,7 +10,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
+import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.functions.Function;
 import org.junit.BeforeClass;
 import org.junit.Test;

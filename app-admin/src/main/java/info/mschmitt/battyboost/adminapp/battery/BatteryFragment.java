@@ -17,8 +17,8 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.BatteryViewBinding;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.utils.firebase.RxQuery;
-import info.mschmitt.battyboost.core.utils.zxing.ZXingImageLoader;
+import info.mschmitt.firebasesupport.RxQuery;
+import info.mschmitt.zxingsupport.ZXingImageLoader;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
