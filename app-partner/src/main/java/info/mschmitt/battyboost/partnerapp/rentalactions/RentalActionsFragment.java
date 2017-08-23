@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.BattyboostClient;
-import info.mschmitt.battyboost.core.QrParser;
+import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
 import info.mschmitt.battyboost.partnerapp.databinding.RentalActionsViewBinding;
@@ -73,17 +73,21 @@ public class RentalActionsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        if (qr.length() == QrParser.USER_QR_LENGTH) {
-            viewModel.userQr = qr;
-        } else {
-            viewModel.batteryQr = qr;
+        Disposable disposable = client.findBatteryByQr(qr)
+                .subscribe((batteryOptional, throwable) -> onFindBatterByQrComplete(batteryOptional.value, throwable));
+        compositeDisposable.add(disposable);
+    }
+
+    private void onFindBatterByQrComplete(Battery battery, Throwable throwable) {
+        if (throwable != null) {
+            return; // TODO
         }
+        if (battery == null) {
+            return; // TODO
+        }
+        viewModel.batteryQr = battery.qr;
+        viewModel.batteryRentalTime = battery.rentalTime;
         viewModel.notifyChange();
-//        DatabaseReference reference = database.getReference("pos").child(qr);
-//        Disposable disposable = RxQuery.valueEvents(reference)
-//                .map(BattyboostClient.POS_MAPPER)
-//                .subscribe(optional -> setPos(optional.value));
-//        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -102,42 +106,53 @@ public class RentalActionsFragment extends Fragment {
         return ((AppCompatActivity) getActivity()).getSupportActionBar();
     }
 
-    public void onUserQrClick() {
-    }
-
-    public void onBatteryQrClick() {
-    }
-
     public void goUp() {
         router.goUp(this);
     }
 
-    public void onRentClick() {
-        Disposable disposable =
-                client.rentBattery(viewModel.batteryQr, viewModel.userQr).subscribe(this::onRentBatteryComplete);
+    public void onRentBatteryClick() {
+        if (viewModel.batteryRentalTime > 0) {
+            showRentBatteryAlert();
+        } else {
+            rentBattery();
+        }
+    }
+
+    private void showRentBatteryAlert() {
+    }
+
+    private void rentBattery() {
+        Disposable disposable = client.rentBattery(viewModel.batteryQr, null).subscribe(this::onRentBatteryComplete);
         compositeDisposable.add(disposable);
     }
 
-    private void onRentBatteryComplete(BattyboostClient.RentBatteryResult result) {
+    private void onRentBatteryComplete(BattyboostClient.RentBatteryResult result, Throwable throwable) {
         router.dismiss(this);
     }
 
-    private void onReturnBatteryComplete(BattyboostClient.ReturnBatteryResult result) {
+    private void onReturnBatteryComplete(BattyboostClient.ReturnBatteryResult result, Throwable throwable) {
         router.dismiss(this);
     }
 
-    public void onReturnClick() {
+    public void onReturnBatteryClick() {
+        if (viewModel.batteryRentalTime > 0) {
+            returnBattery();
+        } else {
+            showReturnBatteryAlert();
+        }
+    }
+
+    private void returnBattery() {
         Disposable disposable =
-                client.returnBattery(viewModel.batteryQr, viewModel.userQr).subscribe(this::onReturnBatteryComplete);
+                client.returnBattery(viewModel.batteryQr, null).subscribe(this::onReturnBatteryComplete);
         compositeDisposable.add(disposable);
     }
 
-    public void onSwapClick() {
-//        client.swapBattery(viewModel.batteryQr, viewModel.userQr);
+    private void showReturnBatteryAlert() {
     }
 
     public static class ViewModel extends BaseObservable implements Serializable {
-        @Bindable public String userQr;
         @Bindable public String batteryQr;
+        @Bindable public long batteryRentalTime;
     }
 }

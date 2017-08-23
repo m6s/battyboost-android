@@ -2,7 +2,6 @@ package info.mschmitt.battyboost.core.entities;
 
 import android.databinding.BaseObservable;
 import com.google.firebase.database.Exclude;
-import com.google.firebase.database.PropertyName;
 
 import java.io.Serializable;
 
@@ -10,9 +9,16 @@ import java.io.Serializable;
  * @author Matthias Schmitt
  */
 public class BusinessTransaction extends BaseObservable implements Serializable {
+    public static final String TYPE_RENTAL = "rental";
+    public static final String TYPE_RETURN = "return";
+    public static final String TYPE_DELIVERY = "delivery";
+    public static final String TYPE_COLLECTION = "collection";
     @Exclude public String id;
-    @PropertyName("consumerId") public String renterId;
-    public String batteryId;
-    public int partnerCreditedCents;
     public String type;
+    public String batteryId;
+    public String partnerId;
+    public int partnerCreditedCents;
+    public String cashierId;
+    public String conflictTransactionId;
+    public long time;
 }

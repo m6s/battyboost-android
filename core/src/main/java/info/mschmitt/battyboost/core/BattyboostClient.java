@@ -19,7 +19,8 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Matthias Schmitt
@@ -67,8 +68,10 @@ public class BattyboostClient {
     public final DatabaseReference invitesRef;
     public final DatabaseReference transactionsRef;
     public final StorageReference usersStorageRef;
+    private final DatabaseReference rootRef;
 
     public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth, FirebaseStorage storage) {
+        rootRef = database.getReference();
         usersRef = database.getReference("users");
         partnersRef = database.getReference("partners");
         posListRef = database.getReference("pos");
@@ -189,40 +192,57 @@ public class BattyboostClient {
         return RxDatabaseReference.setValue(inviteRef, token);
     }
 
-    public Single<RentBatteryResult> rentBattery(String batteryQr, String userQr) {
-        Single<PrepareRentBatteryResult> prepareRentBatteryResultSingle = prepareRentBattery(batteryQr, userQr);
+    public Single<RentBatteryResult> rentBattery(String batteryQr) {
+        Single<PrepareRentBatteryResult> prepareRentBatteryResultSingle = prepareRentBattery(batteryQr);
         return prepareRentBatteryResultSingle.flatMap(prepareRentBatteryResult -> {
             if (prepareRentBatteryResult.error != null) {
                 RentBatteryResult result = new RentBatteryResult();
                 result.error = prepareRentBatteryResult.error;
                 return Single.just(result);
-            } else {
-                return rentBattery(prepareRentBatteryResult.battery, prepareRentBatteryResult.user,
-                        prepareRentBatteryResult.partnerCreditedCents);
             }
+            return rentBattery(prepareRentBatteryResult.battery, prepareRentBatteryResult.partnerCreditedCents);
         });
     }
 
-    public Single<PrepareRentBatteryResult> prepareRentBattery(String batteryQr, String userQr) {
-        Single<RxOptional<BusinessUser>> userSingle = findUserByQr(userQr);
-        Single<RxOptional<Battery>> batterySingle = findBatteryByQr(batteryQr);
-        return Single.zip(batterySingle, userSingle,
-                (batteryOptional, userOptional) -> toPrepareRentBatteryResult(batteryOptional.value, userOptional.value,
-                        userQr == null));
+    public Single<PrepareRentBatteryResult> prepareRentBattery(String batteryQr) {
+        return findBatteryByQr(batteryQr).map(batteryOptional -> toPrepareRentBatteryResult(batteryOptional.value));
     }
 
-    private Single<RentBatteryResult> rentBattery(Battery battery, BusinessUser user, int partnerCreditedCents) {
-        battery.rentalTime = new Date().getTime();
+    private Single<RentBatteryResult> rentBattery(Battery battery, int partnerCreditedCents) {
+        battery.rentalTime = System.currentTimeMillis();
         BusinessTransaction transaction = new BusinessTransaction();
-        if (user != null) {
-            transaction.renterId = user.id;
-        }
         transaction.batteryId = battery.id;
         transaction.partnerCreditedCents = partnerCreditedCents;
-        transaction.type = "borrow";
+        transaction.type = BusinessTransaction.TYPE_RENTAL;
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put(transactionsRef.getKey() + "/" + transactionsRef.push().getKey(), transaction);
+        updateMap.put(batteriesRef.getKey() + "/" + battery.id, battery);
         RentBatteryResult result = new RentBatteryResult();
         result.transaction = transaction;
-        return RxDatabaseReference.setValue(transactionsRef.push(), transaction).toSingleDefault(result);
+        result.battery = battery;
+        return RxDatabaseReference.updateChildren(rootRef, updateMap).toSingleDefault(result);
+    }
+
+    public Single<RxOptional<Battery>> findBatteryByQr(String batteryQr) {
+        Query batteryByQrQuery = batteriesRef.orderByChild("qr").equalTo(batteryQr);
+        return RxQuery.valueEvents(batteryByQrQuery)
+                .map(RxQuery.FIRST_CHILD_MAPPER)
+                .map(optional -> optional.flatMap(BATTERY_MAPPER))
+                .firstElement()
+                .toSingle();
+    }
+
+    public PrepareRentBatteryResult toPrepareRentBatteryResult(Battery battery) {
+        PrepareRentBatteryResult result = new PrepareRentBatteryResult();
+        if (battery == null) {
+            result.error = "Battery does not exist";
+        } else {
+            result.battery = battery;
+            result.renterCreditedCents = -1200;
+            result.renterCashCreditedCents = -1200;
+            result.partnerCreditedCents = 40;
+        }
+        return result;
     }
 
     private Single<RxOptional<BusinessUser>> findUserByQr(String userQr) {
@@ -238,61 +258,27 @@ public class BattyboostClient {
         }
     }
 
-    private Single<RxOptional<Battery>> findBatteryByQr(String batteryQr) {
-        Query batteryByQrQuery = batteriesRef.orderByChild("qr").equalTo(batteryQr);
-        return RxQuery.valueEvents(batteryByQrQuery)
-                .map(RxQuery.FIRST_CHILD_MAPPER)
-                .map(optional -> optional.flatMap(BATTERY_MAPPER))
-                .firstElement()
-                .toSingle();
-    }
-
-    public PrepareRentBatteryResult toPrepareRentBatteryResult(Battery battery, BusinessUser user, boolean anonymous) {
-        PrepareRentBatteryResult result = new PrepareRentBatteryResult();
-        if (!anonymous && user == null) {
-            result.error = "User does not exist";
-            return result;
-        }
-        if (battery == null) {
-            result.error = "Battery does not exist";
-        } else {
-            result.battery = battery;
-            result.user = user;
-            result.renterCreditedCents = -1200;
-            result.renterCashCreditedCents = -1200;
-            result.partnerCreditedCents = 40;
-        }
-        return result;
-    }
-
-    public Single<ReturnBatteryResult> returnBattery(String batteryQr, String userQr) {
-        Single<PrepareReturnBatteryResult> prepareReturnBatteryResultSingle = prepareReturnBattery(batteryQr, userQr);
+    public Single<ReturnBatteryResult> returnBattery(String batteryQr) {
+        Single<PrepareReturnBatteryResult> prepareReturnBatteryResultSingle = prepareReturnBattery(batteryQr);
         return prepareReturnBatteryResultSingle.flatMap(prepareReturnBatteryResult -> {
             if (prepareReturnBatteryResult.error != null) {
                 ReturnBatteryResult result = new ReturnBatteryResult();
                 result.error = prepareReturnBatteryResult.error;
                 return Single.just(result);
             } else {
-                return returnBattery(prepareReturnBatteryResult.battery, prepareReturnBatteryResult.user,
+                return returnBattery(prepareReturnBatteryResult.battery,
                         prepareReturnBatteryResult.partnerCreditedCents);
             }
         });
     }
 
-    public Single<PrepareReturnBatteryResult> prepareReturnBattery(String batteryQr, String userQr) {
-        Single<RxOptional<BusinessUser>> userSingle = findUserByQr(userQr);
-        Single<RxOptional<Battery>> batterySingle = findBatteryByQr(batteryQr);
-        return Single.zip(batterySingle, userSingle,
-                (batteryOptional, userOptional) -> toPrepareReturnBatteryResult(batteryOptional.value,
-                        userOptional.value, userQr == null));
+    public Single<PrepareReturnBatteryResult> prepareReturnBattery(String batteryQr) {
+        return findBatteryByQr(batteryQr).map(batteryOptional -> toPrepareReturnBatteryResult(batteryOptional.value));
     }
 
-    private Single<ReturnBatteryResult> returnBattery(Battery battery, BusinessUser user, int partnerCreditedCents) {
-        battery.rentalTime = new Date().getTime();
+    private Single<ReturnBatteryResult> returnBattery(Battery battery, int partnerCreditedCents) {
+        battery.rentalTime = 0;
         BusinessTransaction transaction = new BusinessTransaction();
-        if (user != null) {
-            transaction.renterId = user.id;
-        }
         transaction.batteryId = battery.id;
         transaction.partnerCreditedCents = partnerCreditedCents;
         transaction.type = "return";
@@ -301,18 +287,12 @@ public class BattyboostClient {
         return RxDatabaseReference.setValue(transactionsRef.push(), transaction).toSingleDefault(result);
     }
 
-    public PrepareReturnBatteryResult toPrepareReturnBatteryResult(Battery battery, BusinessUser user,
-                                                                   boolean anonymous) {
+    public PrepareReturnBatteryResult toPrepareReturnBatteryResult(Battery battery) {
         PrepareReturnBatteryResult result = new PrepareReturnBatteryResult();
-        if (!anonymous && user == null) {
-            result.error = "User does not exist";
-            return result;
-        }
         if (battery == null) {
             result.error = "Battery does not exist";
         } else {
             result.battery = battery;
-            result.user = user;
             result.renterCreditedCents = 800;
             result.renterCashCreditedCents = 800;
             result.partnerCreditedCents = 40;
@@ -323,12 +303,12 @@ public class BattyboostClient {
     public static class RentBatteryResult {
         public String error;
         public BusinessTransaction transaction;
+        public Battery battery;
     }
 
     public static class PrepareRentBatteryResult {
         public String error;
         public Battery battery;
-        public BusinessUser user;
         public int renterCreditedCents;
         public int partnerCreditedCents;
         public int renterCashCreditedCents;
@@ -337,7 +317,6 @@ public class BattyboostClient {
     public static class PrepareReturnBatteryResult {
         public String error;
         public Battery battery;
-        public BusinessUser user;
         public int renterCreditedCents;
         public int partnerCreditedCents;
         public int renterCashCreditedCents;

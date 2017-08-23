@@ -17,7 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Matthias Schmitt
@@ -68,12 +69,6 @@ public class AdminConsole {
     @Test
     public void addBattery() {
         Battery battery = new Battery();
-        Calendar calendar = Calendar.getInstance(Locale.GERMANY);
-        calendar.clear();
-        calendar.set(Calendar.MONTH, Calendar.AUGUST);
-        calendar.set(Calendar.YEAR, 2016);
-        Date date = calendar.getTime();
-        battery.manufacturingTime = date.getTime();
         String key = client.addBattery(battery).blockingGet();
         Log.i(TAG, key);
     }

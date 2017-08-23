@@ -42,49 +42,16 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <LinearLayout
+                <include
+                    layout="@layout/text_output_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        android:layout_width="0px"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:label="@{`Battery QR`}"
-                        app:text="@{fragment.viewModel.batteryQr}" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="@{() -> fragment.onBatteryQrClick()}"
-                        android:text="Change" />
-                </LinearLayout>
+                    app:label="@{`Battery QR`}"
+                    app:text="@{fragment.viewModel.batteryQr}" />
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="16dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        android:layout_width="0px"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:label="@{`User QR`}"
-                        app:text="@{fragment.viewModel.userQr}" />
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="@{() -> fragment.onUserQrClick()}"
-                        android:text="Change" />
-                </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
@@ -93,7 +60,7 @@
                 <Button
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
-                    android:onClick="@{() -> fragment.onRentClick()}"
+                    android:onClick="@{() -> fragment.onRentBatteryClick()}"
                     android:text="Rent battery" />
 
                 <View
@@ -103,18 +70,8 @@
                 <Button
                     android:layout_width="180dp"
                     android:layout_height="wrap_content"
-                    android:onClick="@{() -> fragment.onReturnClick()}"
+                    android:onClick="@{() -> fragment.onReturnBatteryClick()}"
                     android:text="Return battery" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="16dp" />
-
-                <Button
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:onClick="@{() -> fragment.onSwapClick()}"
-                    android:text="Swap battery" />
 
                 <View
                     android:layout_width="0px"

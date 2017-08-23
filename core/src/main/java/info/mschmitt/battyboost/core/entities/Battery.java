@@ -11,7 +11,5 @@ import java.io.Serializable;
 public class Battery extends BaseObservable implements Serializable {
     @Exclude public String id;
     public String qr;
-    public long manufacturingTime;
-    public int chargeCycleCount;
     public long rentalTime;
 }

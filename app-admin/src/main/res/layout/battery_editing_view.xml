@@ -84,34 +84,6 @@
                         <android.support.design.widget.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Manufacturing time"
-                            android:inputType="number"
-                            app:longText="@={fragment.viewModel.battery.manufacturingTime}" />
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:errorEnabled="true"
-                        app:hintAnimationEnabled="false">
-
-                        <android.support.design.widget.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Charge cycle count"
-                            android:inputType="number"
-                            app:intText="@={fragment.viewModel.battery.chargeCycleCount}" />
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:errorEnabled="true"
-                        app:hintAnimationEnabled="false">
-
-                        <android.support.design.widget.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
                             android:hint="Rental time"
                             android:inputType="number"
                             app:longText="@={fragment.viewModel.battery.rentalTime}" />

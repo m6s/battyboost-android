@@ -93,24 +93,6 @@
 
                     <include
                         layout="@layout/text_output_layout"
-                        app:label="@{`Manufacturing time`}"
-                        app:text="@{`` + fragment.viewModel.battery.manufacturingTime}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
-
-                    <include
-                        layout="@layout/text_output_layout"
-                        app:label="@{`Charge cycle count`}"
-                        app:text="@{`` + fragment.viewModel.battery.chargeCycleCount}" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="16dp" />
-
-                    <include
-                        layout="@layout/text_output_layout"
                         app:label="@{`Rental time`}"
                         app:text="@{`` + fragment.viewModel.battery.rentalTime}" />
                 </LinearLayout>
