@@ -68,7 +68,7 @@ public class BattyboostClient {
     public final DatabaseReference invitesRef;
     public final DatabaseReference transactionsRef;
     public final StorageReference usersStorageRef;
-    private final DatabaseReference rootRef;
+    public final DatabaseReference rootRef;
 
     public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth, FirebaseStorage storage) {
         rootRef = database.getReference();

@@ -8,7 +8,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.entities.Battery;
+import info.mschmitt.battyboost.core.entities.BusinessTransaction;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.firebasesupport.RxDatabaseReference;
 import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.functions.Function;
 import org.junit.Assert;
@@ -16,8 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author Matthias Schmitt
@@ -86,5 +88,29 @@ public class BattyboostClientTest {
         client.addPartner(new Partner()).blockingGet();
         partners = RxQuery.valueEvents(partnersRef).firstElement().map(PARTNER_LIST_MAPPER).blockingGet();
         Assert.assertEquals(partners.size(), oldSize + 1);
+    }
+
+    /**
+     * "txend": {
+     * ".validate": "newData.val() === root.child('txbegin').val()"
+     * }
+     */
+    @Test
+    public void transaction() throws Exception {
+        DatabaseReference txBeginRef = database.getReference("txbegin");
+        String txId = UUID.randomUUID().toString();
+        RxDatabaseReference.setValue(txBeginRef, txId).blockingAwait();
+        Battery battery = new Battery();
+        battery.id = client.batteriesRef.push().getKey();
+        battery.rentalTime = System.currentTimeMillis();
+        BusinessTransaction transaction = new BusinessTransaction();
+        transaction.batteryId = battery.id;
+        transaction.partnerCreditedCents = 10;
+        transaction.type = BusinessTransaction.TYPE_RENTAL;
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put(client.transactionsRef.getKey() + "/" + client.transactionsRef.push().getKey(), transaction);
+        updateMap.put(client.batteriesRef.getKey() + "/" + battery.id, battery);
+        updateMap.put("/txend", txId);
+        RxDatabaseReference.updateChildren(client.rootRef, updateMap).blockingAwait();
     }
 }
