@@ -61,6 +61,9 @@ public class BattyboostClient {
         }
         return new RxOptional<>(user);
     };
+    public static final Function<DataSnapshot, RxOptional<AddPartnerOutput>> ADD_PARTNER_OUTPUT_MAPPER =
+            dataSnapshot -> new RxOptional<>(dataSnapshot.getValue(AddPartnerOutput.class));
+    public final DatabaseReference rootRef;
     public final DatabaseReference usersRef;
     public final DatabaseReference partnersRef;
     public final DatabaseReference posListRef;
@@ -68,7 +71,7 @@ public class BattyboostClient {
     public final DatabaseReference invitesRef;
     public final DatabaseReference transactionsRef;
     public final StorageReference usersStorageRef;
-    public final DatabaseReference rootRef;
+    private final DatabaseReference logicRef;
 
     public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth, FirebaseStorage storage) {
         rootRef = database.getReference();
@@ -78,6 +81,7 @@ public class BattyboostClient {
         batteriesRef = database.getReference("batteries");
         invitesRef = database.getReference("invites");
         transactionsRef = database.getReference("transactions");
+        logicRef = database.getReference().child("logic");
         usersStorageRef = storage.getReference().child("users");
         userCreations(auth).subscribe(this::onUserCreated); // TODO Create auth trigger function
     }
@@ -109,9 +113,19 @@ public class BattyboostClient {
         userRef.setValue(businessUser);
     }
 
-    public Single<String> addPartner(Partner partner) {
-        DatabaseReference partnerRef = partnersRef.push();
-        return RxDatabaseReference.setValue(partnerRef, partner).toSingleDefault(partnerRef.getKey());
+    public Single<String> addPartner(String userId, Partner partner) {
+        DatabaseReference executionRef = logicRef.child(userId).child("addPartner").push();
+        AddPartnerInput input = new AddPartnerInput();
+        input.partner = partner;
+        DatabaseReference inputRef = executionRef.child("input");
+        DatabaseReference outputRef = executionRef.child("output");
+        return RxDatabaseReference.setValue(inputRef, input)
+                .toSingleDefault(new Object())
+                .flatMap(ignore -> RxQuery.valueEvents(outputRef)
+                        .filter(DataSnapshot::exists)
+                        .map(ADD_PARTNER_OUTPUT_MAPPER)
+                        .firstOrError()
+                        .map(optional -> optional.value.partnerId));
     }
 
     public Completable updatePartner(String partnerKey, Partner partner) {
@@ -298,6 +312,15 @@ public class BattyboostClient {
             result.partnerCreditedCents = 40;
         }
         return result;
+    }
+
+    public static class AddPartnerInput {
+        public Partner partner;
+    }
+
+    public static class AddPartnerOutput {
+        public String status;
+        public String partnerId;
     }
 
     public static class RentBatteryResult {

@@ -7,6 +7,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import info.mschmitt.androidsupport.RxOptional;
 import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.BusinessTransaction;
@@ -33,6 +34,7 @@ public class BattyboostClientTest {
         }
         return list;
     };
+    private static final String UID = "WODzvGGRhwQJS8xFFRD5RkPiFDC3";
     private static FirebaseDatabase database;
     private static BattyboostClient client;
 
@@ -46,48 +48,17 @@ public class BattyboostClientTest {
         FirebaseStorage storage = FirebaseStorage.getInstance(app);
         client = new BattyboostClient(database, auth, storage);
     }
-//    @Test
-//    public void queryAtLocation() throws InterruptedException {
-//        double radius = 8589; // Fails
-////        double radius = 8587.8; //Passes
-//        CountDownLatch latch = new CountDownLatch(1);
-//        final boolean[] entered = {false};
-//        new GeoFire(database.getReference("_geofirePos")).queryAtLocation(new GeoLocation(0, 0), radius)
-//                .addGeoQueryEventListener(new GeoQueryEventListener() {
-//                    @Override
-//                    public void onKeyEntered(String key, GeoLocation location) {
-//                        entered[0] = true;
-//                    }
-//
-//                    @Override
-//                    public void onKeyExited(String key) {
-//                    }
-//
-//                    @Override
-//                    public void onKeyMoved(String key, GeoLocation location) {
-//                    }
-//
-//                    @Override
-//                    public void onGeoQueryReady() {
-//                        latch.countDown();
-//                    }
-//
-//                    @Override
-//                    public void onGeoQueryError(DatabaseError error) {
-//                    }
-//                });
-//        latch.await();
-//        Assert.assertTrue(entered[0]);
-//    }
 
     @Test
     public void addPartner() throws Exception {
-        DatabaseReference partnersRef = database.getReference("partners");
-        List<Partner> partners = RxQuery.valueEvents(partnersRef).firstElement().map(PARTNER_LIST_MAPPER).blockingGet();
-        int oldSize = partners.size();
-        client.addPartner(new Partner()).blockingGet();
-        partners = RxQuery.valueEvents(partnersRef).firstElement().map(PARTNER_LIST_MAPPER).blockingGet();
-        Assert.assertEquals(partners.size(), oldSize + 1);
+        Partner partner = new Partner();
+        partner.name = UUID.randomUUID().toString();
+        String partnerId = client.addPartner(UID, partner).blockingGet();
+        DatabaseReference partnerRef = client.partnersRef.child(partnerId);
+        RxOptional<Partner> optional =
+                RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient.PARTNER_MAPPER).blockingGet();
+        Assert.assertNotNull(optional.value);
+        Assert.assertEquals(partner.name, optional.value.name);
     }
 
     /**
@@ -112,5 +83,9 @@ public class BattyboostClientTest {
         updateMap.put(client.batteriesRef.getKey() + "/" + battery.id, battery);
         updateMap.put("/txend", txId);
         RxDatabaseReference.updateChildren(client.rootRef, updateMap).blockingAwait();
+    }
+
+    public static class AddPartnerRequest {
+        public Partner input;
     }
 }

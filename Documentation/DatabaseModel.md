@@ -163,31 +163,19 @@ All write access is through trigger functions. (See Functions.md for actual func
 
 ```
 logic/
-    {userId}/
+    {uid}/
         addPartner/
             {execId}/
                 input/
+                    partner/
+                        ...
                 output/
-                    succeeded: boolean
+                    success: boolean
         addCashier/
             {execId}/
                 input/
                     partnerId: {partnerId}
                     userId: {userId}
                 output/
-                    succeeded: boolean
-```
-
-## Alternative to for database triggered functions
-
-```
-command/
-    {userId}/
-        {execId}/
-            name: "addPartner" | "addCashier"
-            params...
-response/
-    {userId}/
-        {execId}/
-            succeeded: boolean
+                    success: boolean
 ```

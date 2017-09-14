@@ -104,7 +104,7 @@ public class PartnerEditingFragment extends Fragment implements PosSelectionFrag
     private boolean onSaveMenuItemClick(MenuItem menuItem) {
         Disposable disposable;
         if (viewModel.partner.id == null) {
-            disposable = client.addPartner(viewModel.partner).subscribe(s -> router.goUp(this));
+            disposable = client.addPartner("123", viewModel.partner).subscribe(s -> router.goUp(this)); // TODO
         } else {
             disposable =
                     client.updatePartner(viewModel.partner.id, viewModel.partner).subscribe(() -> router.goUp(this));
