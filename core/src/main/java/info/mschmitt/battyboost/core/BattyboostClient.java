@@ -1,8 +1,6 @@
 package info.mschmitt.battyboost.core;
 
-import android.net.Uri;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -11,11 +9,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import info.mschmitt.androidsupport.RxOptional;
 import info.mschmitt.battyboost.core.entities.*;
-import info.mschmitt.firebasesupport.RxAuth;
 import info.mschmitt.firebasesupport.RxDatabaseReference;
 import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.Completable;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 
@@ -71,7 +67,7 @@ public class BattyboostClient {
     public final DatabaseReference invitesRef;
     public final DatabaseReference transactionsRef;
     public final StorageReference usersStorageRef;
-    private final DatabaseReference logicRef;
+    private final DatabaseReference messagesRef;
 
     public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth, FirebaseStorage storage) {
         rootRef = database.getReference();
@@ -81,44 +77,16 @@ public class BattyboostClient {
         batteriesRef = database.getReference("batteries");
         invitesRef = database.getReference("invites");
         transactionsRef = database.getReference("transactions");
-        logicRef = database.getReference().child("logic");
+        messagesRef = database.getReference().child("messages");
         usersStorageRef = storage.getReference().child("users");
-        userCreations(auth).subscribe(this::onUserCreated); // TODO Create auth trigger function
-    }
-
-    private Observable<FirebaseUser> userCreations(FirebaseAuth auth) {
-        return RxAuth.userChanges(auth)
-                .filter(optional -> optional.value != null)
-                .map(optional -> optional.value)
-                .flatMapMaybe(firebaseUser -> {
-                    DatabaseReference userRef = usersRef.child(firebaseUser.getUid());
-                    return RxQuery.valueEvents(userRef)
-                            .firstElement()
-                            .filter(dataSnapshot -> !dataSnapshot.exists())
-                            .map(ignore -> firebaseUser);
-                });
-    }
-
-    /**
-     * Trigger
-     */
-    private void onUserCreated(FirebaseUser firebaseUser) {
-        String uid = firebaseUser.getUid();
-        DatabaseReference userRef = usersRef.child(uid);
-        BusinessUser businessUser = new BusinessUser();
-        businessUser.displayName = firebaseUser.getDisplayName();
-        businessUser.email = firebaseUser.getEmail();
-        Uri photoUrl = firebaseUser.getPhotoUrl();
-        businessUser.photoUrl = photoUrl != null ? photoUrl.toString() : null;
-        userRef.setValue(businessUser);
     }
 
     public Single<String> addPartner(String userId, Partner partner) {
-        DatabaseReference executionRef = logicRef.child(userId).child("addPartner").push();
+        DatabaseReference messageRef = messagesRef.child(userId).child("addPartner").push();
         AddPartnerInput input = new AddPartnerInput();
         input.partner = partner;
-        DatabaseReference inputRef = executionRef.child("input");
-        DatabaseReference outputRef = executionRef.child("output");
+        DatabaseReference inputRef = messageRef.child("input");
+        DatabaseReference outputRef = messageRef.child("output");
         return RxDatabaseReference.setValue(inputRef, input)
                 .toSingleDefault(new Object())
                 .flatMap(ignore -> RxQuery.valueEvents(outputRef)
