@@ -122,7 +122,7 @@ public class RentalActionsFragment extends Fragment {
     }
 
     private void rentBattery() {
-        Disposable disposable = client.rentBattery(viewModel.batteryQr, null).subscribe(this::onRentBatteryComplete);
+        Disposable disposable = client.rentBattery(viewModel.batteryQr).subscribe(this::onRentBatteryComplete);
         compositeDisposable.add(disposable);
     }
 
@@ -143,8 +143,7 @@ public class RentalActionsFragment extends Fragment {
     }
 
     private void returnBattery() {
-        Disposable disposable =
-                client.returnBattery(viewModel.batteryQr, null).subscribe(this::onReturnBatteryComplete);
+        Disposable disposable = client.returnBattery(viewModel.batteryQr).subscribe(this::onReturnBatteryComplete);
         compositeDisposable.add(disposable);
     }
 

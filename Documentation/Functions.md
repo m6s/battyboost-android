@@ -1,5 +1,7 @@
 # Trigger functions for Firebase
 
+All paths are relative to `{prefix}/logic/`, where `prefix` will be `"default"` in the production environment.
+
 ## Battery borrowing
 
 `calculatePayment(borrowerQR: uuid): integer`
@@ -31,3 +33,9 @@ Look up user via userQRs, copy to current user and delete.
 Update userQRs.
 
 ## Partner admin
+
+`addPartner`
+
+`updatePartner`
+
+`deletePartner`

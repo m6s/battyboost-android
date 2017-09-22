@@ -9,6 +9,7 @@ public class RxDatabaseError extends Throwable {
     public final DatabaseError databaseError;
 
     public RxDatabaseError(DatabaseError databaseError) {
+        super(databaseError.getMessage());
         this.databaseError = databaseError;
     }
 }

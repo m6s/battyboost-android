@@ -57,9 +57,7 @@ public class BattyboostClient {
         }
         return new RxOptional<>(user);
     };
-    public static final Function<DataSnapshot, RxOptional<AddPartnerOutput>> ADD_PARTNER_OUTPUT_MAPPER =
-            dataSnapshot -> new RxOptional<>(dataSnapshot.getValue(AddPartnerOutput.class));
-    public final DatabaseReference rootRef;
+    public final DatabaseReference prefixRef;
     public final DatabaseReference usersRef;
     public final DatabaseReference partnersRef;
     public final DatabaseReference posListRef;
@@ -68,28 +66,29 @@ public class BattyboostClient {
     public final DatabaseReference transactionsRef;
     public final StorageReference usersStorageRef;
     private final DatabaseReference logicRef;
+    private final FirebaseAuth auth;
 
-    public BattyboostClient(FirebaseDatabase database, FirebaseAuth auth, FirebaseStorage storage) {
-        rootRef = database.getReference();
-        usersRef = database.getReference("users");
-        partnersRef = database.getReference("partners");
-        posListRef = database.getReference("pos");
-        batteriesRef = database.getReference("batteries");
-        invitesRef = database.getReference("invites");
-        transactionsRef = database.getReference("transactions");
-        logicRef = database.getReference().child("logic");
+    public BattyboostClient(FirebaseAuth auth, FirebaseDatabase database, FirebaseStorage storage, String prefix) {
+        this.auth = auth;
+        prefixRef = database.getReference(prefix);
+        usersRef = prefixRef.child("data/users");
+        partnersRef = prefixRef.child("data/partners");
+        posListRef = prefixRef.child("data/pos");
+        batteriesRef = prefixRef.child("data/batteries");
+        invitesRef = prefixRef.child("data/invites");
+        transactionsRef = prefixRef.child("data/transactions");
+        logicRef = prefixRef.child("logic");
         usersStorageRef = storage.getReference().child("users");
     }
 
-    public Single<String> addPartner(String userId, Partner partner) {
-        AddPartnerInput input = new AddPartnerInput();
-        input.partner = partner;
-        return executeFunction("addPartner", userId, input, AddPartnerOutput.class).map(
-                addPartnerOutput -> addPartnerOutput.partnerId);
+    public Single<String> createPartner(Partner partner) {
+        return executeFunction("createPartner", new CreatePartnerInput(partner), CreatePartnerOutput.class).map(
+                createPartnerOutput -> createPartnerOutput.partnerId);
     }
 
-    private <InputT, OutputT> Single<OutputT> executeFunction(String functionName, String userId, InputT input,
+    private <InputT, OutputT> Single<OutputT> executeFunction(String functionName, InputT input,
                                                               Class<OutputT> outputClass) {
+        String userId = auth.getCurrentUser().getUid();
         DatabaseReference executionRef = logicRef.child(userId).child(functionName).push();
         DatabaseReference inputRef = executionRef.child("input");
         DatabaseReference outputRef = executionRef.child("output");
@@ -99,14 +98,14 @@ public class BattyboostClient {
                 .firstOrError());
     }
 
-    public Completable updatePartner(String partnerKey, Partner partner) {
-        DatabaseReference partnerRef = partnersRef.child(partnerKey);
-        return RxDatabaseReference.setValue(partnerRef, partner);
+    public Completable updatePartner(String partnerId, Partner partner) {
+        return executeFunction("updatePartner", new UpdatePartnerInput(partnerId, partner),
+                UpdatePartnerOutput.class).toCompletable();
     }
 
-    public Completable deletePartner(String partnerKey) {
-        DatabaseReference partnerRef = partnersRef.child(partnerKey);
-        return RxDatabaseReference.removeValue(partnerRef);
+    public Completable deletePartner(String partnerId) {
+        return executeFunction("deletePartner", new DeletePartnerInput(partnerId),
+                DeletePartnerOutput.class).toCompletable();
     }
 
     public Single<String> addPos(Pos pos) {
@@ -205,7 +204,7 @@ public class BattyboostClient {
         RentBatteryResult result = new RentBatteryResult();
         result.transaction = transaction;
         result.battery = battery;
-        return RxDatabaseReference.updateChildren(rootRef, updateMap).toSingleDefault(result);
+        return RxDatabaseReference.updateChildren(prefixRef, updateMap).toSingleDefault(result);
     }
 
     public Single<RxOptional<Battery>> findBatteryByQr(String batteryQr) {
@@ -285,13 +284,43 @@ public class BattyboostClient {
         return result;
     }
 
-    public static class AddPartnerInput {
-        public Partner partner;
+    private static class CreatePartnerInput {
+        public final Partner partner;
+
+        CreatePartnerInput(Partner partner) {
+            this.partner = partner;
+        }
     }
 
-    public static class AddPartnerOutput {
+    private static class CreatePartnerOutput {
         public String error;
         public String partnerId;
+    }
+
+    private static class UpdatePartnerInput {
+        public final String partnerId;
+        public final Partner partner;
+
+        private UpdatePartnerInput(String partnerId, Partner partner) {
+            this.partnerId = partnerId;
+            this.partner = partner;
+        }
+    }
+
+    private static class UpdatePartnerOutput {
+        public String error;
+    }
+
+    private static class DeletePartnerInput {
+        public String partnerId;
+
+        public DeletePartnerInput(String partnerId) {
+            this.partnerId = partnerId;
+        }
+    }
+
+    private static class DeletePartnerOutput {
+        public String error;
     }
 
     public static class RentBatteryResult {

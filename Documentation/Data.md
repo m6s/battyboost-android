@@ -1,5 +1,7 @@
 # Database model for Firebase
 
+All paths are relative to `{prefix}/data/`, where `prefix` will be `"default"` in the production environment.
+
 ## Dumb charging stations
 
 ```
