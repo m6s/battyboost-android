@@ -141,34 +141,43 @@ public class BattyboostClient {
                 DeleteBatteryOutput.class).toCompletable();
     }
 
-    public Completable updateUser(String userKey, BusinessUser user) {
-        DatabaseReference userRef = usersRef.child(userKey);
-        return RxDatabaseReference.setValue(userRef, user);
+    public Completable updateUser(String userId, BusinessUser user) {
+        return executeFunction("updateUser", new UpdateUserInput(userId, user), UpdateUserOutput.class).toCompletable();
     }
 
     public Completable updateUserEmail(String userId, String email) {
-        DatabaseReference emailRef = usersRef.child(userId).child("email");
-        return RxDatabaseReference.setValue(emailRef, email);
+        UpdateUserFieldsInput input = new UpdateUserFieldsInput(userId);
+        input.email = email;
+        input.updateEmail = true;
+        return executeFunction("updateUserFields", input, UpdateUserFieldsOutput.class).toCompletable();
     }
 
     public Completable updateUserDisplayName(String userId, String displayName) {
-        DatabaseReference displayNameRef = usersRef.child(userId).child("displayName");
-        return RxDatabaseReference.setValue(displayNameRef, displayName);
+        UpdateUserFieldsInput input = new UpdateUserFieldsInput(userId);
+        input.displayName = displayName;
+        input.updateDisplayName = true;
+        return executeFunction("updateUserFields", input, UpdateUserFieldsOutput.class).toCompletable();
     }
 
     public Completable updateUserIban(String userId, String iban) {
-        DatabaseReference ibanRef = usersRef.child(userId).child("iban");
-        return RxDatabaseReference.setValue(ibanRef, iban);
+        UpdateUserFieldsInput input = new UpdateUserFieldsInput(userId);
+        input.iban = iban;
+        input.updateIban = true;
+        return executeFunction("updateUserFields", input, UpdateUserFieldsOutput.class).toCompletable();
     }
 
     public Completable updateUserBankAccountOwner(String userId, String owner) {
-        DatabaseReference ownerRef = usersRef.child(userId).child("bankAccountOwner");
-        return RxDatabaseReference.setValue(ownerRef, owner);
+        UpdateUserFieldsInput input = new UpdateUserFieldsInput(userId);
+        input.bankAccountOwner = owner;
+        input.updateBankAccountOwner = true;
+        return executeFunction("updateUserFields", input, UpdateUserFieldsOutput.class).toCompletable();
     }
 
     public Completable updateUserPhotoUrl(String userId, String url) {
-        DatabaseReference urlRef = usersRef.child(userId).child("photoUrl");
-        return RxDatabaseReference.setValue(urlRef, url);
+        UpdateUserFieldsInput input = new UpdateUserFieldsInput(userId);
+        input.photoUrl = url;
+        input.updatePhotoUrl = true;
+        return executeFunction("updateUserFields", input, UpdateUserFieldsOutput.class).toCompletable();
     }
 
     /**

@@ -4,15 +4,13 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.androidsupport.RxOptional;
-import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.entities.BusinessTransaction;
-import info.mschmitt.battyboost.core.entities.Partner;
-import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.entities.*;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxAuth;
 import info.mschmitt.firebasesupport.RxDatabaseReference;
@@ -32,6 +30,7 @@ import java.util.UUID;
 @RunWith(AndroidJUnit4.class)
 public class BattyboostClientTest {
     private static BattyboostClient client;
+    private static String userId;
 
     @BeforeClass
     public static void setup() {
@@ -40,7 +39,9 @@ public class BattyboostClientTest {
         //noinspection ConstantConditions
         FirebaseDatabase database = FirebaseDatabase.getInstance(app);
         FirebaseAuth auth = FirebaseAuth.getInstance(app);
-        RxAuth.signInWithEmailAndPassword(auth, "emailclient.m6s@gmail.com", "qwerty!@").blockingGet();
+        AuthResult authResult =
+                RxAuth.signInWithEmailAndPassword(auth, "emailclient.m6s@gmail.com", "qwerty!@").blockingGet();
+        userId = authResult.getUser().getUid();
         FirebaseStorage storage = FirebaseStorage.getInstance(app);
         client = new BattyboostClient(auth, database, storage, "default");
     }
@@ -148,6 +149,21 @@ public class BattyboostClientTest {
     }
 
     @Test
+    public void updateUser() throws Exception {
+        BusinessUser user = new BusinessUser();
+        user.qr = "qr1";
+        client.updateUser(userId, user).blockingAwait();
+        DatabaseReference userRef = client.usersRef.child(userId);
+        BusinessUser before =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        user.qr = "qr2";
+        client.updateUser(userId, user).blockingAwait();
+        BusinessUser after =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        Assert.assertNotSame(before.qr, after.qr);
+    }
+
+    @Test
     public void deleteBattery() throws Exception {
         Battery battery = new Battery();
         battery.qr = UUID.randomUUID().toString();
@@ -157,6 +173,66 @@ public class BattyboostClientTest {
         RxOptional<Battery> optional =
                 RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient.BATTERY_MAPPER).blockingGet();
         Assert.assertNull(optional.value);
+    }
+
+    @Test
+    public void updateUserEmail() throws Exception {
+        client.updateUserEmail(userId, "email1").blockingAwait();
+        DatabaseReference userRef = client.usersRef.child(userId);
+        BusinessUser before =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        client.updateUserEmail(userId, "email2").blockingAwait();
+        BusinessUser after =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        Assert.assertNotSame(before.email, after.email);
+    }
+
+    @Test
+    public void updateUserDisplayName() throws Exception {
+        client.updateUserDisplayName(userId, "name1").blockingAwait();
+        DatabaseReference userRef = client.usersRef.child(userId);
+        BusinessUser before =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        client.updateUserDisplayName(userId, "name2").blockingAwait();
+        BusinessUser after =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        Assert.assertNotSame(before.displayName, after.displayName);
+    }
+
+    @Test
+    public void updateUserIban() throws Exception {
+        client.updateUserIban(userId, "iban1").blockingAwait();
+        DatabaseReference userRef = client.usersRef.child(userId);
+        BusinessUser before =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        client.updateUserIban(userId, "iban2").blockingAwait();
+        BusinessUser after =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        Assert.assertNotSame(before.iban, after.iban);
+    }
+
+    @Test
+    public void updateUserBankAccountOwner() throws Exception {
+        client.updateUserBankAccountOwner(userId, "owner1").blockingAwait();
+        DatabaseReference userRef = client.usersRef.child(userId);
+        BusinessUser before =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        client.updateUserBankAccountOwner(userId, "owner2").blockingAwait();
+        BusinessUser after =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        Assert.assertNotSame(before.bankAccountOwner, after.bankAccountOwner);
+    }
+
+    @Test
+    public void updateUserPhotoUrl() throws Exception {
+        client.updateUserPhotoUrl(userId, "url1").blockingAwait();
+        DatabaseReference userRef = client.usersRef.child(userId);
+        BusinessUser before =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        client.updateUserPhotoUrl(userId, "url2").blockingAwait();
+        BusinessUser after =
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+        Assert.assertNotSame(before.photoUrl, after.photoUrl);
     }
 
     /**
