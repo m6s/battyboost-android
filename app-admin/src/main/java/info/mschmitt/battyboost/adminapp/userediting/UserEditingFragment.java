@@ -10,10 +10,10 @@ import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserEditingViewBinding;
 import info.mschmitt.battyboost.adminapp.user.UserViewModel;
-import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.ChecksumProcessor;
 import info.mschmitt.battyboost.core.RandomStringGenerator;
 import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 

@@ -8,8 +8,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
-import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Battery;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.functions.Function;
 import org.junit.BeforeClass;
@@ -69,7 +69,7 @@ public class AdminConsole {
     @Test
     public void addBattery() {
         Battery battery = new Battery();
-        String key = client.addBattery(battery).blockingGet();
+        String key = client.createBattery(battery).blockingGet();
         Log.i(TAG, key);
     }
 }

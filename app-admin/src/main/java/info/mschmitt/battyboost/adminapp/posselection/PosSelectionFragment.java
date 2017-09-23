@@ -15,8 +15,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PosSelectionViewBinding;
 import info.mschmitt.battyboost.adminapp.drawer.DrawerFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.core.ui.PosRecyclerAdapter;
 
 import javax.inject.Inject;

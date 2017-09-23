@@ -23,7 +23,7 @@ import info.mschmitt.battyboost.app.Cache;
 import info.mschmitt.battyboost.app.R;
 import info.mschmitt.battyboost.app.Router;
 import info.mschmitt.battyboost.app.databinding.PhotoViewBinding;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxStorageReference;
 import io.reactivex.Completable;
 import io.reactivex.disposables.CompositeDisposable;

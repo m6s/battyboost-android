@@ -2,7 +2,7 @@ package info.mschmitt.battyboost.adminapp.batteryediting;
 
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 
 /**
  * @author Matthias Schmitt

@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PosListViewBinding;
-import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.core.ui.PosRecyclerAdapter;
 
 import javax.inject.Inject;

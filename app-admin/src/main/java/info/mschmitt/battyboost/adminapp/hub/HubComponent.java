@@ -12,7 +12,7 @@ import info.mschmitt.battyboost.adminapp.poslist.PosListComponent;
 import info.mschmitt.battyboost.adminapp.poslist.PosListFragment;
 import info.mschmitt.battyboost.adminapp.userlist.UserListComponent;
 import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 
 /**
  * @author Matthias Schmitt

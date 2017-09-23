@@ -11,8 +11,8 @@ import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PartnerEditingViewBinding;
 import info.mschmitt.battyboost.adminapp.partner.PartnerViewModel;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 

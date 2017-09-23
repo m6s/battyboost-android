@@ -11,7 +11,7 @@ import info.mschmitt.battyboost.app.map.MapComponent;
 import info.mschmitt.battyboost.app.map.MapFragment;
 import info.mschmitt.battyboost.app.schedule.ScheduleComponent;
 import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 
 /**
  * @author Matthias Schmitt

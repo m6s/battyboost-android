@@ -12,6 +12,8 @@ import info.mschmitt.androidsupport.RxOptional;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.entities.BusinessTransaction;
 import info.mschmitt.battyboost.core.entities.Partner;
+import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxAuth;
 import info.mschmitt.firebasesupport.RxDatabaseReference;
 import info.mschmitt.firebasesupport.RxQuery;
@@ -78,6 +80,82 @@ public class BattyboostClientTest {
         DatabaseReference partnerRef = client.partnersRef.child(partnerId);
         RxOptional<Partner> optional =
                 RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient.PARTNER_MAPPER).blockingGet();
+        Assert.assertNull(optional.value);
+    }
+
+    @Test
+    public void createPos() throws Exception {
+        Pos pos = new Pos();
+        pos.name = UUID.randomUUID().toString();
+        String partnerId = client.createPos(pos).blockingGet();
+        DatabaseReference posRef = client.posListRef.child(partnerId);
+        RxOptional<Pos> optional =
+                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient.POS_MAPPER).blockingGet();
+        Assert.assertNotNull(optional.value);
+        Assert.assertEquals(pos.name, optional.value.name);
+    }
+
+    @Test
+    public void updatePos() throws Exception {
+        Pos pos = new Pos();
+        pos.name = UUID.randomUUID().toString();
+        String posId = client.createPos(pos).blockingGet();
+        pos.name = UUID.randomUUID().toString();
+        client.updatePos(posId, pos).blockingAwait();
+        DatabaseReference posRef = client.posListRef.child(posId);
+        RxOptional<Pos> optional =
+                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient.POS_MAPPER).blockingGet();
+        Assert.assertNotNull(optional.value);
+        Assert.assertEquals(pos.name, optional.value.name);
+    }
+
+    @Test
+    public void deletePos() throws Exception {
+        Pos pos = new Pos();
+        pos.name = UUID.randomUUID().toString();
+        String posId = client.createPos(pos).blockingGet();
+        client.deletePos(posId).blockingAwait();
+        DatabaseReference posRef = client.posListRef.child(posId);
+        RxOptional<Pos> optional =
+                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient.POS_MAPPER).blockingGet();
+        Assert.assertNull(optional.value);
+    }
+
+    @Test
+    public void createBattery() throws Exception {
+        Battery battery = new Battery();
+        battery.qr = UUID.randomUUID().toString();
+        String partnerId = client.createBattery(battery).blockingGet();
+        DatabaseReference batteryRef = client.batteriesRef.child(partnerId);
+        RxOptional<Battery> optional =
+                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient.BATTERY_MAPPER).blockingGet();
+        Assert.assertNotNull(optional.value);
+        Assert.assertEquals(battery.qr, optional.value.qr);
+    }
+
+    @Test
+    public void updateBattery() throws Exception {
+        Battery battery = new Battery();
+        battery.qr = UUID.randomUUID().toString();
+        String batteryId = client.createBattery(battery).blockingGet();
+        battery.qr = UUID.randomUUID().toString();
+        client.updateBattery(batteryId, battery).blockingAwait();
+        DatabaseReference batteryRef = client.batteriesRef.child(batteryId);
+        RxOptional<Battery> optional =
+                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient.BATTERY_MAPPER).blockingGet();
+        Assert.assertNotNull(optional.value);
+        Assert.assertEquals(battery.qr, optional.value.qr);
+    }
+
+    @Test
+    public void deleteBattery() throws Exception {
+        Battery battery = new Battery();
+        battery.qr = UUID.randomUUID().toString();
+        String batteryId = client.createBattery(battery).blockingGet();
+        client.deleteBattery(batteryId).blockingAwait();
+        DatabaseReference batteryRef = client.batteriesRef.child(batteryId);
+        RxOptional<Battery> optional =
+                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient.BATTERY_MAPPER).blockingGet();
         Assert.assertNull(optional.value);
     }
 

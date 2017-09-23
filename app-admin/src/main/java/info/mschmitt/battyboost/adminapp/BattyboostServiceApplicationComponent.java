@@ -24,7 +24,7 @@ import info.mschmitt.battyboost.adminapp.user.UserComponent;
 import info.mschmitt.battyboost.adminapp.user.UserFragment;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingComponent;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 
 /**
  * @author Matthias Schmitt

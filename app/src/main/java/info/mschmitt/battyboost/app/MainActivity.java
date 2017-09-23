@@ -9,7 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import info.mschmitt.battyboost.app.hub.HubFragment;
 import info.mschmitt.battyboost.app.photo.PhotoFragment;
 import info.mschmitt.battyboost.app.settings.SettingsFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxAuth;
 import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.disposables.CompositeDisposable;

@@ -10,7 +10,7 @@ import info.mschmitt.battyboost.app.photo.PhotoComponent;
 import info.mschmitt.battyboost.app.photo.PhotoFragment;
 import info.mschmitt.battyboost.app.settings.SettingsComponent;
 import info.mschmitt.battyboost.app.settings.SettingsFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 
 /**
  * @author Matthias Schmitt

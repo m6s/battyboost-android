@@ -3,7 +3,7 @@ package info.mschmitt.battyboost.app.photo;
 import com.google.firebase.storage.FirebaseStorage;
 import info.mschmitt.battyboost.app.Cache;
 import info.mschmitt.battyboost.app.Router;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 
 /**
  * @author Matthias Schmitt

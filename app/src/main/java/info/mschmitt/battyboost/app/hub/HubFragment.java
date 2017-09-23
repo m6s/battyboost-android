@@ -18,7 +18,7 @@ import info.mschmitt.battyboost.app.balance.BalanceFragment;
 import info.mschmitt.battyboost.app.databinding.HubViewBinding;
 import info.mschmitt.battyboost.app.map.MapFragment;
 import info.mschmitt.battyboost.app.schedule.ScheduleFragment;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 
 import javax.inject.Inject;
 import java.io.Serializable;

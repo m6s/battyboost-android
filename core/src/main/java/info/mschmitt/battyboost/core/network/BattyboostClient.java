@@ -1,4 +1,4 @@
-package info.mschmitt.battyboost.core;
+package info.mschmitt.battyboost.core.network;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -86,8 +86,8 @@ public class BattyboostClient {
                 createPartnerOutput -> createPartnerOutput.partnerId);
     }
 
-    private <InputT, OutputT> Single<OutputT> executeFunction(String functionName, InputT input,
-                                                              Class<OutputT> outputClass) {
+    private <InputT, OutputT extends ErrorOutput> Single<OutputT> executeFunction(String functionName, InputT input,
+                                                                                  Class<OutputT> outputClass) {
         String userId = auth.getCurrentUser().getUid();
         DatabaseReference executionRef = logicRef.child(userId).child(functionName).push();
         DatabaseReference inputRef = executionRef.child("input");
@@ -95,6 +95,11 @@ public class BattyboostClient {
         return RxDatabaseReference.setValue(inputRef, input).andThen(RxQuery.valueEvents(outputRef)
                         .filter(DataSnapshot::exists)
                 .map(dataSnapshot -> dataSnapshot.getValue(outputClass))
+                .doOnNext(output -> {
+                    if (output.getError() != null) {
+                        throw new ClientException(output.getError());
+                    }
+                })
                 .firstOrError());
     }
 
@@ -108,20 +113,32 @@ public class BattyboostClient {
                 DeletePartnerOutput.class).toCompletable();
     }
 
-    public Single<String> addPos(Pos pos) {
-        DatabaseReference posRef = posListRef.push();
-        String key = posRef.getKey();
-        return RxDatabaseReference.setValue(posRef, pos).toSingleDefault(key);
+    public Single<String> createPos(Pos pos) {
+        return executeFunction("createPos", new CreatePosInput(pos), CreatePosOutput.class).map(
+                createPartnerOutput -> createPartnerOutput.posId);
     }
 
-    public Completable updatePos(String posKey, Pos pos) {
-        DatabaseReference partnerRef = posListRef.child(posKey);
-        return RxDatabaseReference.setValue(partnerRef, pos);
+    public Completable updatePos(String posId, Pos pos) {
+        return executeFunction("updatePos", new UpdatePosInput(posId, pos), UpdatePosOutput.class).toCompletable();
     }
 
-    public Completable deletePos(String posKey) {
-        DatabaseReference partnerRef = posListRef.child(posKey);
-        return RxDatabaseReference.removeValue(partnerRef);
+    public Completable deletePos(String posId) {
+        return executeFunction("deletePos", new DeletePosInput(posId), DeletePosOutput.class).toCompletable();
+    }
+
+    public Single<String> createBattery(Battery battery) {
+        return executeFunction("createBattery", new CreateBatteryInput(battery), CreateBatteryOutput.class).map(
+                createPartnerOutput -> createPartnerOutput.batteryId);
+    }
+
+    public Completable updateBattery(String batteryId, Battery battery) {
+        return executeFunction("updateBattery", new UpdateBatteryInput(batteryId, battery),
+                UpdateBatteryOutput.class).toCompletable();
+    }
+
+    public Completable deleteBattery(String batteryId) {
+        return executeFunction("deleteBattery", new DeleteBatteryInput(batteryId),
+                DeleteBatteryOutput.class).toCompletable();
     }
 
     public Completable updateUser(String userKey, BusinessUser user) {
@@ -152,16 +169,6 @@ public class BattyboostClient {
     public Completable updateUserPhotoUrl(String userId, String url) {
         DatabaseReference urlRef = usersRef.child(userId).child("photoUrl");
         return RxDatabaseReference.setValue(urlRef, url);
-    }
-
-    public Single<String> addBattery(Battery battery) {
-        DatabaseReference batteryRef = batteriesRef.push();
-        return RxDatabaseReference.setValue(batteryRef, battery).toSingleDefault(batteryRef.getKey());
-    }
-
-    public Completable updateBattery(String batteryKey, Battery battery) {
-        DatabaseReference batteryRef = batteriesRef.child(batteryKey);
-        return RxDatabaseReference.setValue(batteryRef, battery);
     }
 
     /**
@@ -282,45 +289,6 @@ public class BattyboostClient {
             result.partnerCreditedCents = 40;
         }
         return result;
-    }
-
-    private static class CreatePartnerInput {
-        public final Partner partner;
-
-        CreatePartnerInput(Partner partner) {
-            this.partner = partner;
-        }
-    }
-
-    private static class CreatePartnerOutput {
-        public String error;
-        public String partnerId;
-    }
-
-    private static class UpdatePartnerInput {
-        public final String partnerId;
-        public final Partner partner;
-
-        private UpdatePartnerInput(String partnerId, Partner partner) {
-            this.partnerId = partnerId;
-            this.partner = partner;
-        }
-    }
-
-    private static class UpdatePartnerOutput {
-        public String error;
-    }
-
-    private static class DeletePartnerInput {
-        public String partnerId;
-
-        public DeletePartnerInput(String partnerId) {
-            this.partnerId = partnerId;
-        }
-    }
-
-    private static class DeletePartnerOutput {
-        public String error;
     }
 
     public static class RentBatteryResult {

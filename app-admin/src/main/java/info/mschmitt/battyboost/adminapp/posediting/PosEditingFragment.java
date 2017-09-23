@@ -20,9 +20,9 @@ import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.PosEditingViewBinding;
 import info.mschmitt.battyboost.adminapp.pos.PosViewModel;
-import info.mschmitt.battyboost.core.BattyboostClient;
 import info.mschmitt.battyboost.core.GeoCoordinates;
 import info.mschmitt.battyboost.core.entities.Pos;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -60,7 +60,7 @@ public class PosEditingFragment extends Fragment {
         }
         Disposable disposable;
         if (viewModel.pos.id == null) {
-            disposable = client.addPos(viewModel.pos).subscribe(s -> router.goUp(this));
+            disposable = client.createPos(viewModel.pos).subscribe(s -> router.goUp(this));
         } else {
             disposable = client.updatePos(viewModel.pos.id, viewModel.pos).subscribe(() -> router.goUp(this));
         }

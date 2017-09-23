@@ -1,7 +1,7 @@
 package info.mschmitt.battyboost.partnerapp.rentalactions;
 
 import com.firebase.ui.auth.AuthUI;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
 

@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
-import info.mschmitt.battyboost.core.BattyboostClient;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.rentalactions.RentalActionsFragment;
 import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
 import info.mschmitt.battyboost.partnerapp.transactionlist.TransactionListFragment;
