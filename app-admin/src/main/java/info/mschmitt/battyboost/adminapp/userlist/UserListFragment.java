@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import com.google.firebase.database.FirebaseDatabase;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserListViewBinding;
-import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.BattyboostUser;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.core.ui.UserRecyclerAdapter;
 
@@ -46,7 +46,7 @@ public class UserListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         UserListViewBinding binding = UserListViewBinding.inflate(inflater, container, false);
-        UserRecyclerAdapter adapter = new UserRecyclerAdapter(database.getReference("users"), this::onUserClick);
+        UserRecyclerAdapter adapter = new UserRecyclerAdapter(client.usersRef, this::onUserClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -63,7 +63,7 @@ public class UserListFragment extends Fragment {
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
     }
 
-    private void onUserClick(BusinessUser user) {
+    private void onUserClick(BattyboostUser user) {
         router.showUser(this, user.id);
     }
 

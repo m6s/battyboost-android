@@ -22,12 +22,12 @@ import java.util.Map;
  * @author Matthias Schmitt
  */
 public class BattyboostClient {
-    public static final Function<DataSnapshot, RxOptional<BusinessUser>> DATABASE_USER_MAPPER = dataSnapshot -> {
-        BusinessUser businessUser = dataSnapshot.getValue(BusinessUser.class);
-        if (businessUser != null) {
-            businessUser.id = dataSnapshot.getKey();
+    public static final Function<DataSnapshot, RxOptional<BattyboostUser>> DATABASE_USER_MAPPER = dataSnapshot -> {
+        BattyboostUser battyboostUser = dataSnapshot.getValue(BattyboostUser.class);
+        if (battyboostUser != null) {
+            battyboostUser.id = dataSnapshot.getKey();
         }
-        return new RxOptional<>(businessUser);
+        return new RxOptional<>(battyboostUser);
     };
     public static final Function<DataSnapshot, RxOptional<Partner>> PARTNER_MAPPER = dataSnapshot -> {
         Partner partner = dataSnapshot.getValue(Partner.class);
@@ -50,8 +50,8 @@ public class BattyboostClient {
         }
         return new RxOptional<>(battery);
     };
-    public static final Function<DataSnapshot, RxOptional<BusinessUser>> USER_MAPPER = dataSnapshot -> {
-        BusinessUser user = dataSnapshot.getValue(BusinessUser.class);
+    public static final Function<DataSnapshot, RxOptional<BattyboostUser>> USER_MAPPER = dataSnapshot -> {
+        BattyboostUser user = dataSnapshot.getValue(BattyboostUser.class);
         if (user != null) {
             user.id = dataSnapshot.getKey();
         }
@@ -141,7 +141,7 @@ public class BattyboostClient {
                 DeleteBatteryOutput.class).toCompletable();
     }
 
-    public Completable updateUser(String userId, BusinessUser user) {
+    public Completable updateUser(String userId, BattyboostUser user) {
         return executeFunction("updateUser", new UpdateUserInput(userId, user), UpdateUserOutput.class).toCompletable();
     }
 
@@ -210,10 +210,10 @@ public class BattyboostClient {
 
     private Single<RentBatteryResult> rentBattery(Battery battery, int partnerCreditedCents) {
         battery.rentalTime = System.currentTimeMillis();
-        BusinessTransaction transaction = new BusinessTransaction();
+        BattyboostTransaction transaction = new BattyboostTransaction();
         transaction.batteryId = battery.id;
         transaction.partnerCreditedCents = partnerCreditedCents;
-        transaction.type = BusinessTransaction.TYPE_RENTAL;
+        transaction.type = BattyboostTransaction.TYPE_RENTAL;
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put(transactionsRef.getKey() + "/" + transactionsRef.push().getKey(), transaction);
         updateMap.put(batteriesRef.getKey() + "/" + battery.id, battery);
@@ -245,7 +245,7 @@ public class BattyboostClient {
         return result;
     }
 
-    private Single<RxOptional<BusinessUser>> findUserByQr(String userQr) {
+    private Single<RxOptional<BattyboostUser>> findUserByQr(String userQr) {
         Query userByQrQuery = usersRef.orderByChild("qr").equalTo(userQr);
         if (userQr != null) {
             return RxQuery.valueEvents(userByQrQuery)
@@ -278,7 +278,7 @@ public class BattyboostClient {
 
     private Single<ReturnBatteryResult> returnBattery(Battery battery, int partnerCreditedCents) {
         battery.rentalTime = 0;
-        BusinessTransaction transaction = new BusinessTransaction();
+        BattyboostTransaction transaction = new BattyboostTransaction();
         transaction.batteryId = battery.id;
         transaction.partnerCreditedCents = partnerCreditedCents;
         transaction.type = "return";
@@ -302,7 +302,7 @@ public class BattyboostClient {
 
     public static class RentBatteryResult {
         public String error;
-        public BusinessTransaction transaction;
+        public BattyboostTransaction transaction;
         public Battery battery;
     }
 
@@ -324,6 +324,6 @@ public class BattyboostClient {
 
     public static class ReturnBatteryResult {
         public String error;
-        public BusinessTransaction transaction;
+        public BattyboostTransaction transaction;
     }
 }

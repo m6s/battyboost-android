@@ -50,8 +50,7 @@ public class BatteryListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         BatteryListViewBinding binding = BatteryListViewBinding.inflate(inflater, container, false);
-        BatteryRecyclerAdapter adapter =
-                new BatteryRecyclerAdapter(database.getReference("batteries"), this::onBatteryClick);
+        BatteryRecyclerAdapter adapter = new BatteryRecyclerAdapter(client.batteriesRef, this::onBatteryClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);

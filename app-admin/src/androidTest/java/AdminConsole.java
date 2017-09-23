@@ -49,7 +49,7 @@ public class AdminConsole {
 
     @Test
     public void printBatteryQRs() throws Exception {
-        DatabaseReference batteriesRef = database.getReference("batteries");
+        DatabaseReference batteriesRef = client.batteriesRef;
         Map<String, Battery> batteries =
                 RxQuery.valueEvents(batteriesRef).firstElement().map(BATTERY_MAP_MAPPER).blockingGet();
         for (Map.Entry<String, Battery> entry : batteries.entrySet()) {

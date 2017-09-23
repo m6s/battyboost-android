@@ -70,7 +70,7 @@ public class PosFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        DatabaseReference reference = database.getReference("pos").child(posKey);
+        DatabaseReference reference = client.posListRef.child(posKey);
         Disposable disposable = RxQuery.valueEvents(reference)
                 .map(BattyboostClient.POS_MAPPER)
                 .subscribe(optional -> setPos(optional.value));

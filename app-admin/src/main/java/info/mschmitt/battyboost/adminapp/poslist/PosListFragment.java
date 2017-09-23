@@ -50,7 +50,7 @@ public class PosListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         PosListViewBinding binding = PosListViewBinding.inflate(inflater, container, false);
-        PosRecyclerAdapter adapter = new PosRecyclerAdapter(database.getReference("pos"), this::onPosClick);
+        PosRecyclerAdapter adapter = new PosRecyclerAdapter(client.posListRef, this::onPosClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);

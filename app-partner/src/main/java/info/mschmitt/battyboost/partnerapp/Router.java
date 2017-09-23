@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.BattyboostUser;
 import info.mschmitt.battyboost.partnerapp.checkout.CheckoutFragment;
 import info.mschmitt.battyboost.partnerapp.rentalactions.RentalActionsFragment;
 import info.mschmitt.battyboost.partnerapp.scanner.ScannerFragment;
@@ -33,7 +33,7 @@ public class Router {
                 .commit();
     }
 
-    public void showCheckout(Fragment fragment, BusinessUser user, Battery battery) {
+    public void showCheckout(Fragment fragment, BattyboostUser user, Battery battery) {
         FragmentActivity activity = fragment.getActivity();
         activity.getSupportFragmentManager()
                 .beginTransaction()

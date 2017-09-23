@@ -10,21 +10,21 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 import info.mschmitt.battyboost.core.R;
 import info.mschmitt.battyboost.core.databinding.UserItemBinding;
-import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.BattyboostUser;
 
 /**
  * @author Matthias Schmitt
  */
-public class UserRecyclerAdapter extends FirebaseRecyclerAdapter<BusinessUser, UserRecyclerAdapter.UserHolder> {
+public class UserRecyclerAdapter extends FirebaseRecyclerAdapter<BattyboostUser, UserRecyclerAdapter.UserHolder> {
     private final OnUserClickListener listener;
 
     public UserRecyclerAdapter(Query ref, OnUserClickListener listener) {
-        super(BusinessUser.class, R.layout.user_item, UserHolder.class, ref);
+        super(BattyboostUser.class, R.layout.user_item, UserHolder.class, ref);
         this.listener = listener;
     }
 
     @Override
-    protected void populateViewHolder(UserHolder viewHolder, BusinessUser user, int position) {
+    protected void populateViewHolder(UserHolder viewHolder, BattyboostUser user, int position) {
         if (user.id == null) {
             user.id = getRef(position).getKey();
         }
@@ -34,12 +34,12 @@ public class UserRecyclerAdapter extends FirebaseRecyclerAdapter<BusinessUser, U
     }
 
     public interface OnUserClickListener {
-        void onUserClick(BusinessUser user);
+        void onUserClick(BattyboostUser user);
     }
 
     public static class UserHolder extends RecyclerView.ViewHolder implements Observable {
         private final PropertyChangeRegistry propertyChangeRegistry = new PropertyChangeRegistry();
-        @Bindable public BusinessUser user;
+        @Bindable public BattyboostUser user;
         private OnUserClickListener listener;
 
         public UserHolder(View itemView) {

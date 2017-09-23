@@ -58,6 +58,6 @@
             android:padding="16dp"
             android:text="Batteries"
             android:textAppearance="@android:style/TextAppearance.Medium"
-            android:textColor="@{fragment.viewModel.drawerItem == DrawerItem.USER_LIST ? @color/primaryAccent : @android:color/secondary_text_light}" />
+            android:textColor="@{fragment.viewModel.drawerItem == DrawerItem.BATTERY_LIST ? @color/primaryAccent : @android:color/secondary_text_light}" />
     </LinearLayout>
 </layout>

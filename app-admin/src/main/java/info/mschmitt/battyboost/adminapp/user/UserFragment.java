@@ -16,7 +16,7 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserViewBinding;
-import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.BattyboostUser;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxQuery;
 import info.mschmitt.zxingsupport.ZXingImageLoader;
@@ -104,7 +104,7 @@ public class UserFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onEditMenuItemClick);
     }
 
-    private void setUser(BusinessUser user) {
+    private void setUser(BattyboostUser user) {
         if (user.qr != null) {
             Glide.with(this)
                     .using(ZXingImageLoader.create(BarcodeFormat.QR_CODE, ErrorCorrectionLevel.L, 0))

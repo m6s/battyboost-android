@@ -12,7 +12,7 @@ import info.mschmitt.battyboost.adminapp.databinding.UserEditingViewBinding;
 import info.mschmitt.battyboost.adminapp.user.UserViewModel;
 import info.mschmitt.battyboost.core.ChecksumProcessor;
 import info.mschmitt.battyboost.core.RandomStringGenerator;
-import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.BattyboostUser;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -32,7 +32,7 @@ public class UserEditingFragment extends Fragment {
     @Inject public boolean injected;
     private CompositeDisposable compositeDisposable;
 
-    public static Fragment newInstance(BusinessUser user) {
+    public static Fragment newInstance(BattyboostUser user) {
         UserEditingFragment fragment = new UserEditingFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_USER, user);
@@ -56,9 +56,9 @@ public class UserEditingFragment extends Fragment {
         if (savedInstanceState == null) {
             viewModel = new UserViewModel();
             Bundle args = getArguments();
-            viewModel.user = (BusinessUser) args.getSerializable(ARG_USER);
+            viewModel.user = (BattyboostUser) args.getSerializable(ARG_USER);
             if (viewModel.user == null) {
-                viewModel.user = new BusinessUser();
+                viewModel.user = new BattyboostUser();
             }
         } else {
             viewModel = (UserViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);

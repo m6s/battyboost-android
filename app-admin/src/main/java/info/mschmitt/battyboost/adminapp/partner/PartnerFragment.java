@@ -70,7 +70,7 @@ public class PartnerFragment extends Fragment {
     public void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        DatabaseReference reference = database.getReference("partners").child(partnerKey);
+        DatabaseReference reference = client.partnersRef.child(partnerKey);
         Disposable disposable = RxQuery.valueEvents(reference)
                 .map(BattyboostClient.PARTNER_MAPPER)
                 .subscribe(optional -> setPartner(optional.value));

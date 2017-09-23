@@ -50,8 +50,7 @@ public class PartnerListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         PartnerListViewBinding binding = PartnerListViewBinding.inflate(inflater, container, false);
-        PartnerRecyclerAdapter adapter =
-                new PartnerRecyclerAdapter(database.getReference("partners"), this::onPartnerClick);
+        PartnerRecyclerAdapter adapter = new PartnerRecyclerAdapter(client.partnersRef, this::onPartnerClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);

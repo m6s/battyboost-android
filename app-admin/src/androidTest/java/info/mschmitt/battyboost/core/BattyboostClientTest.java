@@ -150,15 +150,15 @@ public class BattyboostClientTest {
 
     @Test
     public void updateUser() throws Exception {
-        BusinessUser user = new BusinessUser();
+        BattyboostUser user = new BattyboostUser();
         user.qr = "qr1";
         client.updateUser(userId, user).blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
-        BusinessUser before =
+        BattyboostUser before =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         user.qr = "qr2";
         client.updateUser(userId, user).blockingAwait();
-        BusinessUser after =
+        BattyboostUser after =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         Assert.assertNotSame(before.qr, after.qr);
     }
@@ -179,10 +179,10 @@ public class BattyboostClientTest {
     public void updateUserEmail() throws Exception {
         client.updateUserEmail(userId, "email1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
-        BusinessUser before =
+        BattyboostUser before =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         client.updateUserEmail(userId, "email2").blockingAwait();
-        BusinessUser after =
+        BattyboostUser after =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         Assert.assertNotSame(before.email, after.email);
     }
@@ -191,10 +191,10 @@ public class BattyboostClientTest {
     public void updateUserDisplayName() throws Exception {
         client.updateUserDisplayName(userId, "name1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
-        BusinessUser before =
+        BattyboostUser before =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         client.updateUserDisplayName(userId, "name2").blockingAwait();
-        BusinessUser after =
+        BattyboostUser after =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         Assert.assertNotSame(before.displayName, after.displayName);
     }
@@ -203,10 +203,10 @@ public class BattyboostClientTest {
     public void updateUserIban() throws Exception {
         client.updateUserIban(userId, "iban1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
-        BusinessUser before =
+        BattyboostUser before =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         client.updateUserIban(userId, "iban2").blockingAwait();
-        BusinessUser after =
+        BattyboostUser after =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         Assert.assertNotSame(before.iban, after.iban);
     }
@@ -215,10 +215,10 @@ public class BattyboostClientTest {
     public void updateUserBankAccountOwner() throws Exception {
         client.updateUserBankAccountOwner(userId, "owner1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
-        BusinessUser before =
+        BattyboostUser before =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         client.updateUserBankAccountOwner(userId, "owner2").blockingAwait();
-        BusinessUser after =
+        BattyboostUser after =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         Assert.assertNotSame(before.bankAccountOwner, after.bankAccountOwner);
     }
@@ -227,10 +227,10 @@ public class BattyboostClientTest {
     public void updateUserPhotoUrl() throws Exception {
         client.updateUserPhotoUrl(userId, "url1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
-        BusinessUser before =
+        BattyboostUser before =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         client.updateUserPhotoUrl(userId, "url2").blockingAwait();
-        BusinessUser after =
+        BattyboostUser after =
                 RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
         Assert.assertNotSame(before.photoUrl, after.photoUrl);
     }
@@ -248,10 +248,10 @@ public class BattyboostClientTest {
         Battery battery = new Battery();
         battery.id = client.batteriesRef.push().getKey();
         battery.rentalTime = System.currentTimeMillis();
-        BusinessTransaction transaction = new BusinessTransaction();
+        BattyboostTransaction transaction = new BattyboostTransaction();
         transaction.batteryId = battery.id;
         transaction.partnerCreditedCents = 10;
-        transaction.type = BusinessTransaction.TYPE_RENTAL;
+        transaction.type = BattyboostTransaction.TYPE_RENTAL;
         Map<String, Object> updateMap = new HashMap<>();
         updateMap.put("data/" + client.transactionsRef.getKey() + "/" + client.transactionsRef.push().getKey(),
                 transaction);

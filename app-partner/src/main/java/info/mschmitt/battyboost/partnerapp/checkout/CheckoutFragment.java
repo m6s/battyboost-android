@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.firebase.ui.auth.AuthUI;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.BattyboostUser;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.partnerapp.Cache;
 import info.mschmitt.battyboost.partnerapp.Router;
@@ -33,7 +33,7 @@ public class CheckoutFragment extends Fragment {
     @Inject public BattyboostClient client;
     private CompositeDisposable compositeDisposable;
 
-    public static Fragment newInstance(BusinessUser user, Battery battery) {
+    public static Fragment newInstance(BattyboostUser user, Battery battery) {
         return new CheckoutFragment();
     }
 

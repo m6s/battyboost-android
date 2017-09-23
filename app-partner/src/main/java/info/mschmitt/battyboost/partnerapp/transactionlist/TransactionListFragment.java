@@ -10,7 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.*;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.database.FirebaseDatabase;
-import info.mschmitt.battyboost.core.entities.BusinessTransaction;
+import info.mschmitt.battyboost.core.entities.BattyboostTransaction;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.core.ui.TransactionRecyclerAdapter;
 import info.mschmitt.battyboost.partnerapp.Cache;
@@ -58,7 +58,7 @@ public class TransactionListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         TransactionListViewBinding binding = TransactionListViewBinding.inflate(inflater, container, false);
         TransactionRecyclerAdapter adapter =
-                new TransactionRecyclerAdapter(database.getReference("transactions"), this::onTransactionClick);
+                new TransactionRecyclerAdapter(client.transactionsRef, this::onTransactionClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -95,7 +95,7 @@ public class TransactionListFragment extends Fragment {
         menuItem.setOnMenuItemClickListener(this::onSettingsMenuItemClick);
     }
 
-    private void onTransactionClick(BusinessTransaction transaction) {
+    private void onTransactionClick(BattyboostTransaction transaction) {
 //        router.showUser(this, key);
     }
 

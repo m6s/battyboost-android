@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class BusinessUser extends BaseObservable implements Serializable {
+public class BattyboostUser extends BaseObservable implements Serializable {
     @Exclude public String id;
     public String qr;
     public int balanceCents;

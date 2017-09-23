@@ -10,22 +10,22 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 import info.mschmitt.battyboost.core.R;
 import info.mschmitt.battyboost.core.databinding.TransactionItemBinding;
-import info.mschmitt.battyboost.core.entities.BusinessTransaction;
+import info.mschmitt.battyboost.core.entities.BattyboostTransaction;
 
 /**
  * @author Matthias Schmitt
  */
 public class TransactionRecyclerAdapter
-        extends FirebaseRecyclerAdapter<BusinessTransaction, TransactionRecyclerAdapter.TransactionHolder> {
+        extends FirebaseRecyclerAdapter<BattyboostTransaction, TransactionRecyclerAdapter.TransactionHolder> {
     private final OnTransactionClickListener listener;
 
     public TransactionRecyclerAdapter(Query ref, OnTransactionClickListener listener) {
-        super(BusinessTransaction.class, R.layout.transaction_item, TransactionHolder.class, ref);
+        super(BattyboostTransaction.class, R.layout.transaction_item, TransactionHolder.class, ref);
         this.listener = listener;
     }
 
     @Override
-    protected void populateViewHolder(TransactionHolder viewHolder, BusinessTransaction transaction, int position) {
+    protected void populateViewHolder(TransactionHolder viewHolder, BattyboostTransaction transaction, int position) {
         if (transaction.id == null) {
             transaction.id = getRef(position).getKey();
         }
@@ -35,12 +35,12 @@ public class TransactionRecyclerAdapter
     }
 
     public interface OnTransactionClickListener {
-        void onTransactionClick(BusinessTransaction transaction);
+        void onTransactionClick(BattyboostTransaction transaction);
     }
 
     public static class TransactionHolder extends RecyclerView.ViewHolder implements Observable {
         private final PropertyChangeRegistry propertyChangeRegistry = new PropertyChangeRegistry();
-        @Bindable public BusinessTransaction transaction;
+        @Bindable public BattyboostTransaction transaction;
         private OnTransactionClickListener listener;
 
         public TransactionHolder(View itemView) {

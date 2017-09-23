@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * @author Matthias Schmitt
  */
-public class BusinessTransaction extends BaseObservable implements Serializable {
+public class BattyboostTransaction extends BaseObservable implements Serializable {
     public static final String TYPE_RENTAL = "rental";
     public static final String TYPE_RETURN = "return";
     public static final String TYPE_DELIVERY = "delivery";

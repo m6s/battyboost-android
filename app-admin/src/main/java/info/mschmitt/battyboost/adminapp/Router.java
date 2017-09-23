@@ -20,7 +20,7 @@ import info.mschmitt.battyboost.adminapp.user.UserFragment;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
 import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
 import info.mschmitt.battyboost.core.entities.Battery;
-import info.mschmitt.battyboost.core.entities.BusinessUser;
+import info.mschmitt.battyboost.core.entities.BattyboostUser;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.entities.Pos;
 
@@ -187,7 +187,7 @@ public class Router {
                 .commit();
     }
 
-    public void showUserEditing(Fragment fragment, BusinessUser user) {
+    public void showUserEditing(Fragment fragment, BattyboostUser user) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
