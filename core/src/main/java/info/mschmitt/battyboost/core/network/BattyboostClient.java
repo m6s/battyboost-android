@@ -1,6 +1,7 @@
 package info.mschmitt.battyboost.core.network;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -88,19 +89,27 @@ public class BattyboostClient {
 
     private <InputT, OutputT extends ErrorOutput> Single<OutputT> executeFunction(String functionName, InputT input,
                                                                                   Class<OutputT> outputClass) {
-        String userId = auth.getCurrentUser().getUid();
-        DatabaseReference executionRef = logicRef.child(userId).child(functionName).push();
-        DatabaseReference inputRef = executionRef.child("input");
-        DatabaseReference outputRef = executionRef.child("output");
-        return RxDatabaseReference.setValue(inputRef, input).andThen(RxQuery.valueEvents(outputRef)
-                        .filter(DataSnapshot::exists)
-                .map(dataSnapshot -> dataSnapshot.getValue(outputClass))
-                .doOnNext(output -> {
-                    if (output.getError() != null) {
-                        throw new ClientException(output.getError());
-                    }
-                })
-                .firstOrError());
+        return Single.fromCallable(() -> {
+            FirebaseUser currentUser = auth.getCurrentUser();
+            if (currentUser == null) {
+                throw new NotSignedInException();
+            }
+            return currentUser.getUid();
+        }).flatMap(userId -> {
+            DatabaseReference executionRef = logicRef.child(userId).child(functionName).push();
+            DatabaseReference inputRef = executionRef.child("input");
+            DatabaseReference outputRef = executionRef.child("output");
+            return RxDatabaseReference.setValue(inputRef, input)
+                    .andThen(RxQuery.valueEvents(outputRef)
+                            .filter(DataSnapshot::exists)
+                            .map(dataSnapshot -> dataSnapshot.getValue(outputClass))
+                            .doOnNext(output -> {
+                                if (output.getError() != null) {
+                                    throw new ClientException(output.getError());
+                                }
+                            })
+                            .firstOrError());
+        });
     }
 
     public Completable updatePartner(String partnerId, Partner partner) {
@@ -279,6 +288,7 @@ public class BattyboostClient {
     private Single<ReturnBatteryResult> returnBattery(Battery battery, int partnerCreditedCents) {
         battery.rentalTime = 0;
         BattyboostTransaction transaction = new BattyboostTransaction();
+        transaction.cashierId = auth.getCurrentUser().getUid();
         transaction.batteryId = battery.id;
         transaction.partnerCreditedCents = partnerCreditedCents;
         transaction.type = "return";
