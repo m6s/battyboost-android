@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import info.mschmitt.battyboost.adminapp.battery.BatteryFragment;
 import info.mschmitt.battyboost.adminapp.batteryediting.BatteryEditingFragment;
 import info.mschmitt.battyboost.adminapp.hub.HubFragment;
@@ -14,6 +15,9 @@ import info.mschmitt.battyboost.adminapp.posediting.PosEditingFragment;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
 import info.mschmitt.battyboost.adminapp.user.UserFragment;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
+import info.mschmitt.battyboost.core.network.BattyboostClient;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -29,8 +33,11 @@ public class MainActivity extends AppCompatActivity {
     @Inject public BattyboostServiceApplicationComponent applicationComponent;
     @Inject public Router router;
     @Inject public boolean injected;
+    @Inject public BattyboostClient client;
+    @Inject public FirebaseAuth auth;
     public ViewModel viewModel;
     private boolean postResumed;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,8 +83,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        compositeDisposable.dispose();
         postResumed = false;
         super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        compositeDisposable = new CompositeDisposable();
+        Disposable disposable = client.connect(auth);
+        compositeDisposable.add(disposable);
     }
 
     @Override

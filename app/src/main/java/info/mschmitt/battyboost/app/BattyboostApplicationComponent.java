@@ -22,7 +22,7 @@ public class BattyboostApplicationComponent {
         auth = FirebaseAuth.getInstance();
         storage = FirebaseStorage.getInstance();
         authUI = AuthUI.getInstance();
-        client = new BattyboostClient(auth, database, storage, "default");
+        client = new BattyboostClient(database, storage, "default");
         router = new Router();
     }
 

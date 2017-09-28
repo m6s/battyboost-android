@@ -58,11 +58,12 @@ transactions/
     {transactionId}/
         type: "rental" | "return" | "delivery" | "collection"
         batteryId: {batteryId}
-        partnerId: {partnerId}
-        partnerCreditedCents: integer
         cashierId: {userId}
-        conflictTransactionId: {transactionId}
-        time: integer
+        mainPartnerId: {partnerId}
+        mainPartnerCreditedCents: integer
+        conflictPartnerId: {partnerId}
+        conflictPartnerCreditedCents: {partnerId}
+        transactionTime: integer
 ```
 
 ```
@@ -83,8 +84,9 @@ partners/
         balanceCents: integer
 ```
 
-`posId` only needed for dumb charging stations.
+The `adminId` user can add/remove cashier users.
 
+```
 partnerBatteries/
     {partnerId}/
             {batteryId}: true
@@ -97,7 +99,7 @@ partnerCashiers/
     {partnerId}/
             {userId}: true
             ...
-
+```
 
 ```
 invites/
@@ -106,41 +108,25 @@ invites/
         validTime: integer
 ```
 
-The `adminId` user can add/remove cashier users.
-
 ## User management
 
 ```
 users/
     {userId}/
-        qr: string, indexed
-        rentalTime: integer
-        balanceCents: integer
         bankAccountOwner: string
         iban: string
         photoUrl: string;
         email: string;
         displayName: string;
+        cashierPartnerId: {partnerId}
 ```
-
-The Admin SDK allows access to the following properties via the FirebaseUser: displayName, email, photoUrl,
-providerData, providerId, uid, userMetadata, disabled, emailVerified
-
-`rentalTime` is the earliest `rentalTime` of all batteries currently rented by a user.
-
-userBatteries/
-    {userId}/
-            {batteryId}: true
-            ...
-userTransactions/
-    {userId}/
-            {transactionId}: true
-            ...
-userPartners/
-    {userId}/
-            {partnerId} : true
-            ...
 
 User's photos are kept in Firebase Storage:
 
 users/{userId}/photo.jpg (JPEG, square format)
+
+```
+batteryUsers/
+    {batteryId}/
+            {userId}: true
+```

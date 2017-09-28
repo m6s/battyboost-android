@@ -14,6 +14,8 @@ public class MainActivityComponent {
         activity.component = this;
         activity.applicationComponent = applicationComponent;
         activity.router = applicationComponent.router;
+        activity.client = applicationComponent.client;
+        activity.auth = applicationComponent.auth;
         activity.injected = true;
     }
 }

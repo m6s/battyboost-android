@@ -122,17 +122,16 @@ public class RentalActionsFragment extends Fragment {
     }
 
     private void rentBattery() {
-        Disposable disposable = client.rentBattery(viewModel.batteryQr).subscribe(this::onRentBatteryComplete);
-        compositeDisposable.add(disposable);
+//        Disposable disposable = client.rentBattery(viewModel.batteryQr).subscribe(this::onRentBatteryComplete);
+//        compositeDisposable.add(disposable);
     }
-
-    private void onRentBatteryComplete(BattyboostClient.RentBatteryResult result, Throwable throwable) {
-        router.dismiss(this);
-    }
-
-    private void onReturnBatteryComplete(BattyboostClient.ReturnBatteryResult result, Throwable throwable) {
-        router.dismiss(this);
-    }
+//    private void onRentBatteryComplete(BattyboostClient.RentBatteryResult result, Throwable throwable) {
+//        router.dismiss(this);
+//    }
+//
+//    private void onReturnBatteryComplete(BattyboostClient.ReturnBatteryResult result, Throwable throwable) {
+//        router.dismiss(this);
+//    }
 
     public void onReturnBatteryClick() {
         if (viewModel.batteryRentalTime > 0) {
@@ -143,8 +142,8 @@ public class RentalActionsFragment extends Fragment {
     }
 
     private void returnBattery() {
-        Disposable disposable = client.returnBattery(viewModel.batteryQr).subscribe(this::onReturnBatteryComplete);
-        compositeDisposable.add(disposable);
+//        Disposable disposable = client.returnBattery(viewModel.batteryQr).subscribe(this::onReturnBatteryComplete);
+//        compositeDisposable.add(disposable);
     }
 
     private void showReturnBatteryAlert() {

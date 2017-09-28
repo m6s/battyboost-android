@@ -43,7 +43,8 @@ public class BattyboostClientTest {
                 RxAuth.signInWithEmailAndPassword(auth, "emailclient.m6s@gmail.com", "qwerty!@").blockingGet();
         userId = authResult.getUser().getUid();
         FirebaseStorage storage = FirebaseStorage.getInstance(app);
-        client = new BattyboostClient(auth, database, storage, "default");
+        client = new BattyboostClient(database, storage, "default");
+        client.connect(auth); // TODO Dispose
     }
 
     @Test

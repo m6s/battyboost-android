@@ -100,7 +100,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable =
+        Disposable disposable = client.connect(auth);
+        compositeDisposable.add(disposable);
+        disposable =
                 RxAuth.userChanges(auth).filter(optional -> optional.value == null).subscribe(ignore -> {
                     cache.user = null;
                     cache.initialized = true;

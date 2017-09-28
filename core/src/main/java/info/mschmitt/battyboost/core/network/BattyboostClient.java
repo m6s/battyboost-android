@@ -1,7 +1,7 @@
 package info.mschmitt.battyboost.core.network;
 
+import android.util.Pair;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -10,14 +10,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import info.mschmitt.androidsupport.RxOptional;
 import info.mschmitt.battyboost.core.entities.*;
+import info.mschmitt.firebasesupport.RxAuth;
 import info.mschmitt.firebasesupport.RxDatabaseReference;
 import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Matthias Schmitt
@@ -67,10 +67,9 @@ public class BattyboostClient {
     public final DatabaseReference transactionsRef;
     public final StorageReference usersStorageRef;
     private final DatabaseReference logicRef;
-    private final FirebaseAuth auth;
+    private volatile BattyboostUser user;
 
-    public BattyboostClient(FirebaseAuth auth, FirebaseDatabase database, FirebaseStorage storage, String prefix) {
-        this.auth = auth;
+    public BattyboostClient(FirebaseDatabase database, FirebaseStorage storage, String prefix) {
         prefixRef = database.getReference(prefix);
         usersRef = prefixRef.child("data/users");
         partnersRef = prefixRef.child("data/partners");
@@ -82,6 +81,20 @@ public class BattyboostClient {
         usersStorageRef = storage.getReference().child("users");
     }
 
+    public Disposable connect(FirebaseAuth auth) {
+        return userChanges(usersRef, auth).subscribe(optional -> user = optional.value);
+    }
+
+    private static Observable<RxOptional<BattyboostUser>> userChanges(DatabaseReference usersRef, FirebaseAuth auth) {
+        return RxAuth.userChanges(auth).switchMap(optional -> {
+            if (optional.value == null) {
+                return Observable.just(RxOptional.<BattyboostUser>empty());
+            }
+            DatabaseReference userRef = usersRef.child(optional.value.getUid());
+            return RxQuery.valueEvents(userRef).filter(DataSnapshot::exists).map(USER_MAPPER);
+        });
+    }
+
     public Single<String> createPartner(Partner partner) {
         return executeFunction("createPartner", new CreatePartnerInput(partner), CreatePartnerOutput.class).map(
                 createPartnerOutput -> createPartnerOutput.partnerId);
@@ -90,11 +103,10 @@ public class BattyboostClient {
     private <InputT, OutputT extends ErrorOutput> Single<OutputT> executeFunction(String functionName, InputT input,
                                                                                   Class<OutputT> outputClass) {
         return Single.defer(() -> {
-            FirebaseUser currentUser = auth.getCurrentUser();
-            if (currentUser == null) {
+            if (user == null) {
                 throw new NotSignedInException();
             }
-            DatabaseReference executionRef = logicRef.child(currentUser.getUid()).child(functionName).push();
+            DatabaseReference executionRef = logicRef.child(user.id).child(functionName).push();
             DatabaseReference inputRef = executionRef.child("input");
             DatabaseReference outputRef = executionRef.child("output");
             return RxDatabaseReference.setValue(inputRef, input)
@@ -199,36 +211,14 @@ public class BattyboostClient {
         return RxDatabaseReference.setValue(inviteRef, token);
     }
 
-    public Single<RentBatteryResult> rentBattery(String batteryQr) {
-        Single<PrepareRentBatteryResult> prepareRentBatteryResultSingle = prepareRentBattery(batteryQr);
-        return prepareRentBatteryResultSingle.flatMap(prepareRentBatteryResult -> {
-            if (prepareRentBatteryResult.error != null) {
-                RentBatteryResult result = new RentBatteryResult();
-                result.error = prepareRentBatteryResult.error;
-                return Single.just(result);
-            }
-            return rentBattery(prepareRentBatteryResult.battery, prepareRentBatteryResult.partnerCreditedCents);
-        });
+    public Single<BattyboostTransaction> prepareRentBattery(String batteryId) {
+        return Single.just(new BattyboostTransaction());
     }
 
-    public Single<PrepareRentBatteryResult> prepareRentBattery(String batteryQr) {
-        return findBatteryByQr(batteryQr).map(batteryOptional -> toPrepareRentBatteryResult(batteryOptional.value));
+    public Single<Pair<BattyboostTransaction, String>> commitTransaction(BattyboostTransaction transaction) {
+        return Single.just(Pair.create(null, null));
     }
 
-    private Single<RentBatteryResult> rentBattery(Battery battery, int partnerCreditedCents) {
-        battery.rentalTime = System.currentTimeMillis();
-        BattyboostTransaction transaction = new BattyboostTransaction();
-        transaction.batteryId = battery.id;
-        transaction.partnerCreditedCents = partnerCreditedCents;
-        transaction.type = BattyboostTransaction.TYPE_RENTAL;
-        Map<String, Object> updateMap = new HashMap<>();
-        updateMap.put(transactionsRef.getKey() + "/" + transactionsRef.push().getKey(), transaction);
-        updateMap.put(batteriesRef.getKey() + "/" + battery.id, battery);
-        RentBatteryResult result = new RentBatteryResult();
-        result.transaction = transaction;
-        result.battery = battery;
-        return RxDatabaseReference.updateChildren(prefixRef, updateMap).toSingleDefault(result);
-    }
 
     public Single<RxOptional<Battery>> findBatteryByQr(String batteryQr) {
         Query batteryByQrQuery = batteriesRef.orderByChild("qr").equalTo(batteryQr);
@@ -237,107 +227,5 @@ public class BattyboostClient {
                 .map(optional -> optional.flatMap(BATTERY_MAPPER))
                 .firstElement()
                 .toSingle();
-    }
-
-    public PrepareRentBatteryResult toPrepareRentBatteryResult(Battery battery) {
-        PrepareRentBatteryResult result = new PrepareRentBatteryResult();
-        if (battery == null) {
-            result.error = "Battery does not exist";
-        } else {
-            result.battery = battery;
-            result.renterCreditedCents = -1200;
-            result.renterCashCreditedCents = -1200;
-            result.partnerCreditedCents = 40;
-        }
-        return result;
-    }
-
-    private Single<RxOptional<BattyboostUser>> findUserByQr(String userQr) {
-        Query userByQrQuery = usersRef.orderByChild("qr").equalTo(userQr);
-        if (userQr != null) {
-            return RxQuery.valueEvents(userByQrQuery)
-                    .map(RxQuery.FIRST_CHILD_MAPPER)
-                    .map(optional -> optional.flatMap(USER_MAPPER))
-                    .firstElement()
-                    .toSingle();
-        } else {
-            return Single.just(RxOptional.empty());
-        }
-    }
-
-    public Single<ReturnBatteryResult> returnBattery(String batteryQr) {
-        Single<PrepareReturnBatteryResult> prepareReturnBatteryResultSingle = prepareReturnBattery(batteryQr);
-        return prepareReturnBatteryResultSingle.flatMap(prepareReturnBatteryResult -> {
-            if (prepareReturnBatteryResult.error != null) {
-                ReturnBatteryResult result = new ReturnBatteryResult();
-                result.error = prepareReturnBatteryResult.error;
-                return Single.just(result);
-            } else {
-                return returnBattery(prepareReturnBatteryResult.battery,
-                        prepareReturnBatteryResult.partnerCreditedCents);
-            }
-        });
-    }
-
-    public Single<PrepareReturnBatteryResult> prepareReturnBattery(String batteryQr) {
-        return findBatteryByQr(batteryQr).map(batteryOptional -> toPrepareReturnBatteryResult(batteryOptional.value));
-    }
-
-    private Single<ReturnBatteryResult> returnBattery(Battery battery, int partnerCreditedCents) {
-        return Single.defer(() -> {
-            FirebaseUser currentUser = auth.getCurrentUser();
-            if (currentUser == null) {
-                throw new NotSignedInException();
-            }
-            battery.rentalTime = 0;
-            BattyboostTransaction transaction = new BattyboostTransaction();
-            transaction.cashierId = currentUser.getUid();
-            transaction.batteryId = battery.id;
-            transaction.partnerCreditedCents = partnerCreditedCents;
-            transaction.type = "return";
-            ReturnBatteryResult result = new ReturnBatteryResult();
-            result.transaction = transaction;
-            return RxDatabaseReference.setValue(transactionsRef.push(), transaction).toSingleDefault(result);
-        });
-    }
-
-    public PrepareReturnBatteryResult toPrepareReturnBatteryResult(Battery battery) {
-        PrepareReturnBatteryResult result = new PrepareReturnBatteryResult();
-        if (battery == null) {
-            result.error = "Battery does not exist";
-        } else {
-            result.battery = battery;
-            result.renterCreditedCents = 800;
-            result.renterCashCreditedCents = 800;
-            result.partnerCreditedCents = 40;
-        }
-        return result;
-    }
-
-    public static class RentBatteryResult {
-        public String error;
-        public BattyboostTransaction transaction;
-        public Battery battery;
-    }
-
-    public static class PrepareRentBatteryResult {
-        public String error;
-        public Battery battery;
-        public int renterCreditedCents;
-        public int partnerCreditedCents;
-        public int renterCashCreditedCents;
-    }
-
-    public static class PrepareReturnBatteryResult {
-        public String error;
-        public Battery battery;
-        public int renterCreditedCents;
-        public int partnerCreditedCents;
-        public int renterCashCreditedCents;
-    }
-
-    public static class ReturnBatteryResult {
-        public String error;
-        public BattyboostTransaction transaction;
     }
 }

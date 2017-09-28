@@ -44,7 +44,8 @@ public class AdminConsole {
         database = FirebaseDatabase.getInstance(app);
         FirebaseAuth auth = FirebaseAuth.getInstance(app);
         FirebaseStorage storage = FirebaseStorage.getInstance(app);
-        client = new BattyboostClient(auth, database, storage, "default");
+        client = new BattyboostClient(database, storage, "default");
+        client.connect(auth);
     }
 
     @Test
