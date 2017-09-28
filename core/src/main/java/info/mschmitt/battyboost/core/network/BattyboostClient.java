@@ -89,14 +89,12 @@ public class BattyboostClient {
 
     private <InputT, OutputT extends ErrorOutput> Single<OutputT> executeFunction(String functionName, InputT input,
                                                                                   Class<OutputT> outputClass) {
-        return Single.fromCallable(() -> {
+        return Single.defer(() -> {
             FirebaseUser currentUser = auth.getCurrentUser();
             if (currentUser == null) {
                 throw new NotSignedInException();
             }
-            return currentUser.getUid();
-        }).flatMap(userId -> {
-            DatabaseReference executionRef = logicRef.child(userId).child(functionName).push();
+            DatabaseReference executionRef = logicRef.child(currentUser.getUid()).child(functionName).push();
             DatabaseReference inputRef = executionRef.child("input");
             DatabaseReference outputRef = executionRef.child("output");
             return RxDatabaseReference.setValue(inputRef, input)
@@ -286,15 +284,21 @@ public class BattyboostClient {
     }
 
     private Single<ReturnBatteryResult> returnBattery(Battery battery, int partnerCreditedCents) {
-        battery.rentalTime = 0;
-        BattyboostTransaction transaction = new BattyboostTransaction();
-        transaction.cashierId = auth.getCurrentUser().getUid();
-        transaction.batteryId = battery.id;
-        transaction.partnerCreditedCents = partnerCreditedCents;
-        transaction.type = "return";
-        ReturnBatteryResult result = new ReturnBatteryResult();
-        result.transaction = transaction;
-        return RxDatabaseReference.setValue(transactionsRef.push(), transaction).toSingleDefault(result);
+        return Single.defer(() -> {
+            FirebaseUser currentUser = auth.getCurrentUser();
+            if (currentUser == null) {
+                throw new NotSignedInException();
+            }
+            battery.rentalTime = 0;
+            BattyboostTransaction transaction = new BattyboostTransaction();
+            transaction.cashierId = currentUser.getUid();
+            transaction.batteryId = battery.id;
+            transaction.partnerCreditedCents = partnerCreditedCents;
+            transaction.type = "return";
+            ReturnBatteryResult result = new ReturnBatteryResult();
+            result.transaction = transaction;
+            return RxDatabaseReference.setValue(transactionsRef.push(), transaction).toSingleDefault(result);
+        });
     }
 
     public PrepareReturnBatteryResult toPrepareReturnBatteryResult(Battery battery) {
