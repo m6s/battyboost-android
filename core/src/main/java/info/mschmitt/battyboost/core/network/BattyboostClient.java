@@ -16,7 +16,6 @@ import info.mschmitt.firebasesupport.RxQuery;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 
 /**
@@ -81,8 +80,8 @@ public class BattyboostClient {
         usersStorageRef = storage.getReference().child("users");
     }
 
-    public Disposable connect(FirebaseAuth auth) {
-        return userChanges(usersRef, auth).subscribe(optional -> user = optional.value);
+    public Observable<RxOptional<BattyboostUser>> connect(FirebaseAuth auth) {
+        return userChanges(usersRef, auth).doOnNext(optional -> user = optional.value);
     }
 
     private static Observable<RxOptional<BattyboostUser>> userChanges(DatabaseReference usersRef, FirebaseAuth auth) {

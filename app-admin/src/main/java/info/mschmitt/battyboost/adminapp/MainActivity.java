@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
-        Disposable disposable = client.connect(auth);
+        Disposable disposable = client.connect(auth).subscribe();
         compositeDisposable.add(disposable);
     }
 

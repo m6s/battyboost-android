@@ -44,7 +44,7 @@ public class BattyboostClientTest {
         userId = authResult.getUser().getUid();
         FirebaseStorage storage = FirebaseStorage.getInstance(app);
         client = new BattyboostClient(database, storage, "default");
-        client.connect(auth); // TODO Dispose
+        client.connect(auth).filter(optional -> optional.value != null).blockingFirst();
     }
 
     @Test
