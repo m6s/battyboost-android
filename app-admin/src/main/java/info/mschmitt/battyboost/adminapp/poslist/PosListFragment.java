@@ -1,6 +1,7 @@
 package info.mschmitt.battyboost.adminapp.poslist;
 
 import android.databinding.BaseObservable;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -28,6 +29,7 @@ public class PosListFragment extends Fragment {
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
+    private PosRecyclerAdapter adapter;
 
     public static Fragment newInstance() {
         return new PosListFragment();
@@ -45,12 +47,12 @@ public class PosListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        adapter = new PosRecyclerAdapter(client.posListRef, this::onPosClick);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         PosListViewBinding binding = PosListViewBinding.inflate(inflater, container, false);
-        PosRecyclerAdapter adapter = new PosRecyclerAdapter(client.posListRef, this::onPosClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -65,6 +67,16 @@ public class PosListFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
+    }
+
+    @Override
+    public void onDestroyView() {
+        getBinding().recyclerView.setAdapter(null);
+        super.onDestroyView();
+    }
+
+    private PosListViewBinding getBinding() {
+        return DataBindingUtil.getBinding(getView());
     }
 
     private void onPosClick(Pos pos) {

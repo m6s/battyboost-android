@@ -6,20 +6,18 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.*;
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import info.mschmitt.battyboost.adminapp.GlideApp;
 import info.mschmitt.battyboost.adminapp.R;
 import info.mschmitt.battyboost.adminapp.Router;
 import info.mschmitt.battyboost.adminapp.databinding.UserViewBinding;
 import info.mschmitt.battyboost.core.entities.BattyboostUser;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxQuery;
-import info.mschmitt.zxingsupport.ZXingImageLoader;
+import info.mschmitt.zxingsupport.ZXingGlideModel;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -106,10 +104,7 @@ public class UserFragment extends Fragment {
 
     private void setUser(BattyboostUser user) {
         if (user.qr != null) {
-            Glide.with(this)
-                    .using(ZXingImageLoader.create(BarcodeFormat.QR_CODE, ErrorCorrectionLevel.L, 0))
-                    .load("https://battyboost.com/qr?" + user.qr)
-                    .skipMemoryCache(true)
+            GlideApp.with(this).load(ZXingGlideModel.qr("https://battyboost.com/qr?" + user.qr))
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(getBinding().qrImageView);
         }

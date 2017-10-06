@@ -1,6 +1,7 @@
 package info.mschmitt.battyboost.adminapp.userlist;
 
 import android.databinding.BaseObservable;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -28,6 +29,7 @@ public class UserListFragment extends Fragment {
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
+    private UserRecyclerAdapter adapter;
 
     public static Fragment newInstance() {
         return new UserListFragment();
@@ -41,12 +43,12 @@ public class UserListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        adapter = new UserRecyclerAdapter(client.usersRef, this::onUserClick);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         UserListViewBinding binding = UserListViewBinding.inflate(inflater, container, false);
-        UserRecyclerAdapter adapter = new UserRecyclerAdapter(client.usersRef, this::onUserClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -61,6 +63,16 @@ public class UserListFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
+    }
+
+    @Override
+    public void onDestroyView() {
+        getBinding().recyclerView.setAdapter(null);
+        super.onDestroyView();
+    }
+
+    private UserListViewBinding getBinding() {
+        return DataBindingUtil.getBinding(getView());
     }
 
     private void onUserClick(BattyboostUser user) {

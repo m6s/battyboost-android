@@ -1,6 +1,7 @@
 package info.mschmitt.battyboost.adminapp.batterylist;
 
 import android.databinding.BaseObservable;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -28,6 +29,7 @@ public class BatteryListFragment extends Fragment {
     @Inject public BattyboostClient client;
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
+    private BatteryRecyclerAdapter adapter;
 
     public static Fragment newInstance() {
         return new BatteryListFragment();
@@ -45,12 +47,12 @@ public class BatteryListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
+        adapter = new BatteryRecyclerAdapter(client.batteriesRef, this::onBatteryClick);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         BatteryListViewBinding binding = BatteryListViewBinding.inflate(inflater, container, false);
-        BatteryRecyclerAdapter adapter = new BatteryRecyclerAdapter(client.batteriesRef, this::onBatteryClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -65,6 +67,16 @@ public class BatteryListFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
+    }
+
+    @Override
+    public void onDestroyView() {
+        getBinding().recyclerView.setAdapter(null);
+        super.onDestroyView();
+    }
+
+    private BatteryListViewBinding getBinding() {
+        return DataBindingUtil.getBinding(getView());
     }
 
     private void onBatteryClick(Battery battery) {

@@ -5,8 +5,11 @@ import android.databinding.DataBindingUtil;
 import android.databinding.Observable;
 import android.databinding.PropertyChangeRegistry;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.Query;
 import info.mschmitt.battyboost.core.R;
 import info.mschmitt.battyboost.core.databinding.PartnerItemBinding;
@@ -18,19 +21,37 @@ import info.mschmitt.battyboost.core.entities.Partner;
 public class PartnerRecyclerAdapter extends FirebaseRecyclerAdapter<Partner, PartnerRecyclerAdapter.PartnerHolder> {
     private final OnPartnerClickListener listener;
 
-    public PartnerRecyclerAdapter(Query ref, OnPartnerClickListener listener) {
-        super(Partner.class, R.layout.partner_item, PartnerHolder.class, ref);
+    public PartnerRecyclerAdapter(Query query, OnPartnerClickListener listener) {
+        super(new FirebaseRecyclerOptions.Builder<Partner>().setQuery(query, Partner.class).build());
         this.listener = listener;
     }
 
     @Override
-    protected void populateViewHolder(PartnerHolder viewHolder, Partner partner, int position) {
+    protected void onBindViewHolder(PartnerHolder viewHolder, int position, Partner partner) {
         if (partner.id == null) {
             partner.id = getRef(position).getKey();
         }
         viewHolder.listener = listener;
         viewHolder.partner = partner;
         viewHolder.notifyChange();
+    }
+
+    @Override
+    public PartnerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new PartnerHolder(
+                LayoutInflater.from(parent.getContext()).inflate(R.layout.partner_item, parent, false));
+    }
+
+    @Override
+    public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+        super.registerAdapterDataObserver(observer);
+        startListening();
+    }
+
+    @Override
+    public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+        stopListening();
+        super.unregisterAdapterDataObserver(observer);
     }
 
     public interface OnPartnerClickListener {
