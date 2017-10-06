@@ -2,6 +2,8 @@ package info.mschmitt.battyboost.adminapp.partnerlist;
 
 import android.databinding.BaseObservable;
 import android.databinding.DataBindingUtil;
+import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,15 +17,18 @@ import info.mschmitt.battyboost.adminapp.databinding.PartnerListViewBinding;
 import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.core.ui.PartnerRecyclerAdapter;
+import info.mschmitt.firebasesupport.RxQuery;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author Matthias Schmitt
  */
 public class PartnerListFragment extends Fragment {
     private static final String STATE_VIEW_MODEL = "VIEW_MODEL";
+    private final ObservableList<Partner> partners = new ObservableArrayList<>();
     public ViewModel viewModel;
     @Inject public Router router;
     @Inject public BattyboostClient client;
@@ -47,12 +52,12 @@ public class PartnerListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         viewModel = savedInstanceState == null ? new ViewModel()
                 : (ViewModel) savedInstanceState.getSerializable(STATE_VIEW_MODEL);
-        adapter = new PartnerRecyclerAdapter(client.partnersRef, this::onPartnerClick);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         PartnerListViewBinding binding = PartnerListViewBinding.inflate(inflater, container, false);
+        adapter = new PartnerRecyclerAdapter(partners, this::onPartnerClick);
         binding.recyclerView.setAdapter(adapter);
         LinearLayoutManager layoutManager = new LinearLayoutManager(binding.recyclerView.getContext());
         binding.recyclerView.setLayoutManager(layoutManager);
@@ -64,9 +69,22 @@ public class PartnerListFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        RxQuery.valueEvents(client.partnersRef)
+                .map(BattyboostClient.PARTNER_LIST_MAPPER)
+                .subscribe(this::onPartnersChanged); // TODO Unsubscribe
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(STATE_VIEW_MODEL, viewModel);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Override
@@ -77,6 +95,11 @@ public class PartnerListFragment extends Fragment {
 
     private PartnerListViewBinding getBinding() {
         return DataBindingUtil.getBinding(getView());
+    }
+
+    private void onPartnersChanged(List<Partner> partners) {
+        this.partners.clear();
+        this.partners.addAll(partners);
     }
 
     private void onPartnerClick(Partner partner) {

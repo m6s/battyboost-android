@@ -1,16 +1,11 @@
 package info.mschmitt.battyboost.core.ui;
 
-import android.databinding.Bindable;
-import android.databinding.DataBindingUtil;
-import android.databinding.Observable;
-import android.databinding.PropertyChangeRegistry;
+import android.databinding.*;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.firebase.database.Query;
+import info.mschmitt.androidsupport.databinding.RecyclerViewAdapterOnListChangedCallback;
 import info.mschmitt.battyboost.core.R;
 import info.mschmitt.battyboost.core.databinding.PartnerItemBinding;
 import info.mschmitt.battyboost.core.entities.Partner;
@@ -18,22 +13,15 @@ import info.mschmitt.battyboost.core.entities.Partner;
 /**
  * @author Matthias Schmitt
  */
-public class PartnerRecyclerAdapter extends FirebaseRecyclerAdapter<Partner, PartnerRecyclerAdapter.PartnerHolder> {
+public class PartnerRecyclerAdapter extends RecyclerView.Adapter<PartnerRecyclerAdapter.PartnerHolder> {
+    private final ObservableList<Partner> partners;
     private final OnPartnerClickListener listener;
+    private final RecyclerViewAdapterOnListChangedCallback<Partner> callback =
+            new RecyclerViewAdapterOnListChangedCallback<>(this);
 
-    public PartnerRecyclerAdapter(Query query, OnPartnerClickListener listener) {
-        super(new FirebaseRecyclerOptions.Builder<Partner>().setQuery(query, Partner.class).build());
+    public PartnerRecyclerAdapter(ObservableList<Partner> partners, OnPartnerClickListener listener) {
+        this.partners = partners;
         this.listener = listener;
-    }
-
-    @Override
-    protected void onBindViewHolder(PartnerHolder viewHolder, int position, Partner partner) {
-        if (partner.id == null) {
-            partner.id = getRef(position).getKey();
-        }
-        viewHolder.listener = listener;
-        viewHolder.partner = partner;
-        viewHolder.notifyChange();
     }
 
     @Override
@@ -43,14 +31,27 @@ public class PartnerRecyclerAdapter extends FirebaseRecyclerAdapter<Partner, Par
     }
 
     @Override
+    public void onBindViewHolder(PartnerHolder holder, int position) {
+        Partner partner = partners.get(position);
+        holder.listener = listener;
+        holder.partner = partner;
+        holder.notifyChange();
+    }
+
+    @Override
+    public int getItemCount() {
+        return partners.size();
+    }
+
+    @Override
     public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
         super.registerAdapterDataObserver(observer);
-        startListening();
+        partners.addOnListChangedCallback(callback);
     }
 
     @Override
     public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
-        stopListening();
+        partners.removeOnListChangedCallback(callback);
         super.unregisterAdapterDataObserver(observer);
     }
 

@@ -18,6 +18,10 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.functions.Function;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Matthias Schmitt
  */
@@ -35,6 +39,17 @@ public class BattyboostClient {
             partner.id = dataSnapshot.getKey();
         }
         return new RxOptional<>(partner);
+    };
+    public static final Function<DataSnapshot, List<Partner>> PARTNER_LIST_MAPPER = dataSnapshot -> {
+        if (!dataSnapshot.exists()) {
+            return Collections.emptyList();
+        }
+        ArrayList<Partner> partners = new ArrayList<>();
+        for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+            Partner partner = PARTNER_MAPPER.apply(childSnapshot).value;
+            partners.add(partner);
+        }
+        return partners;
     };
     public static final Function<DataSnapshot, RxOptional<Pos>> POS_MAPPER = dataSnapshot -> {
         Pos pos = dataSnapshot.getValue(Pos.class);
@@ -217,7 +232,6 @@ public class BattyboostClient {
     public Single<Pair<BattyboostTransaction, String>> commitTransaction(BattyboostTransaction transaction) {
         return Single.just(Pair.create(null, null));
     }
-
 
     public Single<RxOptional<Battery>> findBatteryByQr(String batteryQr) {
         Query batteryByQrQuery = batteriesRef.orderByChild("qr").equalTo(batteryQr);
