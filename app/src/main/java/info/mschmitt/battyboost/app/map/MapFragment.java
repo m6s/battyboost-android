@@ -118,8 +118,7 @@ public class MapFragment extends Fragment {
     }
 
     private void resumeMap(GoogleMap map) {
-        Disposable disposable = RxQuery.childAddedEvents(client.posListRef)
-                .map(BattyboostClient.POS_MAPPER)
+        Disposable disposable = RxQuery.childAddedEvents(client.posListRef).map(BattyboostClient::mapPos)
                 .subscribe(optional -> {
                     Pos pos = optional.value;
                     Marker marker = map.addMarker(toMarkerOptions(pos));
@@ -127,8 +126,7 @@ public class MapFragment extends Fragment {
                     markerMap.put(pos.id, marker);
                 });
         compositeDisposable.add(disposable);
-        disposable = RxQuery.childRemovedEvents(client.partnersRef)
-                .map(BattyboostClient.POS_MAPPER)
+        disposable = RxQuery.childRemovedEvents(client.partnersRef).map(BattyboostClient::mapPos)
                 .subscribe(optional -> markerMap.remove(optional.value.id).remove());
         compositeDisposable.add(disposable);
         map.setOnMarkerClickListener(marker -> {

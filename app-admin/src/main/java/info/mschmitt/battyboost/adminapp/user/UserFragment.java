@@ -77,8 +77,7 @@ public class UserFragment extends Fragment {
         compositeDisposable = new CompositeDisposable();
         DatabaseReference reference = client.usersRef.child(userKey);
         Disposable disposable = RxQuery.valueEvents(reference)
-                .filter(DataSnapshot::exists)
-                .map(BattyboostClient.DATABASE_USER_MAPPER)
+                .filter(DataSnapshot::exists).map(BattyboostClient::mapUser)
                 .subscribe(optional -> setUser(optional.value));
         compositeDisposable.add(disposable);
     }

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
     compileSdkVersion 26
@@ -32,10 +31,10 @@ android {
 }
 
 dependencies {
-    compile project(path: ':libs:support-android')
-    compile 'com.firebaseui:firebase-ui-database:3.0.0'
-    compile 'com.firebaseui:firebase-ui-auth:3.0.0'
-    compile 'com.firebaseui:firebase-ui-storage:3.0.0'
+    api project(path: ':libs:support-android')
+    api 'com.firebaseui:firebase-ui-database:3.0.0'
+    api 'com.firebaseui:firebase-ui-auth:3.0.0'
+    api 'com.firebaseui:firebase-ui-storage:3.0.0'
 //    compile "com.google.firebase:firebase-auth:$FOO"
 //    compile "com.google.firebase:firebase-storage:$FOO"
 //    compile "com.google.firebase:firebase-database:$FOO"

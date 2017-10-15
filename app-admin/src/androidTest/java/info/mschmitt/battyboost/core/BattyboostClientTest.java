@@ -54,7 +54,7 @@ public class BattyboostClientTest {
         String partnerId = client.createPartner(partner).blockingGet();
         DatabaseReference partnerRef = client.partnersRef.child(partnerId);
         RxOptional<Partner> optional =
-                RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient.PARTNER_MAPPER).blockingGet();
+                RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient::mapPartner).blockingGet();
         Assert.assertNotNull(optional.value);
         Assert.assertEquals(partner.name, optional.value.name);
     }
@@ -68,7 +68,7 @@ public class BattyboostClientTest {
         client.updatePartner(partnerId, partner).blockingAwait();
         DatabaseReference partnerRef = client.partnersRef.child(partnerId);
         RxOptional<Partner> optional =
-                RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient.PARTNER_MAPPER).blockingGet();
+                RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient::mapPartner).blockingGet();
         Assert.assertNotNull(optional.value);
         Assert.assertEquals(partner.name, optional.value.name);
     }
@@ -81,7 +81,7 @@ public class BattyboostClientTest {
         client.deletePartner(partnerId).blockingAwait();
         DatabaseReference partnerRef = client.partnersRef.child(partnerId);
         RxOptional<Partner> optional =
-                RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient.PARTNER_MAPPER).blockingGet();
+                RxQuery.valueEvents(partnerRef).firstElement().map(BattyboostClient::mapPartner).blockingGet();
         Assert.assertNull(optional.value);
     }
 
@@ -92,7 +92,7 @@ public class BattyboostClientTest {
         String partnerId = client.createPos(pos).blockingGet();
         DatabaseReference posRef = client.posListRef.child(partnerId);
         RxOptional<Pos> optional =
-                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient.POS_MAPPER).blockingGet();
+                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient::mapPos).blockingGet();
         Assert.assertNotNull(optional.value);
         Assert.assertEquals(pos.name, optional.value.name);
     }
@@ -106,7 +106,7 @@ public class BattyboostClientTest {
         client.updatePos(posId, pos).blockingAwait();
         DatabaseReference posRef = client.posListRef.child(posId);
         RxOptional<Pos> optional =
-                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient.POS_MAPPER).blockingGet();
+                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient::mapPos).blockingGet();
         Assert.assertNotNull(optional.value);
         Assert.assertEquals(pos.name, optional.value.name);
     }
@@ -119,7 +119,7 @@ public class BattyboostClientTest {
         client.deletePos(posId).blockingAwait();
         DatabaseReference posRef = client.posListRef.child(posId);
         RxOptional<Pos> optional =
-                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient.POS_MAPPER).blockingGet();
+                RxQuery.valueEvents(posRef).firstElement().map(BattyboostClient::mapPos).blockingGet();
         Assert.assertNull(optional.value);
     }
 
@@ -130,7 +130,7 @@ public class BattyboostClientTest {
         String partnerId = client.createBattery(battery).blockingGet();
         DatabaseReference batteryRef = client.batteriesRef.child(partnerId);
         RxOptional<Battery> optional =
-                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient.BATTERY_MAPPER).blockingGet();
+                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient::mapBattery).blockingGet();
         Assert.assertNotNull(optional.value);
         Assert.assertEquals(battery.qr, optional.value.qr);
     }
@@ -144,7 +144,7 @@ public class BattyboostClientTest {
         client.updateBattery(batteryId, battery).blockingAwait();
         DatabaseReference batteryRef = client.batteriesRef.child(batteryId);
         RxOptional<Battery> optional =
-                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient.BATTERY_MAPPER).blockingGet();
+                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient::mapBattery).blockingGet();
         Assert.assertNotNull(optional.value);
         Assert.assertEquals(battery.qr, optional.value.qr);
     }
@@ -156,11 +156,11 @@ public class BattyboostClientTest {
         client.updateUser(userId, user).blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
         BattyboostUser before =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         user.qr = "qr2";
         client.updateUser(userId, user).blockingAwait();
         BattyboostUser after =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         Assert.assertNotSame(before.qr, after.qr);
     }
 
@@ -172,7 +172,7 @@ public class BattyboostClientTest {
         client.deleteBattery(batteryId).blockingAwait();
         DatabaseReference batteryRef = client.batteriesRef.child(batteryId);
         RxOptional<Battery> optional =
-                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient.BATTERY_MAPPER).blockingGet();
+                RxQuery.valueEvents(batteryRef).firstElement().map(BattyboostClient::mapBattery).blockingGet();
         Assert.assertNull(optional.value);
     }
 
@@ -181,10 +181,10 @@ public class BattyboostClientTest {
         client.updateUserEmail(userId, "email1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
         BattyboostUser before =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         client.updateUserEmail(userId, "email2").blockingAwait();
         BattyboostUser after =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         Assert.assertNotSame(before.email, after.email);
     }
 
@@ -193,10 +193,10 @@ public class BattyboostClientTest {
         client.updateUserDisplayName(userId, "name1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
         BattyboostUser before =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         client.updateUserDisplayName(userId, "name2").blockingAwait();
         BattyboostUser after =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         Assert.assertNotSame(before.displayName, after.displayName);
     }
 
@@ -205,10 +205,10 @@ public class BattyboostClientTest {
         client.updateUserIban(userId, "iban1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
         BattyboostUser before =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         client.updateUserIban(userId, "iban2").blockingAwait();
         BattyboostUser after =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         Assert.assertNotSame(before.iban, after.iban);
     }
 
@@ -217,10 +217,10 @@ public class BattyboostClientTest {
         client.updateUserBankAccountOwner(userId, "owner1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
         BattyboostUser before =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         client.updateUserBankAccountOwner(userId, "owner2").blockingAwait();
         BattyboostUser after =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         Assert.assertNotSame(before.bankAccountOwner, after.bankAccountOwner);
     }
 
@@ -229,10 +229,10 @@ public class BattyboostClientTest {
         client.updateUserPhotoUrl(userId, "url1").blockingAwait();
         DatabaseReference userRef = client.usersRef.child(userId);
         BattyboostUser before =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         client.updateUserPhotoUrl(userId, "url2").blockingAwait();
         BattyboostUser after =
-                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient.USER_MAPPER).blockingGet().value;
+                RxQuery.valueEvents(userRef).firstElement().map(BattyboostClient::mapUser).blockingGet().value;
         Assert.assertNotSame(before.photoUrl, after.photoUrl);
     }
 

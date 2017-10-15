@@ -8,6 +8,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
+import info.mschmitt.androidsupport.RxOptional;
 import info.mschmitt.battyboost.core.entities.Battery;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.firebasesupport.RxQuery;
@@ -29,7 +30,9 @@ public class AdminConsole {
     private static final Function<DataSnapshot, Map<String, Battery>> BATTERY_MAP_MAPPER = dataSnapshot -> {
         Map<String, Battery> map = new HashMap<>((int) dataSnapshot.getChildrenCount());
         for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-            map.put(childSnapshot.getKey(), BattyboostClient.BATTERY_MAPPER.apply(childSnapshot).value);
+            map.put(childSnapshot.getKey(),
+                    ((Function<DataSnapshot, RxOptional<Battery>>) BattyboostClient::mapBattery).apply(
+                            childSnapshot).value);
         }
         return map;
     };

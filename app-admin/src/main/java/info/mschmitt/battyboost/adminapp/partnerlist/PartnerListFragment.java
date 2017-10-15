@@ -18,6 +18,8 @@ import info.mschmitt.battyboost.core.entities.Partner;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
 import info.mschmitt.battyboost.core.ui.PartnerRecyclerAdapter;
 import info.mschmitt.firebasesupport.RxQuery;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 import javax.inject.Inject;
 import java.io.Serializable;
@@ -35,6 +37,7 @@ public class PartnerListFragment extends Fragment {
     @Inject public FirebaseDatabase database;
     @Inject public boolean injected;
     private PartnerRecyclerAdapter adapter;
+    private CompositeDisposable compositeDisposable;
 
     public static Fragment newInstance() {
         return new PartnerListFragment();
@@ -71,9 +74,11 @@ public class PartnerListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        RxQuery.valueEvents(client.partnersRef)
-                .map(BattyboostClient.PARTNER_LIST_MAPPER)
-                .subscribe(this::onPartnersChanged); // TODO Unsubscribe
+        compositeDisposable = new CompositeDisposable();
+        Disposable disposable = RxQuery.valueEvents(client.partnersRef)
+                .map(dataSnapshot -> BattyboostClient.mapList(dataSnapshot, BattyboostClient::mapPartner))
+                .subscribe(this::onPartnersChanged);
+        compositeDisposable.add(disposable);
     }
 
     @Override
@@ -84,6 +89,7 @@ public class PartnerListFragment extends Fragment {
 
     @Override
     public void onPause() {
+        compositeDisposable.dispose();
         super.onPause();
     }
 

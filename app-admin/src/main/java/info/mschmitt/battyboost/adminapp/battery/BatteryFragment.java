@@ -75,8 +75,7 @@ public class BatteryFragment extends Fragment {
         super.onResume();
         compositeDisposable = new CompositeDisposable();
         DatabaseReference reference = client.batteriesRef.child(batteryKey);
-        Disposable disposable = RxQuery.valueEvents(reference)
-                .map(BattyboostClient.BATTERY_MAPPER)
+        Disposable disposable = RxQuery.valueEvents(reference).map(BattyboostClient::mapBattery)
                 .subscribe(optional -> setBattery(optional.value));
         compositeDisposable.add(disposable);
     }

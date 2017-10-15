@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 .filter(optional -> optional.value != null)
                 .map(optional -> optional.value)
                 .switchMap(firebaseUser -> RxQuery.valueEvents(client.usersRef.child(firebaseUser.getUid())))
-                .map(BattyboostClient.DATABASE_USER_MAPPER)
+                .map(BattyboostClient::mapUser)
                 .subscribe(optional -> {
                     cache.user = optional.value;
                     cache.initialized = true;

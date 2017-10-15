@@ -14,6 +14,9 @@ public class RxQuery {
             dataSnapshot -> dataSnapshot.hasChildren() ? new RxOptional<>(dataSnapshot.getChildren().iterator().next())
                     : RxOptional.empty();
 
+    /**
+     * Reports changes in the data at this location
+     */
     public static Observable<DataSnapshot> valueEvents(Query query) {
         return Observable.create(e -> {
             ValueEventListener listener = new ValueEventListener() {
@@ -32,6 +35,9 @@ public class RxQuery {
         });
     }
 
+    /**
+     * Report when child locations are added
+     */
     public static Observable<DataSnapshot> childAddedEvents(Query query) {
         return Observable.create(e -> {
             ChildEventListener listener = new BaseChildEventListener(e) {
@@ -45,6 +51,9 @@ public class RxQuery {
         });
     }
 
+    /**
+     * Report when child locations are changed
+     */
     public static Observable<DataSnapshot> childChangedEvents(Query query) {
         return Observable.create(e -> {
             ChildEventListener listener = new BaseChildEventListener(e) {
@@ -58,6 +67,9 @@ public class RxQuery {
         });
     }
 
+    /**
+     * Report when child locations are removed
+     */
     public static Observable<DataSnapshot> childRemovedEvents(Query query) {
         return Observable.create(e -> {
             ChildEventListener listener = new BaseChildEventListener(e) {
@@ -71,6 +83,9 @@ public class RxQuery {
         });
     }
 
+    /**
+     * Report when child locations are moved
+     */
     public static Observable<DataSnapshot> childMovedEvents(Query query) {
         return Observable.create(e -> {
             ChildEventListener listener = new BaseChildEventListener(e) {

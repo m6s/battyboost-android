@@ -26,52 +26,6 @@ import java.util.List;
  * @author Matthias Schmitt
  */
 public class BattyboostClient {
-    public static final Function<DataSnapshot, RxOptional<BattyboostUser>> DATABASE_USER_MAPPER = dataSnapshot -> {
-        BattyboostUser battyboostUser = dataSnapshot.getValue(BattyboostUser.class);
-        if (battyboostUser != null) {
-            battyboostUser.id = dataSnapshot.getKey();
-        }
-        return new RxOptional<>(battyboostUser);
-    };
-    public static final Function<DataSnapshot, RxOptional<Partner>> PARTNER_MAPPER = dataSnapshot -> {
-        Partner partner = dataSnapshot.getValue(Partner.class);
-        if (partner != null) {
-            partner.id = dataSnapshot.getKey();
-        }
-        return new RxOptional<>(partner);
-    };
-    public static final Function<DataSnapshot, List<Partner>> PARTNER_LIST_MAPPER = dataSnapshot -> {
-        if (!dataSnapshot.exists()) {
-            return Collections.emptyList();
-        }
-        ArrayList<Partner> partners = new ArrayList<>();
-        for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
-            Partner partner = PARTNER_MAPPER.apply(childSnapshot).value;
-            partners.add(partner);
-        }
-        return partners;
-    };
-    public static final Function<DataSnapshot, RxOptional<Pos>> POS_MAPPER = dataSnapshot -> {
-        Pos pos = dataSnapshot.getValue(Pos.class);
-        if (pos != null) {
-            pos.id = dataSnapshot.getKey();
-        }
-        return new RxOptional<>(pos);
-    };
-    public static final Function<DataSnapshot, RxOptional<Battery>> BATTERY_MAPPER = dataSnapshot -> {
-        Battery battery = dataSnapshot.getValue(Battery.class);
-        if (battery != null) {
-            battery.id = dataSnapshot.getKey();
-        }
-        return new RxOptional<>(battery);
-    };
-    public static final Function<DataSnapshot, RxOptional<BattyboostUser>> USER_MAPPER = dataSnapshot -> {
-        BattyboostUser user = dataSnapshot.getValue(BattyboostUser.class);
-        if (user != null) {
-            user.id = dataSnapshot.getKey();
-        }
-        return new RxOptional<>(user);
-    };
     public final DatabaseReference prefixRef;
     public final DatabaseReference usersRef;
     public final DatabaseReference partnersRef;
@@ -95,6 +49,51 @@ public class BattyboostClient {
         usersStorageRef = storage.getReference().child("users");
     }
 
+    public static RxOptional<BattyboostUser> mapUser(DataSnapshot dataSnapshot) {
+        BattyboostUser user = dataSnapshot.getValue(BattyboostUser.class);
+        if (user != null) {
+            user.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(user);
+    }
+
+    public static RxOptional<Partner> mapPartner(DataSnapshot dataSnapshot) {
+        Partner partner = dataSnapshot.getValue(Partner.class);
+        if (partner != null) {
+            partner.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(partner);
+    }
+
+    public static RxOptional<Pos> mapPos(DataSnapshot dataSnapshot) {
+        Pos pos = dataSnapshot.getValue(Pos.class);
+        if (pos != null) {
+            pos.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(pos);
+    }
+
+    public static RxOptional<Battery> mapBattery(DataSnapshot dataSnapshot) {
+        Battery battery = dataSnapshot.getValue(Battery.class);
+        if (battery != null) {
+            battery.id = dataSnapshot.getKey();
+        }
+        return new RxOptional<>(battery);
+    }
+
+    public static <T> List<T> mapList(DataSnapshot listSnapshot, Function<DataSnapshot, RxOptional<T>> mapper)
+            throws Exception {
+        if (!listSnapshot.exists()) {
+            return Collections.emptyList();
+        }
+        ArrayList<T> list = new ArrayList<>();
+        for (DataSnapshot childSnapshot : listSnapshot.getChildren()) {
+            T child = mapper.apply(childSnapshot).value;
+            list.add(child);
+        }
+        return list;
+    }
+
     public Observable<RxOptional<BattyboostUser>> connect(FirebaseAuth auth) {
         return userChanges(usersRef, auth).doOnNext(optional -> user = optional.value);
     }
@@ -105,7 +104,7 @@ public class BattyboostClient {
                 return Observable.just(RxOptional.<BattyboostUser>empty());
             }
             DatabaseReference userRef = usersRef.child(optional.value.getUid());
-            return RxQuery.valueEvents(userRef).filter(DataSnapshot::exists).map(USER_MAPPER);
+            return RxQuery.valueEvents(userRef).filter(DataSnapshot::exists).map(BattyboostClient::mapUser);
         });
     }
 
@@ -236,8 +235,7 @@ public class BattyboostClient {
     public Single<RxOptional<Battery>> findBatteryByQr(String batteryQr) {
         Query batteryByQrQuery = batteriesRef.orderByChild("qr").equalTo(batteryQr);
         return RxQuery.valueEvents(batteryByQrQuery)
-                .map(RxQuery.FIRST_CHILD_MAPPER)
-                .map(optional -> optional.flatMap(BATTERY_MAPPER))
+                .map(RxQuery.FIRST_CHILD_MAPPER).map(optional -> optional.flatMap(BattyboostClient::mapBattery))
                 .firstElement()
                 .toSingle();
     }
