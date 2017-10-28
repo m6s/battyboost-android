@@ -16,6 +16,7 @@ import info.mschmitt.battyboost.adminapp.pos.PosFragment;
 import info.mschmitt.battyboost.adminapp.posediting.PosEditingFragment;
 import info.mschmitt.battyboost.adminapp.poslist.PosListFragment;
 import info.mschmitt.battyboost.adminapp.posselection.PosSelectionFragment;
+import info.mschmitt.battyboost.adminapp.transactionlist.TransactionListFragment;
 import info.mschmitt.battyboost.adminapp.user.UserFragment;
 import info.mschmitt.battyboost.adminapp.userediting.UserEditingFragment;
 import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
@@ -32,6 +33,7 @@ public class Router {
     private static final String POS_LIST_TAG = PosListFragment.class.getSimpleName();
     private static final String USER_LIST_TAG = UserListFragment.class.getSimpleName();
     private static final String BATTERY_LIST_TAG = BatteryListFragment.class.getSimpleName();
+    private static final String TRANSACTION_LIST_TAG = TransactionListFragment.class.getSimpleName();
 
     public void showHub(AppCompatActivity activity) {
         activity.getSupportFragmentManager()
@@ -160,6 +162,23 @@ public class Router {
         fragmentTransaction.commitNow();
     }
 
+    public void showTransactionsList(HubFragment hubFragment) {
+        FragmentManager fragmentManager = hubFragment.getChildFragmentManager();
+        Fragment old = fragmentManager.findFragmentById(R.id.detailsContentView);
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        if (old != null) {
+            fragmentTransaction.detach(old);
+        }
+        Fragment fragment = fragmentManager.findFragmentByTag(TRANSACTION_LIST_TAG);
+        if (fragment == null) {
+            fragment = TransactionListFragment.newInstance();
+            fragmentTransaction.add(R.id.detailsContentView, fragment, TRANSACTION_LIST_TAG);
+        } else {
+            fragmentTransaction.attach(fragment);
+        }
+        fragmentTransaction.commitNow();
+    }
+
     public void showBattery(Fragment fragment, String batteryId) {
         FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -167,6 +186,15 @@ public class Router {
                 .replace(R.id.contentView, BatteryFragment.newInstance(batteryId))
                 .addToBackStack(null)
                 .commit();
+    }
+
+    public void showTransaction(Fragment fragment, String transactionId) {
+//        FragmentManager fragmentManager = fragment.getActivity().getSupportFragmentManager();
+//        fragmentManager.beginTransaction()
+//                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+//                .replace(R.id.contentView, TransactionFragment.newInstance(transactionId))
+//                .addToBackStack(null)
+//                .commit();
     }
 
     public void showBatteryEditing(Fragment fragment, Battery battery) {

@@ -74,6 +74,14 @@ public class DrawerFragment extends Fragment {
         }
     }
 
+    public void onTransactionsClick() {
+        setSelectedItem(DrawerItem.TRANSACTIONS_LIST);
+        DrawerListener drawerListener = getDrawerListener();
+        if (drawerListener != null) {
+            drawerListener.onDrawerItemSelected(this, DrawerItem.TRANSACTIONS_LIST);
+        }
+    }
+
     @Override
     public void setTargetFragment(Fragment fragment, int requestCode) {
         if (!(fragment instanceof DrawerListener)) {
@@ -107,7 +115,7 @@ public class DrawerFragment extends Fragment {
     }
 
     public enum DrawerItem {
-        PARTNER_LIST, POS_LIST, USER_LIST, BATTERY_LIST
+        PARTNER_LIST, POS_LIST, USER_LIST, BATTERY_LIST, TRANSACTIONS_LIST
     }
 
     public interface DrawerListener {

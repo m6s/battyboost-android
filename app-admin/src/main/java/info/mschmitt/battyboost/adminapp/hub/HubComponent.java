@@ -10,6 +10,8 @@ import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListComponent;
 import info.mschmitt.battyboost.adminapp.partnerlist.PartnerListFragment;
 import info.mschmitt.battyboost.adminapp.poslist.PosListComponent;
 import info.mschmitt.battyboost.adminapp.poslist.PosListFragment;
+import info.mschmitt.battyboost.adminapp.transactionlist.TransactionListComponent;
+import info.mschmitt.battyboost.adminapp.transactionlist.TransactionListFragment;
 import info.mschmitt.battyboost.adminapp.userlist.UserListComponent;
 import info.mschmitt.battyboost.adminapp.userlist.UserListFragment;
 import info.mschmitt.battyboost.core.network.BattyboostClient;
@@ -52,5 +54,9 @@ public class HubComponent {
 
     public BatteryListComponent plus(BatteryListFragment userListFragment) {
         return new BatteryListComponent(router, database, client);
+    }
+
+    public TransactionListComponent plus(TransactionListFragment transactionListFragment) {
+        return new TransactionListComponent(router, database, client);
     }
 }
